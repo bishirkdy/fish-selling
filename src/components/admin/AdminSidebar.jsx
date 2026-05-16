@@ -9,6 +9,8 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
+  LineStyle,
+  CircleX,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -59,7 +61,7 @@ const menus = [
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [open, setOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState("");
 
   const handleMenu = (menu) => {
@@ -71,57 +73,40 @@ const AdminSidebar = () => {
   };
 
   return (
-    <aside
-      className="
-        w-64
-        min-h-screen
-        bg-[#0B1120]
-        text-white
-        flex
-        flex-col
-        justify-between
-        border-r
-        border-white/10
-      "
-    >
-      <div>
-        <div className="h-20 flex items-center px-6 border-b border-white/10">
-          <h1 className="text-2xl font-bold tracking-wide">
-            AquaAdmin
-          </h1>
-        </div>
+    <>
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-60 bg-[#0B1120] text-white p-3 rounded-xl shadow-lg"
+        >
+          <LineStyle size={16} />
+        </button>
+      )}
+      <aside
+        className={`fixed lg:sticky top-0 left-0 z-50 w-72 lg:w-64 h-screen bg-[#0B1120] text-white flex flex-col justify-between border-r border-white/10 transition-all duration-300 ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
+      >
+        <div>
+          <div className="h-20 flex justify-between items-center px-4 border-b border-white/10">
+            <h1 className="text-2xl font-bold tracking-wide">Admin Panel</h1>
 
-        <div className="px-4 py-5">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="
-              w-full
-              bg-white/5
-              border
-              border-white/10
-              rounded-xl
-              px-4
-              py-2.5
-              outline-none
-              text-sm
-              placeholder:text-zinc-400
-            "
-          />
-        </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="lg:hidden text-white p-2 rounded-xl hover:bg-white/10 transition"
+            >
+              <CircleX size={22} />
+            </button>
+          </div>
+          <nav className="px-3 py-5 space-y-2">
+            {menus.map((menu, index) => {
+              const isOpen = openMenu === menu.title;
 
-        <nav className="px-3 space-y-2">
-          {menus.map((menu, index) => {
-            const isOpen = openMenu === menu.title;
+              const isActive = location.pathname === menu.path;
 
-            const isActive =
-              location.pathname === menu.path;
-
-            return (
-              <div key={index}>
-                <button
-                  onClick={() => handleMenu(menu)}
-                  className={`
+              return (
+                <div key={index}>
+                  <button
+                    onClick={() => handleMenu(menu)}
+                    className={`
                     w-full
                     flex
                     items-center
@@ -133,38 +118,36 @@ const AdminSidebar = () => {
                     font-medium
                     transition-all
                     duration-200
-                    ${
-                      isActive
-                        ? "bg-cyan-500 text-white"
-                        : "hover:bg-white/10"
-                    }
+                    ${isActive ? "bg-cyan-500 text-white" : "hover:bg-white/10"}
                   `}
-                >
-                  <div className="flex items-center gap-3">
-                    <menu.icon size={20} />
+                  >
+                    <div className="flex items-center gap-3">
+                      <menu.icon size={20} />
 
-                    <span>{menu.title}</span>
-                  </div>
+                      <span>{menu.title}</span>
+                    </div>
 
-                  {menu.subMenu &&
-                    (isOpen ? (
-                      <ChevronDown size={18} />
-                    ) : (
-                      <ChevronRight size={18} />
-                    ))}
-                </button>
+                    {menu.subMenu &&
+                      (isOpen ? (
+                        <ChevronDown size={18} />
+                      ) : (
+                        <ChevronRight size={18} />
+                      ))}
+                  </button>
 
-                {menu.subMenu && isOpen && (
-                  <div className="ml-6 mt-2 space-y-1 border-l border-white/10 pl-4">
-                    {menu.subMenu.map((sub, i) => {
-                      const isSubActive =
-                        location.pathname === sub.path;
+                  {menu.subMenu && isOpen && (
+                    <div className="ml-6 mt-2 space-y-1 border-l border-white/10 pl-4">
+                      {menu.subMenu.map((sub, i) => {
+                        const isSubActive = location.pathname === sub.path;
 
-                      return (
-                        <button
-                          key={i}
-                          onClick={() => navigate(sub.path)}
-                          className={`
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              navigate(sub.path);
+                              setOpen(false);
+                            }}
+                            className={`
                             w-full
                             text-left
                             px-3
@@ -178,66 +161,40 @@ const AdminSidebar = () => {
                                 : "text-zinc-300 hover:bg-white/5"
                             }
                           `}
-                        >
-                          {sub.title}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-      </div>
-
-      <div className="p-4 border-t border-white/10">
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-            bg-white/5
-            rounded-2xl
-            p-3
-          "
-        >
-          <div className="flex items-center gap-3">
-            <img
-              src="https://i.pravatar.cc/100"
-              alt=""
-              className="
-                w-11
-                h-11
-                rounded-full
-                object-cover
-              "
-            />
-
-            <div>
-              <h3 className="text-sm font-semibold">
-                Bishir
-              </h3>
-
-              <p className="text-xs text-zinc-400">
-                Administrator
-              </p>
-            </div>
-          </div>
-
-          <button
-            className="
-              p-2
-              rounded-lg
-              hover:bg-white/10
-              transition
-            "
-          >
-            <LogOut size={18} />
-          </button>
+                          >
+                            {sub.title}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
         </div>
-      </div>
-    </aside>
+
+        <div className="p-4 border-t border-white/10">
+          <div className="flex items-center justify-between bg-white/5 rounded-2xl p-3">
+            <div className="flex items-center gap-3">
+              <img
+                src="https://i.pravatar.cc/100"
+                alt=""
+                className="w-11 h-11 rounded-full object-cover"
+              />
+              <div>
+                <h3 className="text-sm font-semibold">Bishir</h3>
+                <p className="text-xs text-zinc-400">Administrator</p>
+              </div>
+            </div>
+
+            <button className="p-2 rounded-lg hover:bg-white/10 transition">
+              <LogOut size={18} />
+            </button>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

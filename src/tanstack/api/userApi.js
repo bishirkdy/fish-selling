@@ -23,3 +23,11 @@ export const loginUser = async (data) => {
   }
   return user;
 };
+
+export const getAllUser = async () => {
+    const res = await api.get(`/users`)
+    const filtered = res.data.filter((data) => {
+      return data.role !== "admin"
+     })
+     return filtered
+}

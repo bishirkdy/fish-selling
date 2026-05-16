@@ -1,6 +1,6 @@
 import React from "react";
 import ProductCard from "../product/ProductCard";
-import { useGetSixProduct } from "../../tanstack/hooks/queries/peoductQueries";
+import { useGetSixProduct } from "../../tanstack/hooks/queries/productQueries";
 import Loader from "../Loader";
 
 const SixProductSection = () => {

@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Fish,
-  DollarSign,
-  Percent,
-  Package,
   Image,
-  FileText,
-  Tag,
   SquareX,
+  Save,
+  Fish,
+  Package,
+  Percent,
+  DollarSign,
+  FileText,
 } from "lucide-react";
-import axios from "axios";
-import { useAddProduct } from "../../../tanstack/hooks/mutations/productMutation";
-import { toast } from "react-toastify";
+import { useGetProductById } from "../../../tanstack/hooks/queries/productQueries";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEditProductById } from "../../../tanstack/hooks/mutations/productMutation";
 import { useQueryClient } from "@tanstack/react-query";
-const AddFish = () => {
+import { toast } from "react-toastify";
+const EditFish = () => {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -22,10 +23,27 @@ const AddFish = () => {
     discountPercentage: "",
     description: "",
   });
-  const [image, setImage] = useState(null);
-  const { mutate, isPending } = useAddProduct();
-  const [error, setError] = useState();
+  const { id } = useParams();
+  const { data, isLoading, isError } = useGetProductById(id);
+  const [image, setImage] = useState("");
+  const { mutate, isPending } = useEditProductById();
   const client = useQueryClient();
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        name: data.name || "",
+        category: data.category || "",
+        price: data.price || "",
+        stock: data.stock || "",
+        discountPercentage: data.discountPercentage || "",
+        description: data.description || "",
+      });
+      setImage(data.images || "");
+    }
+  }, [data]);
+  const [error, setError] = useState({});
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -37,59 +55,51 @@ const AddFish = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const errors = {};
-    if (!formData.name) errors.name = "Name is required";
+    if (!formData.name) errors.name = "Fish name is required";
     if (!formData.category) errors.category = "Category is required";
     if (!formData.price) errors.price = "Price is required";
     if (!formData.stock) errors.stock = "Stock is required";
     if (!formData.discountPercentage)
-      errors.discountPercentage = "Discount percentage is required";
+      errors.discountPercentage = "Discount is required";
     if (!formData.description) errors.description = "Description is required";
-    if (!image) errors.image = "Image is required";
+
     if (Object.keys(errors).length > 0) {
       setError(errors);
       return;
     }
-    try {
-      const cloudItem = new FormData();
-      cloudItem.append("file", image);
-      cloudItem.append("upload_preset", "fish-shop");
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dztjqqoyw/image/upload",
-        cloudItem,
-      );
-
-      const finalData = {
-        ...formData,
-        images: res.data.secure_url,
-      };
-      mutate(finalData, {
+    const final = {
+      ...formData,
+      images: image,
+    };
+    mutate(
+      { data: final, id },
+      {
         onSuccess: () => {
-          toast.success("Product added successfully");
+          toast.success("Product edited successfully");
           client.invalidateQueries({ queryKey: ["products"] });
+          navigate("/admin/viewfish")
         },
-        onError: (error) => {
-          toast.error(error.message);
+        onError: (err) => {
+          toast.error(err.message);
         },
-      });
-    } catch (error) {
-      console.log(error.message);
-    }
+      },
+    );
   };
 
   return (
     <div className="w-full min-h-screen bg-gray-200 p-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-2 bg-white rounded-[30px] shadow-sm p-6">
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="text-4xl font-bold text-(--color-background)">
-              Add New Fish
+              Edit Fish
             </h1>
 
-            <p className="text-gray-500">
-              Fill all product information carefully
+            <p className="text-gray-500 mt-2">
+              Update fish product information
             </p>
           </div>
 
@@ -97,9 +107,10 @@ const AddFish = () => {
             <div className="grid md:grid-cols-2 gap-6 items-start">
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     Fish Name
                   </label>
+
                   <input
                     type="text"
                     name="name"
@@ -114,14 +125,12 @@ const AddFish = () => {
                   />
 
                   {error?.name && (
-                    <p className="text-red-500 text-sm font-medium pl-1">
-                      {error.name}
-                    </p>
+                    <p className="text-red-500 text-sm pl-1">{error.name}</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     Category
                   </label>
 
@@ -144,7 +153,7 @@ const AddFish = () => {
                   </select>
 
                   {error?.category && (
-                    <p className="text-red-500 text-sm font-medium pl-1">
+                    <p className="text-red-500 text-sm pl-1">
                       {error.category}
                     </p>
                   )}
@@ -153,7 +162,7 @@ const AddFish = () => {
 
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     Price
                   </label>
 
@@ -171,15 +180,13 @@ const AddFish = () => {
                   />
 
                   {error?.price && (
-                    <p className="text-red-500 text-sm font-medium pl-1">
-                      {error.price}
-                    </p>
+                    <p className="text-red-500 text-sm pl-1">{error.price}</p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       Discount %
                     </label>
 
@@ -197,14 +204,14 @@ const AddFish = () => {
                     />
 
                     {error?.discountPercentage && (
-                      <p className="text-red-500 text-sm font-medium pl-1">
+                      <p className="text-red-500 text-sm pl-1">
                         {error.discountPercentage}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                       Stock
                     </label>
 
@@ -222,9 +229,7 @@ const AddFish = () => {
                     />
 
                     {error?.stock && (
-                      <p className="text-red-500 text-sm font-medium pl-1">
-                        {error.stock}
-                      </p>
+                      <p className="text-red-500 text-sm pl-1">{error.stock}</p>
                     )}
                   </div>
                 </div>
@@ -232,7 +237,7 @@ const AddFish = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-gray-700">
+              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 Description
               </label>
 
@@ -250,39 +255,31 @@ const AddFish = () => {
               />
 
               {error?.description && (
-                <p className="text-red-500 text-sm font-medium pl-1">
-                  {error.description}
-                </p>
+                <p className="text-red-500 text-sm pl-1">{error.description}</p>
               )}
             </div>
 
             <button
               type="submit"
-              className="h-14 px-10 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition cursor-pointer shadow-lg"
+              className="h-14 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition flex items-center justify-center gap-3 shadow-lg cursor-pointer"
             >
-              Add Fish
+              Save Changes
             </button>
           </form>
         </div>
 
         <div className="bg-white rounded-[30px] shadow-sm p-6 h-fit sticky top-6">
-          <h2 className="text-2xl font-bold text-gray-800">Upload Images</h2>
+          <h2 className="text-2xl font-bold text-gray-800">Update Image</h2>
 
           <p className="text-sm text-gray-500 mt-1 mb-6">
-            Upload high quality fish images
+            Upload a new fish image
           </p>
 
           <label className="h-52 rounded-[28px] border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-(--color-background) hover:bg-(--color-background)/5 transition">
             <input
               type="file"
               className="hidden"
-              onChange={(e) => {
-                setImage(e.target.files[0]);
-                setError((prev) => ({
-                  ...prev,
-                  image: "",
-                }));
-              }}
+              onChange={(e) => setImage(URL.createObjectURL(e.target.files[0]))}
             />
 
             <Image size={35} className="text-gray-400" />
@@ -294,38 +291,21 @@ const AddFish = () => {
             <p className="text-sm text-gray-400 mt-2">PNG, JPG, WEBP</p>
           </label>
 
-          {error?.image && (
-            <p className="text-red-500 text-sm mt-3 font-medium text-center">
-              {error.image}
-            </p>
-          )}
-
           <div className="mt-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-gray-800">Image Preview</h3>
             </div>
 
-            <div>
-              <div className="relative h-52 rounded-3xl overflow-hidden group">
-                {image ? (
-                  <>
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      onClick={() => setImage(null)}
-                      type="button"
-                      className="absolute top-3 right-3 w-8 h-8 rounded-full p-1 cursor-pointer bg-red-500 text-white opacity-0 group-hover:opacity-100 transition"
-                    >
-                      <SquareX />
-                    </button>
-                  </>
-                ) : (
-                  <p className="ml-2">No image to preview</p>
-                )}
-              </div>
+            <div className="relative h-56 rounded-3xl overflow-hidden group border border-gray-200">
+              <img src={image} alt="" className="w-full h-full object-cover" />
+
+              <button
+                type="button"
+                onClick={() => setImage(null)}
+                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+              >
+                <SquareX size={18} />
+              </button>
             </div>
           </div>
         </div>
@@ -334,4 +314,4 @@ const AddFish = () => {
   );
 };
 
-export default AddFish;
+export default EditFish;

@@ -25,3 +25,18 @@ export const getProductById = async (id) => {
 //     const res = await api.get(`/products/${productId}`)
 //     return res.data
 // }
+
+export const removeProduct = async (id) => {
+    const res = await api.delete(`/products/${id}`)
+    return res.data
+}
+
+export const addProduct = async (data) => {
+    const res = await api.post("/products" , data)
+    return res.data
+}
+
+export const updateProductById = ({ data, id }) => {
+    const res = api.patch(`products/${id}` ,data)
+    return res.data
+}

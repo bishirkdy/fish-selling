@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductById } from "../../tanstack/hooks/queries/peoductQueries";
+import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
 import { Check, Truck } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { setToCart } from "../../redux/features/cartSlice";

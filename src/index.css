@@ -8,3 +8,12 @@
   --color-accent : #F97316;
   --color-text :  #CBD5E1;
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

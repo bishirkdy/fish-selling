@@ -1,16 +1,42 @@
 import React, { useState } from "react";
 import { Search, Eye, Pencil, Trash2, Fish, Package } from "lucide-react";
-import { useGetProducts } from "../../../tanstack/hooks/queries/peoductQueries";
+import { useGetProducts } from "../../../tanstack/hooks/queries/productQueries";
 import { priceDiscounted } from "../../../utils/priceDescounted";
+import { useDeleteProduct } from "../../../tanstack/hooks/mutations/productMutation";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const ViewFish = () => {
   const [search, setSearch] = useState("");
   const { data, isLoading, isError } = useGetProducts();
-  // const data = []
+  const [view, setView] = useState(false);
+  const [selectedFish, setSelectedFish] = useState(null);
+  const client = useQueryClient();
+  const navigate = useNavigate()
+  const { mutate: deleteMutate, isPending } = useDeleteProduct();
+  
   const filteredFish = data?.filter((fish) =>
-    fish.title.toLowerCase().includes(search.toLowerCase()),
+    fish.name.toLowerCase().includes(search.toLowerCase()),
   );
+  function deleteProductHandler(id) {
+    deleteMutate(id, {
+      onSuccess: () => {
+        client.invalidateQueries({ queryKey: ["products"]});
+        setView(false)
+        setSelectedFish(null)
+        toast.success("Item removed successfully");
+      },
+      onError: () => {
+        toast.error("Something went wrong while deleting");
+      },
+    });
+  }
 
+  function viewOneCardFunction(fish) {
+    setSelectedFish(fish);
+    setView(true);
+  }
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="flex flex-row w-full items-center justify-between">
@@ -46,13 +72,7 @@ const ViewFish = () => {
         {filteredFish?.map((fish) => (
           <div
             key={fish.id}
-            className="
-              rounded-3xl
-              overflow-hidden
-              shadow-sm
-              hover:shadow-lg
-              transition
-            "
+            className="rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100"
           >
             <div className="relative h-56 overflow-hidden">
               <img
@@ -60,21 +80,7 @@ const ViewFish = () => {
                 alt={fish.title}
                 className="w-full h-full object-cover hover:scale-105 transition duration-300"
               />
-              <div
-                className="
-                  absolute
-                  top-4
-                  right-4
-                  bg-white/90
-                  backdrop-blur-md
-                  px-3
-                  py-1
-                  rounded-full
-                  text-xs
-                  font-semibold
-                  text-(--color-accent)
-                "
-              >
+              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-(--color-accent) shadow-sm border border-white/50">
                 {fish.category}
               </div>
             </div>
@@ -98,16 +104,22 @@ const ViewFish = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <button className="flex-1 cursor-pointer flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-xl text-sm font-medium transition">
+                <button
+                  onClick={() => viewOneCardFunction(fish)}
+                  className="flex-1 cursor-pointer flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 py-2.5 rounded-xl text-sm font-medium transition"
+                >
                   <Eye size={16} />
                   View
                 </button>
 
-                <button className="flex-1 flex cursor-pointer items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-600 py-2.5 rounded-xl text-sm font-medium transition">
+                <button onClick={() => navigate(`/admin/editfish/${fish.id}`)} className="flex-1 flex cursor-pointer items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-600 py-2.5 rounded-xl text-sm font-medium transition">
                   <Pencil size={16} /> Edit
                 </button>
 
-                <button className="w-11 h-11 flex cursor-pointer items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition">
+                <button
+                  onClick={() => deleteProductHandler(fish.id)}
+                  className="w-11 h-11 flex cursor-pointer items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-xl transition"
+                >
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -117,26 +129,87 @@ const ViewFish = () => {
       </div>
 
       {filteredFish?.length === 0 && (
-        <div
-          className="
-            bg-white
-            rounded-3xl
-            p-12
-            mt-8
-            flex
-            flex-col
-            items-center
-            justify-center
-            text-center
-          "
-        >
+        <div className="bg-white rounded-3xl p-12 mt-8 flex flex-col items-center justify-center text-center shadow-sm border border-gray-100">
           <Fish size={60} className="text-gray-300 mb-4" />
-
           <h2 className="text-2xl font-bold text-gray-700">No Fish Found</h2>
-
           <p className="text-gray-500 mt-2">
             Try searching with another keyword
           </p>
+        </div>
+      )}
+      {view && selectedFish && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
+          <div className="bg-white w-full max-w-5xl rounded-3xl relative grid grid-cols-1 lg:grid-cols-2 shadow-2xl">
+            <button
+              onClick={() => setView(false)}
+              className="absolute top-5 right-5 bg-gray-100 hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold z-10 cursor-pointer"
+            >
+              ×
+            </button>
+            <div className="bg-gray-100 p-8 flex items-center justify-center">
+              <img
+                src={selectedFish?.images}
+                alt={selectedFish?.title}
+                className="w-full h-125 object-cover rounded-3xl"
+              />
+            </div>
+            <div className="p-10 flex flex-col justify-between">
+              <div>
+                <span className="bg-blue-100 text-(--color-surface) px-4 py-2 rounded-full text-sm font-medium">
+                  {selectedFish?.category}
+                </span>
+
+                <h1 className="text-4xl font-bold text-gray-800 mt-5">
+                  {selectedFish?.title}
+                </h1>
+
+                <p className="text-green-600 font-medium mt-3">
+                  In Stock : {selectedFish?.stock}
+                </p>
+
+                <div className="flex items-center gap-4 mt-6">
+                  <p className="text-gray-400 line-through text-md">
+                    ₹{selectedFish?.price}
+                  </p>
+
+                  <p className="text-xl font-bold text-black">
+                    ₹
+                    {priceDiscounted(
+                      selectedFish?.price,
+                      selectedFish?.discountPercentage,
+                    )}
+                  </p>
+
+                  <span className="bg-green-100 text-black px-3 py-1 rounded-xl text-sm font-semibold">
+                    {selectedFish?.discountPercentage}% OFF
+                  </span>
+                </div>
+
+                <div className="mt-8">
+                  <h3 className="text-xl font-bold text-gray-800">
+                    Description
+                  </h3>
+
+                  <p className="text-gray-600 leading-8">
+                    {selectedFish?.description}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 mt-10">
+                <button className="flex-1 bg-black cursor-pointer hover:bg-gray-800 text-white py-4 rounded-2xl font-semibold transition">
+                  Edit Product
+                </button>
+
+                <button
+                  onClick={() => deleteProductHandler(selectedFish?.id)}
+                  className="flex-1 bg-red-100 cursor-pointer hover:bg-red-200 text-red-600 py-4 rounded-2xl font-semibold transition"
+                >
+                  Delete Product
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

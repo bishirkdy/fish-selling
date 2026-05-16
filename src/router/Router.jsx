@@ -21,7 +21,9 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import OrdersList from "../pages/admin/OrdersList";
 import AddFish from "../pages/admin/productHandling/AddFish";
 import ViewFish from "../pages/admin/productHandling/ViewFish";
-import ViewCustomer from "../pages/admin/customerseHandling/ViewCustomer";
+import ViewCustomer from "../pages/admin/customerHandling/ViewCustomer";
+import AdminAnalysis from "../pages/admin/AdminAnalysis";
+import EditFish from "../pages/admin/productHandling/EditFish";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +47,8 @@ export const router = createBrowserRouter(
             <Route path="addfish" element={<AddFish />} />
             <Route path="viewfish" element={<ViewFish />} />
             <Route path="customers" element={<ViewCustomer />} />
+            <Route path="analytics" element={<AdminAnalysis />} />
+            <Route path="editfish/:id" element={<EditFish />} />
           </Route>
         </Route>
       </Route>

@@ -326,56 +326,6 @@
       "description": "this is good fish",
       "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778847675/qyqorhjzyo7njchcd6ct.jpg",
       "id": "KnDJlzj"
-    },
-    {
-      "name": "fish boal",
-      "category": "Saltwater Fish",
-      "price": "200",
-      "stock": "5",
-      "discountPercentage": "10",
-      "description": "this is good for fish",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778904235/bq7oyd7sceawy1rzglwe.jpg",
-      "id": "JzrCs30"
-    },
-    {
-      "name": "fish boal",
-      "category": "Saltwater Fish",
-      "price": "200",
-      "stock": "5",
-      "discountPercentage": "10",
-      "description": "this is good for fish",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778904237/jgwg2058wcyuvzfhsopo.jpg",
-      "id": "VdD7CxA"
-    },
-    {
-      "name": "fish boal",
-      "category": "Saltwater Fish",
-      "price": "200",
-      "stock": "5",
-      "discountPercentage": "10",
-      "description": "this is good for fish",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778904238/kkwlfpzkbqqaymr9zq3u.jpg",
-      "id": "SlZtQ6z"
-    },
-    {
-      "name": "bishir",
-      "category": "Exotic Fish",
-      "price": "10",
-      "stock": "5",
-      "discountPercentage": "10",
-      "description": "d",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778904303/ciywo3z0xhlrrdwkpbnl.jpg",
-      "id": "3T7jzvd"
-    },
-    {
-      "name": "10",
-      "category": "Saltwater Fish",
-      "price": "40",
-      "stock": "10",
-      "discountPercentage": "10",
-      "description": "hello",
-      "images": "blob:http://localhost:5173/94a685c4-1dd2-4538-8124-2bd0ed7aa0dd",
-      "id": "CejV71-"
     }
   ],
   "carts": [
@@ -501,7 +451,169 @@
     }
   ],
   "favorites": [],
-  "orders": [],
-  "analysis": [],
+  "orders": [
+    {
+      "user": "WWKPi__",
+      "shippingAddress": {
+        "name": "bishir Mhd",
+        "email": "bishirbishi1@gmail.com",
+        "phone": "09048931894",
+        "address": {
+          "street": "koduvally",
+          "post": "karuvanpoyil",
+          "district": "kozhikode",
+          "state": "Kerala",
+          "pincode": "673572",
+          "landmark": "house"
+        }
+      },
+      "products": [
+        {
+          "productId": "1",
+          "quantity": 2
+        },
+        {
+          "productId": "3",
+          "quantity": 1
+        }
+      ],
+      "orderStatus": "ORDERED",
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 3795,
+      "paymentStatus": "PAID",
+      "orderedDate": 1778507652518,
+      "id": "ORD-1778507652518-268",
+      "paymentId": "pay_So53ujGMxG93vh"
+    },
+    {
+      "user": "WWKPi__",
+      "shippingAddress": {
+        "name": "dice mart",
+        "email": "bishirbishi1@gmail.com",
+        "phone": "09048931894",
+        "address": {
+          "street": "palazhi",
+          "post": "2505200",
+          "district": "kozhikode",
+          "state": "KERALA",
+          "pincode": "673572",
+          "landmark": "house"
+        }
+      },
+      "products": [
+        {
+          "productId": "11",
+          "quantity": 1
+        }
+      ],
+      "orderStatus": "ORDERED",
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 383,
+      "paymentStatus": "PAID",
+      "orderedDate": 1778654413818,
+      "id": "ORD-1778654413818-497",
+      "paymentId": "pay_Sokjo6bwMJ0YaV"
+    },
+    {
+      "user": "WWKPi__",
+      "shippingAddress": {
+        "name": "bishir Mhd",
+        "email": "bishirbishi1@gmail.com",
+        "phone": "09048931894",
+        "address": {
+          "street": "koduvally",
+          "post": "karuvanpoyil",
+          "district": "kozhikode",
+          "state": "Kerala",
+          "pincode": "673572",
+          "landmark": "house"
+        }
+      },
+      "products": [
+        {
+          "productId": "3",
+          "quantity": 1
+        },
+        {
+          "productId": "4",
+          "quantity": 1
+        },
+        {
+          "productId": "11",
+          "quantity": 1
+        },
+        {
+          "productId": "16",
+          "quantity": 1
+        },
+        {
+          "productId": "20",
+          "quantity": 1
+        },
+        {
+          "productId": "1",
+          "quantity": 1
+        },
+        {
+          "productId": "9",
+          "quantity": 1
+        },
+        {
+          "productId": "2",
+          "quantity": 1
+        },
+        {
+          "productId": "5",
+          "quantity": 1
+        },
+        {
+          "productId": "6",
+          "quantity": 1
+        },
+        {
+          "productId": "12",
+          "quantity": 1
+        },
+        {
+          "productId": "10",
+          "quantity": 1
+        }
+      ],
+      "orderStatus": "ORDERED",
+      "orderMethod": "CASH",
+      "totalAmount": 8226,
+      "paymentStatus": "PENDING",
+      "orderedDate": 1778753897777,
+      "id": "ORD-1778753897777-420"
+    },
+    {
+      "user": "WWKPi__",
+      "shippingAddress": {
+        "name": "bishir Mhd",
+        "email": "bishirbishi1@gmail.com",
+        "phone": "09048931894",
+        "address": {
+          "street": "koduvally",
+          "post": "karuvanpoyil",
+          "district": "kozhikode",
+          "state": "Kerala",
+          "pincode": "673572",
+          "landmark": "house"
+        }
+      },
+      "products": [
+        {
+          "productId": "4",
+          "quantity": 1
+        }
+      ],
+      "orderStatus": "ORDERED",
+      "orderMethod": "CASH",
+      "totalAmount": 946,
+      "paymentStatus": "PENDING",
+      "orderedDate": 1778833956138,
+      "id": "ORD-1778833956138-950"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
