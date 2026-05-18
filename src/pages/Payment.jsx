@@ -27,7 +27,7 @@ const Payment = () => {
       landmark: "",
     },
   });
-
+  const [shippingId, setShippingId] = useState("");
   const { state } = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -36,8 +36,9 @@ const Payment = () => {
   const { data: product } = useGetProductById(id);
   const orderMutation = useAddOrders();
   const orderBulkMutation = useBulkOrders();
-  const {mutate : postMutate , isPending : postIsPending} = usePostAnalysis()
-  const {mutate : postMutate , isPending : postIsPending} = useAddShippingAddress()
+  const { mutate: analysisMutate, isPending: analysisIsPending } = usePostAnalysis();
+  const { mutate: addressMutate, isPending: addressPending } =
+    useAddShippingAddress();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,49 +77,73 @@ const Payment = () => {
 
   const handlePayment = (type) => {
     if (!validateForm()) return;
-
-    const orderData = {
+    const addressData = {
       user: user?.id,
-      shippingAddress: formData,
-      products: state?.items?.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      })),
-      orderStatus: "ORDERED",
-      orderMethod: type === "COD" ? "CASH" : "RAZOR PAY",
-      totalAmount: state?.total,
-      paymentStatus: type === "COD" ? "PENDING" : "PAID",
-      orderedDate: Date.now(),
-      id: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...formData,
     };
 
-    if (type === "COD") {
-      orderMutation.mutate(orderData, {
-        onSuccess: (order) => {
-          toast.success("Order placed successfully");
-          navigate("/success", {
-            state: {
-              id: order.id,
+    addressMutate(addressData, {
+      onSuccess: (data) => {
+        const orderData = {
+          user: user?.id,
+          shippingAddress: data.id,
+          products: state?.items?.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            paymentStatus: type === "COD" ? "PENDING" : "PAID",
+            orderStatus: "ORDERED",
+          })),
+
+          orderMethod: type === "COD" ? "CASH" : "RAZOR PAY",
+          totalAmount: state?.total,
+          orderedDate: Date.now(),
+          id: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        };
+
+        const analysisObj = {
+          user: user?.id,
+          total: state?.total,
+          profit: Math.round((state.total * 15) / 100),
+          paymentMethod: type,
+          products: state?.items.map(p => ({
+            productId : p.productId,
+            quantity : p.quantity
+          })),
+          date: Date.now(),
+        };
+        analysisMutate(analysisObj);
+
+        if (type === "COD") {
+          orderMutation.mutate(orderData, {
+            onSuccess: (order) => {
+              toast.success("Order placed successfully");
+
+              navigate("/success", {
+                state: {
+                  id: order.id,
+                },
+              });
+            },
+
+            onError: (err) => {
+              toast.error(err.message || "Error while ordering");
             },
           });
-        },
-        onError: (err) => {
-          toast.error(err.message || "Error while ordering");
-        },
-      });
-    } else {
-      handleOnlinePayment({
-        Razorpay,
-        orderData,
-        mutation: orderMutation,
-        navigate,
-        toast,
-      });
-    }
-    const analysisObj = {
-      
-    }
-    postMutate.mutate()
+        } else {
+          handleOnlinePayment({
+            Razorpay,
+            orderData,
+            mutation: orderMutation,
+            navigate,
+            toast,
+          });
+        }
+      },
+
+      onError: (err) => {
+        toast.error(err.message || "Failed to save address");
+      },
+    });
   };
 
   return (
@@ -241,10 +266,7 @@ const Payment = () => {
           <div className="mt-10 border-t border-gray-700 pt-5">
             <div className="flex justify-between mb-2">
               <span>Total</span>
-              <span>
-                ₹{" "}
-                {state.total}
-              </span>
+              <span>₹ {state.total}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-400">
               <span>Delivery</span>

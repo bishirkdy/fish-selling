@@ -174,8 +174,8 @@ const Orders = () => {
                   <MapPin size={15} />
 
                   <p>
-                    {order.shippingAddress.address.street},{" "}
-                    {order.shippingAddress.address.state}
+                    {/* {order.shippingAddress.address.street},{" "}
+                    {order.shippingAddress.address.state} */}
                   </p>
                 </div>
 

@@ -1,70 +1,59 @@
-import { RadialBarChart, RadialBar, Legend, Tooltip } from 'recharts';
+import {
+  RadialBarChart,
+  RadialBar,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
-const data = [
-  {
-    name: '18-24',
-    uv: 31.47,
-    pv: 2400,
-    fill: '#8884d8',
-  },
-  {
-    name: '25-29',
-    uv: 26.69,
-    pv: 4567,
-    fill: '#83a6ed',
-  },
-  {
-    name: '30-34',
-    uv: 15.69,
-    pv: 1398,
-    fill: '#8dd1e1',
-  },
-  {
-    name: '35-39',
-    uv: 8.22,
-    pv: 9800,
-    fill: '#82ca9d',
-  },
-  {
-    name: '40-49',
-    uv: 8.63,
-    pv: 3908,
-    fill: '#a4de6c',
-  },
-  {
-    name: '50+',
-    uv: 2.63,
-    pv: 4800,
-    fill: '#d0ed57',
-  },
-  {
-    name: 'unknown',
-    uv: 6.67,
-    pv: 4800,
-    fill: '#ffc658',
-  },
-];
+import { useLastMonthsProductCount } from "../../../tanstack/hooks/queries/analysisQueries";
 
-// #endregion
 const style = {
-  top: '50%',
+  top: "50%",
   right: 0,
-  transform: 'translate(0, -50%)',
-  lineHeight: '24px',
+  transform: "translate(0, -50%)",
+  lineHeight: "24px",
 };
 
 export const CategoryChart = () => {
+  const { data: categoryData } = useLastMonthsProductCount();
+
   return (
-    <RadialBarChart
-      style={{ width: '100%', maxWidth: '700px', maxHeight: '80vh', aspectRatio: 1.618 }}
-      responsive
-      cx="30%"
-      barSize={14}
-      data={data}
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "600px",
+        maxHeight: "80vh",
+        aspectRatio: 1.618,
+      }}
     >
-      <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="uv" />
-      <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
-      <Tooltip />
-    </RadialBarChart>
+      <ResponsiveContainer width="100%" height="100%">
+        <RadialBarChart
+          innerRadius="30%"
+          outerRadius="100%"
+          cx="30%"
+          cy="50%"
+          barSize={14}
+          data={categoryData?.categoryCount}
+        >
+          <RadialBar
+            // background
+            dataKey="value"
+            label={{
+              position: "center",
+              fill: "#fff",
+            }}
+          />
+
+          <Legend
+            iconSize={10}
+            layout="vertical"
+            verticalAlign="middle"
+            wrapperStyle={style}
+          />
+          <Tooltip />
+        </RadialBarChart>
+      </ResponsiveContainer>
+    </div>
   );
 };

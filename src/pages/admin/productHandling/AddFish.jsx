@@ -63,6 +63,8 @@ const AddFish = () => {
 
       const finalData = {
         ...formData,
+        createdAt : Date.now(),
+        isActive : true,
         images: res.data.secure_url,
       };
       mutate(finalData, {
