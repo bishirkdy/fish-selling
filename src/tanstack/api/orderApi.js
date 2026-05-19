@@ -11,26 +11,48 @@ export const addBulkOrders = async (data) => {
 };
 
 export const getOrderByUser = async (user) => {
-  const res = await api.get(`/orders?user=${user}`);
+  const orderRes = await api.get(`/orders?user=${user}`);
 
   const productIds = [];
-
-  res.data.forEach((item) => {
-    item.products.forEach((it) => {
-      productIds.push(it.productId);
+  orderRes.data.forEach((order) => {
+    order.products.forEach((item) => {
+      productIds.push(item.productId);
     });
   });
   const uniqueProductIds = [...new Set(productIds)];
+
   const products = await Promise.all(
     uniqueProductIds.map(async (id) => {
       const res = await api.get(`/products/${id}`);
       return res.data;
     }),
   );
-  return {
-    orders: res.data.sort((a, b) => b.orderedDate - a.orderedDate),
-    products,
-  };
+
+  const updatedOrders = await Promise.all(
+    orderRes.data.map(async (order) => {
+      const shippingAddressRes = await api.get(
+        `/addresses/${order.shippingAddress}`,
+      );
+
+      const updatedProducts = order.products.map((item) => {
+        const productData = products.find(
+          (product) => product.id === item.productId,
+        );
+
+        return {
+          ...item,
+          product: productData,
+        };
+      });
+
+      return {
+        ...order,
+        shippingAddress: shippingAddressRes.data,
+        products: updatedProducts,
+      };
+    }),
+  );
+  return updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate);
 };
 
 export const getLatestOrderOfUser = async (id) => {
@@ -44,25 +66,16 @@ export const removeOrder = async (id) => {
 };
 
 export const getAllOrders = async () => {
-  const res = await api.get("/orders");
-  const orders = res.data;
-
-  const userIds = [...new Set(orders.map((item) => item.user))];
-  const users = await Promise.all(
-    userIds.map(async (id) => {
-      const res = await api.get(`/users/${id}`);
-      return res.data;
-    }),
-  );
+  const orderRes = await api.get(`/orders`);
 
   const productIds = [];
-  orders.forEach((item) => {
-    item.products.forEach((it) => {
-      productIds.push(it.productId);
+  orderRes.data.forEach((order) => {
+    order.products.forEach((item) => {
+      productIds.push(item.productId);
     });
   });
-
   const uniqueProductIds = [...new Set(productIds)];
+
   const products = await Promise.all(
     uniqueProductIds.map(async (id) => {
       const res = await api.get(`/products/${id}`);
@@ -70,27 +83,102 @@ export const getAllOrders = async () => {
     }),
   );
 
-  const updatedOrders = orders.map((order) => {
-    const userData = users.find((user) => user.id === order.user);
-    return {
-      ...order,
-      userData,
-    };
-  });
+  const updatedOrders = await Promise.all(
+    orderRes.data.map(async (order) => {
+      const shippingAddressRes = await api.get(
+        `/addresses/${order.shippingAddress}`,
+      );
+      const user = await api.get(`/users/${order.user}`);
+      const updatedProducts = order.products.map((item) => {
+        const productData = products.find(
+          (product) => product.id === item.productId,
+        );
+        return {
+          ...item,
+          product: productData,
+        };
+      });
 
-  return {
-    orders: updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate),
-    products,
-  };
+      return {
+        ...order,
+        user_name : user.data.name,
+        email : user.data.email,
+        shippingAddress: shippingAddressRes.data,
+        products: updatedProducts,
+      };
+    }),
+  );
+  return updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate);
 };
 
 export const statesOfOrders = async () => {
   const res = await api.get("/orders");
   const orders = res.data;
-  return {
-    orderedCount: orders.length,
-    ordered: orders.filter((item) => item.orderStatus === "ORDERED").length,
-    cancelled: orders.filter((item) => item.orderStatus === "CANCELLED").length,
-    pending: orders.filter((item) => item.orderStatus === "PENDING").length,
+
+  const allProducts = orders.flatMap((order) => order.products);
+
+  const stats = {
+    orderedCount: allProducts.length,
+    ordered: 0,
+    confirmed: 0,
+    packed: 0,
+    shipped: 0,
+    outOfDelivery: 0,
+    delivered: 0,
+    cancelled: 0,
   };
+
+  allProducts.forEach((item) => {
+    switch (item.orderStatus) {
+      case "Order Placed":
+        stats.ordered++;
+        break;
+
+      case "Confirmed":
+        stats.confirmed++;
+        break;
+
+      case "Packed":
+        stats.packed++;
+        break;
+
+      case "Shipping":
+        stats.shipped++;
+        break;
+
+      case "Out For Delivery":
+        stats.outOfDelivery++;
+        break;
+
+      case "Delivered":
+        stats.delivered++;
+        break;
+
+      case "Cancelled":
+        stats.cancelled++;
+        break;
+
+      default:
+        break;
+    }
+  });
+
+  return stats;
+};
+
+export const orderStatusChange = async ({ orderId, productId, final }) => {
+  const { data } = await api.get(`/orders/${orderId}`);
+  const { status, ...timeFields } = final;
+
+  const updatedProducts = data.products.map((item) =>
+    item.productId === productId
+      ? { ...item, orderStatus: final.status, ...timeFields }
+      : item,
+  );
+
+  const res = await api.patch(`/orders/${orderId}`, {
+    products: updatedProducts,
+  });
+
+  return res.data;
 };

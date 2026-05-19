@@ -35,7 +35,7 @@ const Payment = () => {
   const { Razorpay } = useRazorpay();
   const { data: product } = useGetProductById(id);
   const orderMutation = useAddOrders();
-  const orderBulkMutation = useBulkOrders();
+  // const orderBulkMutation = useBulkOrders();
   const { mutate: analysisMutate, isPending: analysisIsPending } = usePostAnalysis();
   const { mutate: addressMutate, isPending: addressPending } =
     useAddShippingAddress();

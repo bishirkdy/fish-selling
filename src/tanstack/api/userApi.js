@@ -31,3 +31,11 @@ export const getAllUser = async () => {
      })
      return filtered
 }
+
+export const blockUser = async (id) => {
+  const res = await api.patch(`/users/${id}`, {
+    isBlocked: true,
+  });
+
+  return res.data;
+};

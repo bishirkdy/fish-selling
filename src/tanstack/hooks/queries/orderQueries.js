@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getAllOrders, getLatestOrderOfUser, getOrderByUser, statesOfOrders } from "../../api/orderApi"
+import { getAllOrders, getLatestOrderOfUser, getOrderByUser , statesOfOrders } from "../../api/orderApi"
 
 export const useGetAllOrdersOfUser = (userId) => {
     return useQuery({

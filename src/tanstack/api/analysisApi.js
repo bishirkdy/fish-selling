@@ -7,10 +7,11 @@ export const addOrderAnalysis = async (data) => {
 };
 
 export const getCountOfTotalAndProfit = async () => {
-  const [analysisRes, userRes, orderRes] = await Promise.all([
+  const [analysisRes, userRes, orderRes , productRes] = await Promise.all([
     api.get("/analysis"),
     api.get("/users"),
     api.get("/orders"),
+    api.get("/products"),
   ]);
 
   const calculated = analysisRes.data.reduce(
@@ -27,9 +28,10 @@ export const getCountOfTotalAndProfit = async () => {
 
   return {
     total: calculated.total,
-    profit: calculated.profit,
+    profit: Math.floor(calculated.profit),
     userCount: userRes.data.length,
     orderCount: orderRes.data.length,
+    productCount: productRes.data.length,
   };
 };
 

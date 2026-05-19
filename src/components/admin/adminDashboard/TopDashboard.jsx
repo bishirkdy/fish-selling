@@ -5,7 +5,10 @@ import {
   Users,
   Package,
   TrendingUp,
+  Boxes,
+  HandCoins,
 } from "lucide-react";
+import { useGetAllCartDataOfUser } from "../../../tanstack/hooks/queries/analysisQueries";
 
 const dashboardData = [
   {
@@ -35,6 +38,30 @@ const dashboardData = [
 ];
 
 const TopDashboard = () => {
+  const {data : analysisData , isLoading , isError} = useGetAllCartDataOfUser();
+  
+  const dashboardData = [
+  {
+    title: "Total Revenue",
+    value: analysisData?.profit,
+    icon: HandCoins,
+  },
+  {
+    title: "Total Orders",
+    value: analysisData?.orderCount,
+    icon: ShoppingCart,
+  },
+  {
+    title: "Customers",
+    value: analysisData?.userCount,
+    icon: Users,
+  },
+  {
+    title: "Products",
+    value: analysisData?.productCount,
+    icon: Boxes,
+  },
+];
   return (
     <div className="grid grid-cols-1 h-fit md:grid-cols-2 xl:grid-cols-4 gap-6">
       {dashboardData.map((item, index) => (
@@ -57,7 +84,7 @@ const TopDashboard = () => {
             >
               <item.icon size={26} />
             </div>
-
+{/* 
             <div
               className="
                 flex
@@ -71,7 +98,7 @@ const TopDashboard = () => {
               <TrendingUp size={16} />
 
               {item.growth}
-            </div>
+            </div> */}
           </div>
 
           <div className="mt-6">

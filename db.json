@@ -420,21 +420,12 @@
     },
     {
       "user": "WWKPi__",
-      "productId": "1",
-      "price": 1500,
-      "image": "https://images.unsplash.com/photo-1516408388733-2f8364f2e00b?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "discountPercentage": 5,
-      "quantity": 1,
-      "id": 18
-    },
-    {
-      "user": "WWKPi__",
       "productId": "2",
       "price": 1200,
       "image": "https://plus.unsplash.com/premium_photo-1664304342009-bdf3fb35a466?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8",
       "discountPercentage": 8,
       "quantity": 1,
-      "id": 19
+      "id": 18
     },
     {
       "user": "WWKPi__",
@@ -443,225 +434,127 @@
       "image": "https://plus.unsplash.com/premium_photo-1684933348916-eb63726b6557?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww",
       "discountPercentage": 10,
       "quantity": 1,
-      "id": 20
+      "id": 19
     }
   ],
   "favorites": [],
   "orders": [
     {
-      "user": "WWKPi__",
+      "user": "WB7CFhZ",
       "shippingAddress": 1,
       "products": [
         {
           "productId": "1",
-          "quantity": 1
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Order Placed"
+        },
+        {
+          "productId": "2",
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "ORDERED"
+        },
+        {
+          "productId": "3",
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "ORDERED"
         }
       ],
-      "orderStatus": "ORDERED",
       "orderMethod": "CASH",
-      "totalAmount": 1425,
-      "paymentStatus": "PENDING",
-      "orderedDate": 1778928358887,
-      "id": "ORD-1778928358887-874"
+      "totalAmount": 3474,
+      "orderedDate": 1779078466974,
+      "id": "ORD-1779078466974-949"
     },
     {
-      "user": "WB7CFhZ",
+      "user": "WWKPi__",
       "shippingAddress": 2,
       "products": [
         {
           "productId": "1",
-          "quantity": 1
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Confirmed",
+          "confirmTime": 1779188102325
         },
         {
           "productId": "2",
-          "quantity": 1
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Delivered",
+          "deliveredTime": 1779188201520
         },
         {
           "productId": "3",
-          "quantity": 1
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "ORDERED"
         }
       ],
-      "orderStatus": "ORDERED",
-      "orderMethod": "RAZOR PAY",
+      "orderMethod": "CASH",
       "totalAmount": 3474,
-      "paymentStatus": "PAID",
-      "orderedDate": 1778928634995,
-      "id": "ORD-1778928634995-524",
-      "paymentId": "pay_Sq0beF5IlSRixW"
+      "orderedDate": 1779159797061,
+      "id": "ORD-1779159797061-519"
     },
     {
       "user": "WWKPi__",
       "shippingAddress": 3,
       "products": [
         {
-          "productId": "1",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        },
-        {
           "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        },
-        {
-          "productId": "3",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 3474,
-      "orderedDate": 1778929021458,
-      "id": "ORD-1778929021458-917"
-    },
-    {
-      "user": "WWKPi__",
-      "shippingAddress": 4,
-      "products": [
-        {
-          "productId": "1",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        },
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        },
-        {
-          "productId": "3",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 3474,
-      "orderedDate": 1778929179631,
-      "id": "ORD-1778929179631-834"
-    },
-    {
-      "user": "WWKPi__",
-      "shippingAddress": 5,
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 1104,
-      "orderedDate": 1778929348347,
-      "id": "ORD-1778929348347-182"
-    },
-    {
-      "user": "WB7CFhZ",
-      "shippingAddress": 6,
-      "products": [
-        {
-          "productId": "1",
           "quantity": 1,
           "paymentStatus": "PAID",
-          "orderStatus": "ORDERED"
+          "orderStatus": "Confirmed",
+          "confirmTime": 1779188372312,
+          "packedTime": 1779187693221,
+          "shippingTime": 1779188088684,
+          "deliveryStartTime": 1779188093808,
+          "deliveredTime": 1779186688952
+        },
+        {
+          "productId": "3",
+          "quantity": 1,
+          "paymentStatus": "PAID",
+          "orderStatus": "Packed",
+          "packedTime": 1779188307707,
+          "shippingTime": 1779188273347,
+          "deliveryStartTime": 1779169387432,
+          "deliveredTime": 1779188264960,
+          "canceledTime": 1779188255816,
+          "confirmTime": 1779188278995
         }
       ],
       "orderMethod": "RAZOR PAY",
-      "totalAmount": 1425,
-      "orderedDate": 1778999959588,
-      "id": "ORD-1778999959588-500",
-      "paymentId": "pay_SqKrI6wikzG1QS",
+      "totalAmount": 2049,
+      "orderedDate": 1779160046626,
+      "id": "ORD-1779160046626-946",
+      "paymentId": "pay_Sr4JiUgQTk8fx9",
       "paymentStatus": "PAID"
     }
   ],
   "analysis": [
     {
-      "user": "WWKPi__",
-      "total": 1425,
-      "profit": 213.75,
-      "paymentMethod": "COD",
-      "products": [
-        {
-          "productId": "1",
-          "quantity": 1
-        }
-      ],
-      "date": 1778928358887,
-      "id": 1
-    },
-    {
       "user": "WB7CFhZ",
       "total": 3474,
-      "profit": 521.1,
-      "paymentMethod": "ONLINE",
-      "products": [
-        {
-          "user": "WB7CFhZ",
-          "productId": "1",
-          "price": 1500,
-          "image": "https://images.unsplash.com/photo-1516408388733-2f8364f2e00b?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          "discountPercentage": 5,
-          "quantity": 1
-        },
-        {
-          "user": "WB7CFhZ",
-          "productId": "2",
-          "price": 1200,
-          "image": "https://plus.unsplash.com/premium_photo-1664304342009-bdf3fb35a466?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8",
-          "discountPercentage": 8,
-          "quantity": 1
-        },
-        {
-          "user": "WB7CFhZ",
-          "productId": "3",
-          "price": 1050,
-          "image": "https://plus.unsplash.com/premium_photo-1684933348916-eb63726b6557?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww",
-          "discountPercentage": 10,
-          "quantity": 1
-        }
-      ],
-      "date": 1778928634995,
-      "id": 2
-    },
-    {
-      "user": "WWKPi__",
-      "total": 3474,
-      "profit": 521.1,
+      "profit": 521,
       "paymentMethod": "COD",
       "products": [
         {
-          "user": "WWKPi__",
           "productId": "1",
-          "price": 1500,
-          "image": "https://images.unsplash.com/photo-1516408388733-2f8364f2e00b?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          "discountPercentage": 5,
           "quantity": 1
         },
         {
-          "user": "WWKPi__",
           "productId": "2",
-          "price": 1200,
-          "image": "https://plus.unsplash.com/premium_photo-1664304342009-bdf3fb35a466?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8",
-          "discountPercentage": 8,
           "quantity": 1
         },
         {
-          "user": "WWKPi__",
           "productId": "3",
-          "price": 1050,
-          "image": "https://plus.unsplash.com/premium_photo-1684933348916-eb63726b6557?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww",
-          "discountPercentage": 10,
           "quantity": 1
         }
       ],
-      "date": 1778929021458,
-      "id": 3
+      "date": 1779078466974,
+      "id": 1
     },
     {
       "user": "WWKPi__",
@@ -670,80 +563,58 @@
       "paymentMethod": "COD",
       "products": [
         {
-          "user": "WWKPi__",
           "productId": "1",
-          "price": 1500,
-          "image": "https://images.unsplash.com/photo-1516408388733-2f8364f2e00b?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          "discountPercentage": 5,
           "quantity": 1
         },
         {
-          "user": "WWKPi__",
           "productId": "2",
-          "price": 1200,
-          "image": "https://plus.unsplash.com/premium_photo-1664304342009-bdf3fb35a466?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8",
-          "discountPercentage": 8,
           "quantity": 1
         },
         {
-          "user": "WWKPi__",
           "productId": "3",
-          "price": 1050,
-          "image": "https://plus.unsplash.com/premium_photo-1684933348916-eb63726b6557?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww",
-          "discountPercentage": 10,
           "quantity": 1
         }
       ],
-      "date": 1778929179631,
-      "id": 4
+      "date": 1779159797061,
+      "id": 2
     },
     {
       "user": "WWKPi__",
-      "total": 1104,
-      "profit": 166,
-      "paymentMethod": "COD",
+      "total": 2049,
+      "profit": 307,
+      "paymentMethod": "ONLINE",
       "products": [
         {
           "productId": "2",
           "quantity": 1
-        }
-      ],
-      "date": 1778929348347,
-      "id": 5
-    },
-    {
-      "user": "WB7CFhZ",
-      "total": 1425,
-      "profit": 214,
-      "paymentMethod": "ONLINE",
-      "products": [
+        },
         {
-          "productId": "1",
+          "productId": "3",
           "quantity": 1
         }
       ],
-      "date": 1778999959588,
-      "id": 6
+      "date": 1779160046626,
+      "id": 3
     }
   ],
   "addresses": [
     {
-      "user": "WWKPi__",
-      "name": "dice mart",
+      "user": "WB7CFhZ",
+      "name": "bishir Mhd",
       "email": "bishirbishi1@gmail.com",
       "phone": "09048931894",
       "address": {
-        "street": "palazhi",
-        "post": "2505200",
+        "street": "koduvally",
+        "post": "karuvanpoyil",
         "district": "kozhikode",
-        "state": "KERALA",
+        "state": "Kerala",
         "pincode": "673572",
         "landmark": "house"
       },
       "id": 1
     },
     {
-      "user": "WB7CFhZ",
+      "user": "WWKPi__",
       "name": "bishir Mhd",
       "email": "bishirbishi1@gmail.com",
       "phone": "09048931894",
@@ -771,51 +642,6 @@
         "landmark": "house"
       },
       "id": 3
-    },
-    {
-      "user": "WWKPi__",
-      "name": "dice mart",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "palazhi",
-        "post": "2505200",
-        "district": "kozhikode",
-        "state": "KERALA",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 4
-    },
-    {
-      "user": "WWKPi__",
-      "name": "dice mart",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "palazhi",
-        "post": "2505200",
-        "district": "kozhikode",
-        "state": "KERALA",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 5
-    },
-    {
-      "user": "WB7CFhZ",
-      "name": "bishir Mhd",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "koduvally",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 6
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

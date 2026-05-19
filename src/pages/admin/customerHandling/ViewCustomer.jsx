@@ -9,58 +9,96 @@ import {
   Users,
   Ban,
   BaggageClaim,
+  CircleX,
 } from "lucide-react";
 import { useGetUsers } from "../../../tanstack/hooks/queries/userQueries";
 import { useGetAllOrdersOfUser } from "../../../tanstack/hooks/queries/orderQueries";
 import { toast } from "react-toastify";
+import { useEditOrderStatus } from "../../../tanstack/hooks/mutations/orderMutation";
+import { useQueryClient } from "@tanstack/react-query";
 const ViewCustomer = () => {
   const [search, setSearch] = useState("");
   const [showOrderId, setShowOrderId] = useState(null);
   const [viewUserOrder, setViewUserOrder] = useState(false);
   const [orderedData, setOrderedData] = useState(null);
   const { data, isLoading, isError } = useGetUsers();
+  const client = useQueryClient()
   const {
     data: userOrders,
     isLoading: userOrderLoading,
     isError: userOrderIsError,
   } = useGetAllOrdersOfUser(showOrderId);
+  const {mutate , isPending} = useEditOrderStatus()
   const filteredCustomers = data?.filter((customer) =>
     customer.name.toLowerCase().includes(search.toLowerCase()),
   );
   useEffect(() => {
-    if (userOrders) {
-      const formattedOrders = userOrders.orders.map((order) => {
-        const products = order.products.map((item) => {
-          const fullProduct = userOrders.products.find(
-            (p) => p.id === item.productId,
-          );
+    if (showOrderId && userOrders) {
+      setOrderedData(userOrders);
 
-          return {
-            ...fullProduct,
-            quantity: item.quantity,
-          };
-        });
-
-        return {
-          ...order,
-          products,
-        };
-      });
-      setOrderedData(formattedOrders);
+      if (userOrders.length === 0) {
+        toast.info("User not ordered yet");
+        setViewUserOrder(false);
+      }
     }
-  }, [userOrders]);
-  useEffect(() => {
-    if (viewUserOrder && userOrders && userOrders.orders.length === 0) {
-      toast.info("User not ordered yet");
-      setViewUserOrder(false);
-    }
-  }, [viewUserOrder, userOrders]);
+  }, [userOrders, showOrderId]);
 
   function orderShowHandler(userId) {
     setOrderedData(null);
     setShowOrderId(userId);
     setViewUserOrder(true);
   }
+  if (orderedData === []) {
+    return toast.info("User not ordered yet");
+  }
+function orderStatusHandler(orderId, productId, value) {
+  const updatedTime = {};
+
+  switch (value) {
+    case "Confirmed":
+      updatedTime.confirmTime = Date.now();
+      break;
+    case "Packed":
+      updatedTime.packedTime = Date.now();
+      break;
+    case "Shipping":
+      updatedTime.shippingTime = Date.now();
+      break;
+    case "Out For Delivery":
+      updatedTime.deliveryStartTime = Date.now();
+      break;
+    case "Delivered":
+      updatedTime.deliveredTime = Date.now();
+      break;
+    case "Cancelled":
+      updatedTime.canceledTime = Date.now();
+      break;
+    default:
+      break;
+  }
+
+  const final = {
+    status: value,
+    ...updatedTime,
+  };
+
+  mutate(
+    { orderId, productId, final },
+    {
+      onSuccess: () => {
+        client.invalidateQueries({
+          queryKey: ["orders"],
+        });
+
+        toast.success("Status Updated");
+      },
+
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    }
+  );
+}
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -257,74 +295,109 @@ const ViewCustomer = () => {
                   setOrderedData(null);
                   setShowOrderId(null);
                 }}
-                className="w-10 h-10 rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition cursor-pointer"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition cursor-pointer"
               >
-                ✕
+                <CircleX />
               </button>
             </div>
 
-            <div className="max-h-[75vh] overflow-y-auto no-scrollbar p-6 space-y-6">
-              {orderedData?.map((order, index) => (
+            <div className="max-h-[75vh] overflow-y-auto no-scrollbar p-3 md:p-6 space-y-6">
+              {orderedData?.map((order, orderId) => (
                 <div
-                  key={index}
+                  key={orderId}
                   className="border rounded-3xl overflow-hidden shadow-sm"
                 >
-                  <div className="bg-gray-50 px-6 py-4 flex flex-wrap gap-6 items-center justify-between">
+                  <div className=" px-4 md:px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b">
                     <div>
-                      <p className="text-sm text-gray-500">Order ID</p>
-                      <h2 className="font-bold text-gray-700">{order.id}</h2>
+                      <p className="text-xs md:text-sm text-gray-500">
+                        Order ID
+                      </p>
+
+                      <h2 className="font-bold text-sm md:text-base text-gray-700 break-all">
+                        {order.id}
+                      </h2>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-500">Payment</p>
-                      <h2 className="font-semibold text-cyan-700">
+                      <p className="text-xs md:text-sm text-gray-500">
+                        Payment
+                      </p>
+
+                      <h2 className="font-semibold text-(--color-secondary) text-sm md:text-base">
                         {order.orderMethod}
                       </h2>
                     </div>
 
                     <div>
-                      <p className="text-sm text-gray-500">Status</p>
-                      <span className="px-3 py-1 rounded-full text-sm bg-green-100 text-green-700 font-semibold">
-                        {order.orderStatus}
-                      </span>
-                    </div>
+                      <p className="text-xs md:text-sm text-gray-500">Total</p>
 
-                    <div>
-                      <p className="text-sm text-gray-500">Total</p>
-                      <h2 className="font-bold text-(--color-background)">
+                      <h2 className="font-bold text-(--color-background) text-sm md:text-base">
                         ₹ {order.totalAmount}
                       </h2>
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-4">
-                    {order.products.map((product) => (
+                  <div className="p-3 md:p-6 space-y-4">
+                    {order.products.map((item, productId) => (
                       <div
-                        key={product.id}
-                        className="flex items-center gap-5 border rounded-2xl p-4 hover:bg-gray-50 transition"
+                        key={productId}
+                        className="border rounded-2xl p-3 md:p-5 flex flex-col sm:flex-row gap-4"
                       >
                         <img
-                          src={product.images}
-                          alt={product.title}
-                          className="w-24 h-24 object-cover rounded-2xl"
+                          src={item.product.images}
+                          alt={item.product.name}
+                          className="w-full sm:w-28 h-48 sm:h-28 object-cover rounded-2xl"
                         />
 
                         <div className="flex-1">
-                          <h1 className="font-bold text-lg text-gray-800">
-                            {product.title}
-                          </h1>
+                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                            <div>
+                              <h1 className="font-bold text-base md:text-lg text-gray-800">
+                                {item.product.name}
+                              </h1>
 
-                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {product.description}
+                              <p className="text-xs md:text-sm text-gray-500 mt-1">
+                                {item.product.category}
+                              </p>
+                            </div>
+                            <select disabled={isPending}
+                              value={item.orderStatus}
+                              onChange={(e) =>
+                                orderStatusHandler(
+                                  order.id,
+                                  item.productId,
+                                  e.target.value,
+                                )
+                              }
+                              className="px-3 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-cyan-500"
+                            >
+                              <option value="Order Placed">Order Placed</option>
+                              <option value="Confirmed">Confirmed</option>
+                              <option value="Packed">Packed</option>
+                              <option value="Shipping">Shipping</option>
+                              <option value="Out For Delivery">
+                                Out For Delivery
+                              </option>
+                              <option value="Delivered">Delivered</option>
+                              <option value="Cancelled">Cancelled</option>
+                            </select>
+                          </div>
+
+                          <p className="text-xs md:text-sm text-gray-500 mt-3">
+                            {item.product.description}
                           </p>
 
-                          <div className="flex items-center gap-5 mt-3">
-                            <span className="font-bold text-cyan-700">
-                              ₹ {product.price}
+                          <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
+                            <span className="font-bold text-(--color-accent) text-base md:text-lg">
+                              ₹ {item.product.price}
                             </span>
 
-                            <span className="px-3 py-1 rounded-full bg-gray-100 text-sm">
-                              Qty : {product.quantity}
+                            <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
+                              Qty : {item.quantity}
+                            </span>
+
+                            <span className="px-3 py-1 rounded-full bg-blue-100 text-(--color-background) text-xs md:text-sm">
+                              {item.paymentStatus}
                             </span>
                           </div>
                         </div>
@@ -332,42 +405,40 @@ const ViewCustomer = () => {
                     ))}
                   </div>
 
-                  <div className="border-t px-6 py-5 bg-gray-50">
-                    <h2 className="font-bold text-gray-700 mb-3">
+                  <div className="border-t px-4 md:px-6 py-5 bg-gray-50">
+                    <h2 className="font-bold text-gray-700 mb-3 text-sm md:text-base">
                       Shipping Address
                     </h2>
 
-                    <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm text-gray-600">
+                      <div className="space-y-1">
                         <p>
                           <span className="font-semibold">Name :</span>{" "}
                           {order.shippingAddress.name}
                         </p>
 
                         <p>
-                          <span className="font-semibold">Email :</span>{" "}
-                          {order.shippingAddress.email}
-                        </p>
-
-                        <p>
                           <span className="font-semibold">Phone :</span>{" "}
                           {order.shippingAddress.phone}
                         </p>
+
+                        <p>
+                          <span className="font-semibold">Email :</span>{" "}
+                          {order.shippingAddress.email}
+                        </p>
                       </div>
 
-                      <div>
+                      <div className="space-y-1">
                         <p>
-                          {order.shippingAddress.address.street},{" "}
+                          {order.shippingAddress.address.street},
                           {order.shippingAddress.address.post},{" "}
                           {order.shippingAddress.address.district},{" "}
                           {order.shippingAddress.address.state}
                         </p>
 
-                        <p className="mt-1">
-                          Pincode : {order.shippingAddress.address.pincode}
-                        </p>
+                        <p>Pincode : {order.shippingAddress.address.pincode}</p>
 
-                        <p className="mt-1">
+                        <p>
                           Landmark : {order.shippingAddress.address.landmark}
                         </p>
                       </div>

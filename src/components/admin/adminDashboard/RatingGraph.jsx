@@ -54,14 +54,12 @@ const RatingChart = () => {
             endAngle={0}
           >
             <RadialBar minAngle={15} background clockWise dataKey="value" style={{paddingBottom : "8px"}} />
-
             <Legend
               iconSize={14}
               layout="horizontal"
               verticalAlign="bottom"
               align="center"
             />
-
             <Tooltip />
           </RadialBarChart>
         </ResponsiveContainer>
