@@ -46,6 +46,17 @@ const OrdersList = () => {
   const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
+  if (data?.length === 0) {
+    return (
+      <div className="w-full flex flex-col h-screen items-center justify-center border border-dashed border-gray-300 rounded-2xl">
+        <h2 className="text-xl font-semibold text-gray-700">No Orders Found</h2>
+
+        <p className="text-sm text-gray-500 mt-2">
+          You don’t have any orders yet.
+        </p>
+      </div>
+    );
+  }
   const currentOrder = data?.find((order) => order.id === selectedOrder?.id);
 
   function viewOrderProducts(order) {

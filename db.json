@@ -6,7 +6,7 @@
       "password": "ABcd@@11",
       "confirmPassword": "ABcd@@11",
       "id": "hGNhm08",
-      "isBlocked": false
+      "isBlocked": true
     },
     {
       "name": "bishir Mhd",
@@ -14,7 +14,7 @@
       "password": "ABcd@@11",
       "confirmPassword": "ABcd@@11",
       "id": "WWKPi__",
-      "isBlocked": true
+      "isBlocked": false
     },
     {
       "name": "bishir",
@@ -24,6 +24,14 @@
       "confirmPassword": "ABcd@@11",
       "id": "WB7CFhZ",
       "isBlocked": false
+    },
+    {
+      "name": "junaid",
+      "email": "junaid@gmail.com",
+      "password": "ABcd@@11",
+      "confirmPassword": "ABcd@@11",
+      "id": "0a8Sf1V",
+      "isBlocked": true
     }
   ],
   "products": [
@@ -31,10 +39,10 @@
       "id": "1",
       "name": "Clownfish",
       "description": "Bright orange saltwater fish popular in marine aquariums.",
-      "price": 1500,
-      "discountPercentage": 5,
+      "price": "1800",
+      "discountPercentage": "3",
       "rating": 4.8,
-      "stock": 40,
+      "stock": "35",
       "brand": "Aquora",
       "isActive": true,
       "category": "Saltwater Fish",
@@ -438,101 +446,7 @@
     }
   ],
   "favorites": [],
-  "orders": [
-    {
-      "user": "WB7CFhZ",
-      "shippingAddress": 1,
-      "products": [
-        {
-          "productId": "1",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Order Placed"
-        },
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        },
-        {
-          "productId": "3",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 3474,
-      "orderedDate": 1779078466974,
-      "id": "ORD-1779078466974-949"
-    },
-    {
-      "user": "WWKPi__",
-      "shippingAddress": 2,
-      "products": [
-        {
-          "productId": "1",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Confirmed",
-          "confirmTime": 1779188102325
-        },
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Delivered",
-          "deliveredTime": 1779188201520
-        },
-        {
-          "productId": "3",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "ORDERED"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 3474,
-      "orderedDate": 1779159797061,
-      "id": "ORD-1779159797061-519"
-    },
-    {
-      "user": "WWKPi__",
-      "shippingAddress": 3,
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PAID",
-          "orderStatus": "Confirmed",
-          "confirmTime": 1779188372312,
-          "packedTime": 1779187693221,
-          "shippingTime": 1779188088684,
-          "deliveryStartTime": 1779188093808,
-          "deliveredTime": 1779186688952
-        },
-        {
-          "productId": "3",
-          "quantity": 1,
-          "paymentStatus": "PAID",
-          "orderStatus": "Packed",
-          "packedTime": 1779188307707,
-          "shippingTime": 1779188273347,
-          "deliveryStartTime": 1779169387432,
-          "deliveredTime": 1779188264960,
-          "canceledTime": 1779188255816,
-          "confirmTime": 1779188278995
-        }
-      ],
-      "orderMethod": "RAZOR PAY",
-      "totalAmount": 2049,
-      "orderedDate": 1779160046626,
-      "id": "ORD-1779160046626-946",
-      "paymentId": "pay_Sr4JiUgQTk8fx9",
-      "paymentStatus": "PAID"
-    }
-  ],
+  "orders": [],
   "analysis": [
     {
       "user": "WB7CFhZ",

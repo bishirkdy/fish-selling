@@ -5,13 +5,13 @@ import {
 } from "../tanstack/hooks/mutations/orderMutation";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useAuth } from "../context/AuthContext";
 import { useGetProductById } from "../tanstack/hooks/queries/productQueries";
 import { useRazorpay } from "react-razorpay";
 import { handleOnlinePayment } from "../utils/razonPay";
 import { priceDiscounted } from "../utils/priceDescounted";
 import { usePostAnalysis } from "../tanstack/hooks/mutations/analisysMutation";
 import { useAddShippingAddress } from "../tanstack/hooks/mutations/shippingAddress";
+import { useSelector } from "react-redux";
 
 const Payment = () => {
   const [formData, setFormData] = useState({
@@ -27,11 +27,11 @@ const Payment = () => {
       landmark: "",
     },
   });
+  const user = useSelector(s => s.auth.auth)
   const [shippingId, setShippingId] = useState("");
   const { state } = useLocation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { Razorpay } = useRazorpay();
   const { data: product } = useGetProductById(id);
   const orderMutation = useAddOrders();

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addUser, loginUser } from "../../api/userApi";
+import { addUser, blockUser, loginUser, unblockUser } from "../../api/userApi";
 
 export const useCreateUser = () => {
   const client = useQueryClient();
@@ -15,3 +15,15 @@ export const useLogin = () => {
     mutationFn: loginUser,
   });
 };
+
+export const useBlockUser = () => {
+  return useMutation({
+    mutationFn : blockUser
+  })
+}
+
+export const useUnblockUser = () => {
+  return useMutation({
+    mutationFn : unblockUser
+  })
+}

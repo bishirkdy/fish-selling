@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
 import { data, Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { useAuth } from "./context/AuthContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "./redux/features/cartSlice";
 import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cartQueries";
 import { addToFavorite } from "./redux/features/favoriteSlice";
 import { useFavDataOfUser } from "./tanstack/hooks/queries/favoriteQueries";
 
 const App = () => {
-  const { user } = useAuth();
+  const {user} = useSelector((s) => s.auth)
   const dispatch = useDispatch();
   const { data: cartData } = useGetAllCartDataOfUser(user?.id);
   const { data: favData } = useFavDataOfUser(user?.id);

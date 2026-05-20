@@ -1,11 +1,10 @@
 import React from "react";
-import { useAuth } from "../context/AuthContext";
 import { Navigate, Outlet } from "react-router-dom";
 import AdminSidebar from "./admin/AdminSidebar";
+import { useSelector } from "react-redux";
 
 const AdminProtectedRoute = () => {
-  const { user } = useAuth();
-
+  const {user} = useSelector(s => s.auth)
   return user && user?.role === "admin" ? (
     <div className="flex">
       <AdminSidebar />

@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
-import { useAuth } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { setToCart } from "../../redux/features/cartSlice";
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,7 +18,7 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const {user} = useSelector(s => s.auth)
   const addToCartMutation = useAddToCart();
   const addToFavMutation = useAddToFav();
   const removeFavMutation = useRemoveFromFav();

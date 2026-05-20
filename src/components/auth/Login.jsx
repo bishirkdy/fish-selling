@@ -3,15 +3,14 @@ import fish from "../../assets/header.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { useAuth } from "../../context/AuthContext";
 import { generateToken } from "../../utils/generateToken";
 import { useLogin } from "../../tanstack/hooks/mutations/userMutation";
+import { login } from "../../redux/features/authSlice";
 const Login = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const { login } = useAuth();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginMutation = useLogin();
@@ -22,7 +21,6 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     loginMutation.mutate(form, {
       onSuccess: (user) => {
         const userWithToken = {
@@ -36,7 +34,7 @@ const Login = () => {
         } else {
           navigate("/");
         }
-        login(userWithToken);
+        dispatch(login(userWithToken));
         toast.success("Login successful");
       },
       onError: (err) => {
@@ -64,7 +62,6 @@ const Login = () => {
             Welcome Back
           </h1>
           <p className="text-slate-400 mb-6">Login to continue your journey</p>
-
           <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
             <input
               type="email"

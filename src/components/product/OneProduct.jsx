@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
 import { Check, Truck } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
 import { setToCart } from "../../redux/features/cartSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
@@ -14,7 +13,7 @@ import { priceDiscounted } from "../../utils/priceDescounted";
 const OneProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const {user} = useSelector(s => s.auth)
   const dispatch = useDispatch();
   const { data, isLoading, isError } = useGetProductById(id);
   const cartData = useSelector((s) => s.cart.cart);

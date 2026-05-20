@@ -10,25 +10,33 @@ import {
   Ban,
   BaggageClaim,
   CircleX,
+  Unlock,
 } from "lucide-react";
 import { useGetUsers } from "../../../tanstack/hooks/queries/userQueries";
 import { useGetAllOrdersOfUser } from "../../../tanstack/hooks/queries/orderQueries";
 import { toast } from "react-toastify";
 import { useEditOrderStatus } from "../../../tanstack/hooks/mutations/orderMutation";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  useBlockUser,
+  useUnblockUser,
+} from "../../../tanstack/hooks/mutations/userMutation";
 const ViewCustomer = () => {
   const [search, setSearch] = useState("");
   const [showOrderId, setShowOrderId] = useState(null);
   const [viewUserOrder, setViewUserOrder] = useState(false);
   const [orderedData, setOrderedData] = useState(null);
   const { data, isLoading, isError } = useGetUsers();
-  const client = useQueryClient()
+  const client = useQueryClient();
   const {
     data: userOrders,
     isLoading: userOrderLoading,
     isError: userOrderIsError,
   } = useGetAllOrdersOfUser(showOrderId);
-  const {mutate , isPending} = useEditOrderStatus()
+  const { mutate: userBlockMutate, isPending: blockPending } = useBlockUser();
+  const { mutate: userUnblockMutate, isPending: unblockPending } =
+    useUnblockUser();
+  const { mutate, isPending } = useEditOrderStatus();
   const filteredCustomers = data?.filter((customer) =>
     customer.name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -48,57 +56,78 @@ const ViewCustomer = () => {
     setShowOrderId(userId);
     setViewUserOrder(true);
   }
-  if (orderedData === []) {
-    return toast.info("User not ordered yet");
-  }
-function orderStatusHandler(orderId, productId, value) {
-  const updatedTime = {};
 
-  switch (value) {
-    case "Confirmed":
-      updatedTime.confirmTime = Date.now();
-      break;
-    case "Packed":
-      updatedTime.packedTime = Date.now();
-      break;
-    case "Shipping":
-      updatedTime.shippingTime = Date.now();
-      break;
-    case "Out For Delivery":
-      updatedTime.deliveryStartTime = Date.now();
-      break;
-    case "Delivered":
-      updatedTime.deliveredTime = Date.now();
-      break;
-    case "Cancelled":
-      updatedTime.canceledTime = Date.now();
-      break;
-    default:
-      break;
-  }
+  function orderStatusHandler(orderId, productId, value) {
+    const updatedTime = {};
 
-  const final = {
-    status: value,
-    ...updatedTime,
-  };
+    switch (value) {
+      case "Confirmed":
+        updatedTime.confirmTime = Date.now();
+        break;
+      case "Packed":
+        updatedTime.packedTime = Date.now();
+        break;
+      case "Shipping":
+        updatedTime.shippingTime = Date.now();
+        break;
+      case "Out For Delivery":
+        updatedTime.deliveryStartTime = Date.now();
+        break;
+      case "Delivered":
+        updatedTime.deliveredTime = Date.now();
+        break;
+      case "Cancelled":
+        updatedTime.canceledTime = Date.now();
+        break;
+      default:
+        break;
+    }
 
-  mutate(
-    { orderId, productId, final },
-    {
-      onSuccess: () => {
-        client.invalidateQueries({
-          queryKey: ["orders"],
-        });
+    const final = {
+      status: value,
+      ...updatedTime,
+    };
 
-        toast.success("Status Updated");
+    mutate(
+      { orderId, productId, final },
+      {
+        onSuccess: () => {
+          client.invalidateQueries({
+            queryKey: ["orders"],
+          });
+
+          toast.success("Status Updated");
+        },
+
+        onError: (err) => {
+          toast.error(err.message);
+        },
       },
+    );
+  }
 
+  function blockUserHandler(id) {
+    userBlockMutate(id, {
+      onSuccess: () => {
+        client.invalidateQueries({ queryKey: ["users"] });
+        toast.success("User has been blocked");
+      },
       onError: (err) => {
         toast.error(err.message);
       },
-    }
-  );
-}
+    });
+  }
+  function unblockUserHandler(id) {
+    userUnblockMutate(id, {
+      onSuccess: () => {
+        client.invalidateQueries({ queryKey: ["users"] });
+        toast.success("User has been unblocked");
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
+  }
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -237,15 +266,24 @@ function orderStatusHandler(orderId, productId, value) {
                   </td>
                   <td className="py-5 pl-6">
                     <button
-                      className="
-                          w-10 cursor-pointer h-10 flex items-center justify-center rounded-xl
-                          bg-red-100
-                          hover:bg-red-200
-                          text-red-600
-                          transition
-                        "
+                      onClick={() =>
+                        customer.isBlocked
+                          ? unblockUserHandler(customer.id)
+                          : blockUserHandler(customer.id)
+                      }
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl transition cursor-pointer
+      ${
+        customer.isBlocked
+          ? "bg-green-100 hover:bg-green-200 text-green-600"
+          : "bg-red-100 hover:bg-red-200 text-red-600"
+      }
+    `}
                     >
-                      <Ban size={18} />
+                      {customer.isBlocked ? (
+                        <Unlock size={18} />
+                      ) : (
+                        <Ban size={18} />
+                      )}
                     </button>
                   </td>
                 </tr>
@@ -360,7 +398,8 @@ function orderStatusHandler(orderId, productId, value) {
                                 {item.product.category}
                               </p>
                             </div>
-                            <select disabled={isPending}
+                            <select
+                              disabled={isPending}
                               value={item.orderStatus}
                               onChange={(e) =>
                                 orderStatusHandler(

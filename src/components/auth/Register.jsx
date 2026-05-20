@@ -3,9 +3,10 @@ import fish from "../../assets/header.jpg";
 import { useCreateUser } from "../../tanstack/hooks/mutations/userMutation";
 import { useNavigate } from "react-router-dom";
 import { generateToken } from "../../utils/generateToken";
-import { useAuth } from "../../context/AuthContext";
 import { checkUser } from "../../utils/authCheck";
 import { toast } from "react-toastify";
+import { login } from "../../redux/features/authSlice";
+import { useDispatch } from "react-redux";
 const Register = () => {
   const [form, setForm] = useState({
     name: "",
@@ -15,9 +16,9 @@ const Register = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const token = generateToken();
   const { mutate, isPending } = useCreateUser();
-  const { login } = useAuth();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -30,10 +31,10 @@ const Register = () => {
     mutate(form, {
       onSuccess: (user) => {
         toast.success("User added successfully");
-        login({
+        dispatch(login({
           token,
           id: user.id,
-        });
+        }));
         navigate("/");
       },
       onError: (err) => {

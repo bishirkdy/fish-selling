@@ -8,13 +8,13 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { useGetUserById } from "../tanstack/hooks/queries/userQueries";
 import Cart from "../pages/Cart";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, clearCart } from "../redux/features/cartSlice";
 import { useGetAllCartDataOfUser } from "../tanstack/hooks/queries/cartQueries";
 import { clearFavorite } from "../redux/features/favoriteSlice";
+import { logout } from "../redux/features/authSlice";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const {user , loading} = useSelector(s => s.auth)
   const dispatch = useDispatch();
   const cartFromSlice = useSelector((s) => s.cart.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
@@ -39,7 +39,7 @@ const Navbar = () => {
     navigate(`/favorite/${user?.id}`);
   }
   function handleLogout() {
-    logout();
+    dispatch(logout());
     setProfileOpen(false);
     dispatch(clearCart());
     dispatch(clearFavorite());
