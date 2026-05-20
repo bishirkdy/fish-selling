@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Search, Eye, Pencil, Trash2, Fish, Package, ShoppingBagIcon } from "lucide-react";
+import {
+  Search,
+  Eye,
+  Pencil,
+  Trash2,
+  Fish,
+  Package,
+  ShoppingBagIcon,
+} from "lucide-react";
 import { useGetProducts } from "../../../tanstack/hooks/queries/productQueries";
 import { priceDiscounted } from "../../../utils/priceDescounted";
 import { useDeleteProduct } from "../../../tanstack/hooks/mutations/productMutation";
@@ -25,8 +33,12 @@ const ViewFish = () => {
     );
   }
 
-  const filteredFish = data?.filter((fish) =>
-    fish.name.toLowerCase().includes(search.toLowerCase()),
+  const filteredFish = data?.filter(
+    (fish) =>
+      fish.name.toLowerCase().includes(search.toLowerCase()) ||
+      fish.category.toLowerCase().includes(search.toLowerCase()) ||
+      fish.price.toLowerCase().includes(search.toLowerCase()) ||
+      fish.discountPercentage.toLowerCase().includes(search.toLowerCase()),
   );
 
   function deleteProductHandler(id) {
@@ -105,7 +117,6 @@ const ViewFish = () => {
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-
                   <p className="bg-green-50 text-black-500 text-sm font-medium px-4 py-2 rounded-xl  border border-green-200">
                     ₹{priceDiscounted(fish.price, fish.discountPercentage)}
                   </p>

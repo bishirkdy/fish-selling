@@ -5,10 +5,6 @@ export const addOrders = async (data) => {
   return res.data;
 };
 
-export const addBulkOrders = async (data) => {
-  const res = await api.post("/orders", data);
-  return res.data;
-};
 
 export const getOrderByUser = async (user) => {
   const orderRes = await api.get(`/orders?user=${user}`);

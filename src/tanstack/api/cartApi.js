@@ -4,7 +4,6 @@ export const addToCartDB = async (data) => {
   const isExisted = await api.get(
     `/carts?productId=${data.productId}&user=${data.user}`,
   );
-  console.log(isExisted.data);
   
   if (isExisted.data.length > 0) {
     throw new Error("Data already added to cart");

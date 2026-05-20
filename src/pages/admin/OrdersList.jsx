@@ -14,6 +14,7 @@ import {
   Bike,
   CircleX,
   ShoppingBagIcon,
+  Boxes,
 } from "lucide-react";
 import {
   useGetAllOrders,
@@ -135,7 +136,7 @@ const OrdersList = () => {
           </div>
 
           <div className="bg-gray-100 p-3 rounded-xl">
-            <Package className="text-black" />
+            <Boxes className="text-black" />
           </div>
         </div>
 

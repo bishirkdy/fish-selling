@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   useAddOrders,
-  useBulkOrders,
 } from "../tanstack/hooks/mutations/orderMutation";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -27,7 +26,7 @@ const Payment = () => {
       landmark: "",
     },
   });
-  const user = useSelector(s => s.auth.auth)
+  const {user} = useSelector(s => s.auth);
   const [shippingId, setShippingId] = useState("");
   const { state } = useLocation();
   const { id } = useParams();
@@ -35,7 +34,6 @@ const Payment = () => {
   const { Razorpay } = useRazorpay();
   const { data: product } = useGetProductById(id);
   const orderMutation = useAddOrders();
-  // const orderBulkMutation = useBulkOrders();
   const { mutate: analysisMutate, isPending: analysisIsPending } = usePostAnalysis();
   const { mutate: addressMutate, isPending: addressPending } =
     useAddShippingAddress();
@@ -85,13 +83,13 @@ const Payment = () => {
     addressMutate(addressData, {
       onSuccess: (data) => {
         const orderData = {
-          user: user?.id,
+          user: user.id,
           shippingAddress: data.id,
           products: state?.items?.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
             paymentStatus: type === "COD" ? "PENDING" : "PAID",
-            orderStatus: "ORDERED",
+            orderStatus: "Order Placed",
           })),
 
           orderMethod: type === "COD" ? "CASH" : "RAZOR PAY",

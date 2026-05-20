@@ -14,6 +14,7 @@ import { useAddProduct } from "../../../tanstack/hooks/mutations/productMutation
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 const AddFish = () => {
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -53,6 +54,7 @@ const AddFish = () => {
       return;
     }
     try {
+      setUploading(true);
       const cloudItem = new FormData();
       cloudItem.append("file", image);
       cloudItem.append("upload_preset", "fish-shop");
@@ -63,8 +65,8 @@ const AddFish = () => {
 
       const finalData = {
         ...formData,
-        createdAt : Date.now(),
-        isActive : true,
+        createdAt: Date.now(),
+        isActive: true,
         images: res.data.secure_url,
       };
       mutate(finalData, {
@@ -75,8 +77,21 @@ const AddFish = () => {
         onError: (error) => {
           toast.error(error.message);
         },
+        onSettled: () => {
+          setUploading(false);
+          setFormData({
+            name: "",
+            category: "",
+            price: "",
+            stock: "",
+            discountPercentage: "",
+            description: "",
+          });
+          setImage(null)
+        },
       });
     } catch (error) {
+      setUploading(false);
       console.log(error.message);
     }
   };
@@ -263,7 +278,7 @@ const AddFish = () => {
               disabled={isPending}
               className="h-14 px-10 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition cursor-pointer shadow-lg"
             >
-              Add Fish
+              {isPending || uploading ? "Adding..." : "Add Fish"}
             </button>
           </form>
         </div>

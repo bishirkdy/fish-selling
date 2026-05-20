@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { addBulkOrders, addOrders, orderStatusChange, removeOrder } from "../../api/orderApi";
+import {  addOrders, orderStatusChange, removeOrder } from "../../api/orderApi";
 
 export const useAddOrders = () => {
   return useMutation({
@@ -7,11 +7,7 @@ export const useAddOrders = () => {
   });
 };
 
-export const useBulkOrders = () => {
-  return useMutation({
-    mutationFn: addBulkOrders,
-  });
-};
+
 
 export const useRemoveUserById = () => {
   return useMutation({

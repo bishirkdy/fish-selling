@@ -217,14 +217,16 @@ const Orders = () => {
                         View Details
                       </button>
 
-                      <button onClick={() => setViewTrack(true)} className="w-full sm:w-auto border border-gray-700 hover:border-(--color-primary) px-4 py-2 rounded-xl text-sm transition">
+                      <button onClick={() => {setViewTrack(true)
+                        setTrackableData({...item , orderedDate : order.orderedDate})
+                      }} className="w-full cursor-pointer sm:w-auto border border-gray-700 hover:border-(--color-primary) px-4 py-2 rounded-xl text-sm transition">
                         Track Order
                       </button>
 
                       <button
                         disabled={isPending}
                         onClick={() => handleRemove(order.id)}
-                        className="w-full sm:w-auto border border-zinc-700 hover:border-red-500 hover:text-red-400 px-4 py-2 rounded-xl text-sm transition disabled:opacity-50"
+                        className="w-full sm:w-auto border cursor-pointer border-gray-700 hover:border-red-500 hover:text-red-400 px-4 py-2 rounded-xl text-sm transition disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -242,7 +244,7 @@ const Orders = () => {
           setViewDetail={setViewDetail}
         />
       )}
-      {viewTrack && <TrackOrderDetail />}
+      {viewTrack && <TrackOrderDetail setViewTrack={() => setViewTrack(false)} data={trackableData}/>}
     </div>
   );
 };

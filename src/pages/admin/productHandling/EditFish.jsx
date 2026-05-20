@@ -15,6 +15,7 @@ import { useEditProductById } from "../../../tanstack/hooks/mutations/productMut
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
+import axios from "axios";
 const EditFish = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -24,9 +25,11 @@ const EditFish = () => {
     discountPercentage: "",
     description: "",
   });
+  const [isUploading, setUploading] = useState(false);
   const { id } = useParams();
   const { data, isLoading, isError } = useGetProductById(id);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
   const { mutate, isPending } = useEditProductById();
   const client = useQueryClient();
   const navigate = useNavigate();
@@ -64,7 +67,7 @@ const EditFish = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
     if (!formData.name) errors.name = "Fish name is required";
@@ -79,23 +82,49 @@ const EditFish = () => {
       setError(errors);
       return;
     }
-    const final = {
-      ...formData,
-      images: image,
-    };
-    mutate(
-      { data: final, id },
-      {
-        onSuccess: () => {
-          toast.success("Product edited successfully");
-          client.invalidateQueries({ queryKey: ["products"] });
-          navigate("/admin/viewfish");
+    try {
+      setUploading(true);
+      const cloudItem = new FormData();
+      cloudItem.append("file", image);
+      cloudItem.append("upload_preset", "fish-shop");
+      const res = await axios.post(
+        "https://api.cloudinary.com/v1_1/dztjqqoyw/image/upload",
+        cloudItem,
+      );
+      const final = {
+        ...formData,
+        images: res.data.secure_url,
+      };
+
+      mutate(
+        { data: final, id },
+        {
+          onSuccess: () => {
+            toast.success("Product edited successfully");
+            client.invalidateQueries({ queryKey: ["products"] });
+            navigate("/admin/viewfish");
+          },
+          onError: (err) => {
+            toast.error(err.message);
+          },
+          onSettled: () => {
+            setUploading(false);
+            setImage(null);
+            setFormData({
+              name: data.name || "",
+              category: data.category || "",
+              price: data.price || "",
+              stock: data.stock || "",
+              discountPercentage: data.discountPercentage || "",
+              description: data.description || "",
+            });
+          },
         },
-        onError: (err) => {
-          toast.error(err.message);
-        },
-      },
-    );
+      );
+    } catch (error) {
+      setUploading(false);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -272,7 +301,7 @@ const EditFish = () => {
               type="submit"
               className="h-14 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition flex items-center justify-center gap-3 shadow-lg cursor-pointer"
             >
-              Save Changes
+              {isPending || isUploading ? "Updating..." : "Save Change"}
             </button>
           </form>
         </div>
@@ -288,7 +317,11 @@ const EditFish = () => {
             <input
               type="file"
               className="hidden"
-              onChange={(e) => setImage(URL.createObjectURL(e.target.files[0]))}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setImage(file);
+                setPreview(URL.createObjectURL(file));
+              }}
             />
 
             <Image size={35} className="text-gray-400" />
@@ -306,8 +339,13 @@ const EditFish = () => {
             </div>
 
             <div className="relative h-56 rounded-3xl overflow-hidden group border border-gray-200">
-              <img src={image} alt="" className="w-full h-full object-cover" />
-
+              {preview && (
+                <img
+                  src={preview}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              )}
               <button
                 type="button"
                 disabled={isPending}

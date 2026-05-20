@@ -18,10 +18,235 @@
       "isBlocked": false
     }
   ],
-  "products": [],
-  "carts": [],
-  "favorites": [],
-  "orders": [],
-  "analysis": [],
+  "products": [
+    {
+      "name": "Clownfish",
+      "category": "Saltwater Fish",
+      "price": "1500",
+      "stock": "10",
+      "discountPercentage": "5",
+      "description": "Bright orange saltwater fish popular in marine aquariums",
+      "createdAt": 1779259641019,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263317/mh9jef7zzomti9c7s4vy.jpg",
+      "id": 1
+    },
+    {
+      "name": "abcd",
+      "category": "Freshwater Fish",
+      "price": "1500",
+      "stock": "2",
+      "discountPercentage": "10",
+      "description": "hello",
+      "createdAt": 1779260113252,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263259/gef0hfcttjotlliyitwt.jpg",
+      "id": 4
+    },
+    {
+      "name": "Clownfish",
+      "category": "Beginner Friendly",
+      "price": "100",
+      "stock": "10",
+      "discountPercentage": "2",
+      "description": "he",
+      "createdAt": 1779262271313,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779262269/pkipetnebzgpnpbt3iog.jpg",
+      "id": 5
+    }
+  ],
+  "carts": [
+    {
+      "user": "j9-opmG",
+      "productId": 1,
+      "price": "1500",
+      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263317/mh9jef7zzomti9c7s4vy.jpg",
+      "discountPercentage": "5",
+      "quantity": 1,
+      "id": 1
+    },
+    {
+      "user": "j9-opmG",
+      "productId": 4,
+      "price": "1500",
+      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263259/gef0hfcttjotlliyitwt.jpg",
+      "discountPercentage": "10",
+      "quantity": 1,
+      "id": 2
+    },
+    {
+      "user": "j9-opmG",
+      "productId": 5,
+      "price": "100",
+      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779262269/pkipetnebzgpnpbt3iog.jpg",
+      "discountPercentage": "2",
+      "quantity": 1,
+      "id": 3
+    }
+  ],
+  "favorites": [
+    {
+      "userId": "j9-opmG",
+      "productId": 4,
+      "id": 1
+    },
+    {
+      "userId": "j9-opmG",
+      "productId": 1,
+      "id": 2
+    }
+  ],
+  "orders": [
+    {
+      "user": "j9-opmG",
+      "shippingAddress": 2,
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1,
+          "paymentStatus": "PAID",
+          "orderStatus": "Shipping",
+          "confirmTime": 1779271247211,
+          "packedTime": 1779270270611,
+          "shippingTime": 1779271392643,
+          "deliveryStartTime": 1779271239422,
+          "deliveredTime": 1779271241922,
+          "canceledTime": 1779271243994
+        }
+      ],
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 1425,
+      "orderedDate": 1779267732342,
+      "id": "ORD-1779267732342-578",
+      "paymentId": "pay_SrYtZl7cmDWA1B",
+      "paymentStatus": "PAID"
+    },
+    {
+      "user": "j9-opmG",
+      "shippingAddress": 3,
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Order Placed"
+        },
+        {
+          "productId": 4,
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Order Placed"
+        },
+        {
+          "productId": 5,
+          "quantity": 1,
+          "paymentStatus": "PENDING",
+          "orderStatus": "Order Placed"
+        }
+      ],
+      "orderMethod": "CASH",
+      "totalAmount": 2873,
+      "orderedDate": 1779270624613,
+      "id": "ORD-1779270624613-134"
+    }
+  ],
+  "analysis": [
+    {
+      "total": 1425,
+      "profit": 214,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1
+        }
+      ],
+      "date": 1779263703904,
+      "id": 1
+    },
+    {
+      "user": "j9-opmG",
+      "total": 1425,
+      "profit": 214,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1
+        }
+      ],
+      "date": 1779267732342,
+      "id": 2
+    },
+    {
+      "user": "j9-opmG",
+      "total": 2873,
+      "profit": 431,
+      "paymentMethod": "COD",
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1
+        },
+        {
+          "productId": 4,
+          "quantity": 1
+        },
+        {
+          "productId": 5,
+          "quantity": 1
+        }
+      ],
+      "date": 1779270624613,
+      "id": 3
+    }
+  ],
+  "addresses": [
+    {
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "kakkandathil",
+        "post": "karuvanpoyil",
+        "district": "kozhikode",
+        "state": "Kerala",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 1
+    },
+    {
+      "user": "j9-opmG",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "kakkandathil",
+        "post": "karuvanpoyil",
+        "district": "kozhikode",
+        "state": "Kerala",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 2
+    },
+    {
+      "user": "j9-opmG",
+      "name": "bishir Mhd",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "koduvally",
+        "post": "karuvanpoyil",
+        "district": "kozhikode",
+        "state": "Kerala",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 3
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
