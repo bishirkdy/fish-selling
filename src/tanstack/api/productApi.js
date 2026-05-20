@@ -37,6 +37,56 @@ export const addProduct = async (data) => {
 }
 
 export const updateProductById = ({ data, id }) => {
-    const res = api.patch(`products/${id}` ,data)
+    const res = api.patch(`/products/${id}` ,data)
     return res.data
 }
+
+export const getRatingCount = async () => {
+  const { data } = await api.get("/products");
+
+  const rating = [
+    {
+      name: "1 Star",
+      value: 0,
+      fill: "#F97316",
+    },
+    {
+      name: "2 Star",
+      value: 0,
+      fill: "#06B6D4",
+    },
+    {
+      name: "3 Star",
+      value: 0,
+      fill: "#0B1220",
+    },
+    {
+      name: "4 Star",
+      value: 0,
+      fill: "#e38e51",
+    },
+    {
+      name: "5 Star",
+      value: 0,
+      fill: "#a4de6c",
+    },
+  ];
+
+  data.forEach((product) => {
+    const value = product.rating;
+
+    if (value > 0 && value <= 1) {
+      rating[0].value++;
+    } else if (value > 1 && value <= 2) {
+      rating[1].value++;
+    } else if (value > 2 && value <= 3) {
+      rating[2].value++;
+    } else if (value > 3 && value <= 4) {
+      rating[3].value++;
+    } else if (value > 4 && value <= 5) {
+      rating[4].value++;
+    }
+  });
+
+  return rating;
+};

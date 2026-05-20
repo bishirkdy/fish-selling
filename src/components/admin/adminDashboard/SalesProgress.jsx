@@ -10,8 +10,7 @@ import {
 import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysisQueries";
 
 const SalesChart = () => {
-  const {data} = useLastMonthAnalysis()
-  
+  const {data , isLoading} = useLastMonthAnalysis()
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm border border-zinc-200">
       
@@ -38,6 +37,7 @@ const SalesChart = () => {
               stroke="#18181B"
               fill="#F97316"
               fillOpacity={0.15}
+              onLoad={isLoading}
             />
           </AreaChart>
         </ResponsiveContainer>

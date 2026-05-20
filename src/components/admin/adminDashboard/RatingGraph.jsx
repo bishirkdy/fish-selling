@@ -6,41 +6,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useGetRatingCount } from "../../../tanstack/hooks/queries/productQueries";
 
-const data = [
-  {
-    name: "1 Star",
-    value: 10,
-    fill: "#F97316",
-  },
-  {
-    name: "2 Star",
-    value: 30,
-    fill: "#06B6D4",
-  },
-  {
-    name: "3 Star",
-    value: 15,
-    fill: "#0B1220",
-  },
-  {
-    name: "4 Star",
-    value: 50,
-    fill: "#e38e51",
-  },
-  {
-    name: "5 Star",
-    value: 42,
-    fill: "#a4de6c",
-  },
-];
 
 const RatingChart = () => {
+  const {data , isLoading} = useGetRatingCount()
+
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-zinc-200 h-full">
+    <div className="rounded-3xl p-6 shadow-sm border border-gray-200 h-full">
       <div className="">
-        <h2 className="text-xl font-bold text-zinc-900">Customer Ratings</h2>
-        <p className="text-sm text-zinc-500 mt-1">
+        <h2 className="text-xl font-bold text-gray-900">Customer Ratings</h2>
+        <p className="text-sm text-gray-500 mt-1">
           Product review distribution
         </p>
       </div>
@@ -48,13 +24,13 @@ const RatingChart = () => {
         <ResponsiveContainer width="100%" height="100%">
           <RadialBarChart
             innerRadius="15%"
-            outerRadius="95%"
+            outerRadius="75%"
             data={data}
             startAngle={360}
             endAngle={0}
           >
             <RadialBar minAngle={15} background clockWise dataKey="value" style={{paddingBottom : "8px"}} />
-            <Legend
+            <Legend onLoad={isLoading}
               iconSize={14}
               layout="horizontal"
               verticalAlign="bottom"
