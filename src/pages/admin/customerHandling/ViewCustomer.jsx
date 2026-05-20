@@ -21,6 +21,7 @@ import {
   useBlockUser,
   useUnblockUser,
 } from "../../../tanstack/hooks/mutations/userMutation";
+import Loader from "../../../components/Loader";
 const ViewCustomer = () => {
   const [search, setSearch] = useState("");
   const [showOrderId, setShowOrderId] = useState(null);
@@ -50,6 +51,14 @@ const ViewCustomer = () => {
       }
     }
   }, [userOrders, showOrderId]);
+
+  if (isLoading || userOrderLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   function orderShowHandler(userId) {
     setOrderedData(null);
@@ -294,16 +303,10 @@ const ViewCustomer = () => {
       </div>
       {filteredCustomers?.length === 0 && (
         <div
-          className="
-            bg-white
-            rounded-3xl
-            p-12
-            mt-8
-            text-center
+          className="p-12 mt-8 text-center
           "
         >
           <Users size={60} className="mx-auto text-gray-300 mb-4" />
-
           <h2 className="text-2xl font-bold text-gray-700">
             No Customer Found
           </h2>

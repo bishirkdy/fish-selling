@@ -29,7 +29,7 @@ const EditFish = () => {
   const [image, setImage] = useState("");
   const { mutate, isPending } = useEditProductById();
   const client = useQueryClient();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     if (data) {
       setFormData({
@@ -45,7 +45,7 @@ const EditFish = () => {
   }, [data]);
   const [error, setError] = useState({});
 
-      if (isLoading) {
+  if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Loader />
@@ -89,7 +89,7 @@ const EditFish = () => {
         onSuccess: () => {
           toast.success("Product edited successfully");
           client.invalidateQueries({ queryKey: ["products"] });
-          navigate("/admin/viewfish")
+          navigate("/admin/viewfish");
         },
         onError: (err) => {
           toast.error(err.message);

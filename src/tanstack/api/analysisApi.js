@@ -29,7 +29,7 @@ export const getCountOfTotalAndProfit = async () => {
   return {
     total: calculated.total,
     profit: Math.floor(calculated.profit),
-    userCount: userRes.data.length,
+    userCount: userRes.data.filter(u => u.role !== "admin").length,
     orderCount: orderRes.data.length,
     productCount: productRes.data.length,
   };

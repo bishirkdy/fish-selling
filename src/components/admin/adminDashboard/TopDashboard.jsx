@@ -9,59 +9,41 @@ import {
   HandCoins,
 } from "lucide-react";
 import { useGetAllCartDataOfUser } from "../../../tanstack/hooks/queries/analysisQueries";
-
-const dashboardData = [
-  {
-    title: "Total Revenue",
-    value: "24,780",
-    growth: "+12.5%",
-    icon: DollarSign,
-  },
-  {
-    title: "Total Orders",
-    value: "1,248",
-    growth: "+8.2%",
-    icon: ShoppingCart,
-  },
-  {
-    title: "Customers",
-    value: "842",
-    growth: "+5.4%",
-    icon: Users,
-  },
-  {
-    title: "Products",
-    value: "126",
-    growth: "+2.1%",
-    icon: Package,
-  },
-];
+import Loader from "../../Loader";
 
 const TopDashboard = () => {
-  const {data : analysisData , isLoading , isError} = useGetAllCartDataOfUser();
-  
+  const { data: analysisData, isLoading, isError } = useGetAllCartDataOfUser();
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   const dashboardData = [
-  {
-    title: "Total Revenue",
-    value: analysisData?.profit,
-    icon: HandCoins,
-  },
-  {
-    title: "Total Orders",
-    value: analysisData?.orderCount,
-    icon: ShoppingCart,
-  },
-  {
-    title: "Customers",
-    value: analysisData?.userCount,
-    icon: Users,
-  },
-  {
-    title: "Products",
-    value: analysisData?.productCount,
-    icon: Boxes,
-  },
-];
+    {
+      title: "Total Revenue",
+      value: analysisData?.profit,
+      icon: HandCoins,
+    },
+    {
+      title: "Total Orders",
+      value: analysisData?.orderCount,
+      icon: ShoppingCart,
+    },
+    {
+      title: "Customers",
+      value: analysisData?.userCount,
+      icon: Users,
+    },
+    {
+      title: "Products",
+      value: analysisData?.productCount,
+      icon: Boxes,
+    },
+  ];
   return (
     <div className="grid grid-cols-1 h-fit md:grid-cols-2 xl:grid-cols-4 gap-6">
       {dashboardData.map((item, index) => (
@@ -84,27 +66,10 @@ const TopDashboard = () => {
             >
               <item.icon size={26} />
             </div>
-{/* 
-            <div
-              className="
-                flex
-                items-center
-                gap-1
-                text-green-600
-                text-sm
-                font-semibold
-              "
-            >
-              <TrendingUp size={16} />
-
-              {item.growth}
-            </div> */}
           </div>
 
           <div className="mt-6">
-            <h3 className="text-zinc-500 text-sm font-medium">
-              {item.title}
-            </h3>
+            <h3 className="text-zinc-500 text-sm font-medium">{item.title}</h3>
             <h1 className="text-3xl font-bold text-zinc-900 mt-2">
               {item.value}
             </h1>

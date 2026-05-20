@@ -8,7 +8,7 @@ const AdminProtectedRoute = () => {
   return user && user?.role === "admin" ? (
     <div className="flex">
       <AdminSidebar />
-      <main className="flex-1 p-4 lg:p-6 no-scrollbar overflow-hidden">
+      <main className="flex-1 no-scrollbar overflow-y-auto">
         <Outlet />
       </main>
     </div>
