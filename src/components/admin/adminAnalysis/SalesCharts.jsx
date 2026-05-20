@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysisQueries";
+import Loader from "../../Loader";
 
 // #region Sample data
 // const data = [
@@ -43,8 +44,9 @@ import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysisQu
 
 // #endregion
 export const SalesChart = () => {
-  const {data : salesData} = useLastMonthAnalysis()
-  
+  const { data: salesData, isLoading } = useLastMonthAnalysis();
+
+  if (isLoading) return <p>Loading...</p>
   return (
     <div style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer>

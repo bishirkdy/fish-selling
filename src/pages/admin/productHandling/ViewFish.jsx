@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Search, Eye, Pencil, Trash2, Fish, Package } from "lucide-react";
+import { Search, Eye, Pencil, Trash2, Fish, Package, ShoppingBagIcon } from "lucide-react";
 import { useGetProducts } from "../../../tanstack/hooks/queries/productQueries";
 import { priceDiscounted } from "../../../utils/priceDescounted";
 import { useDeleteProduct } from "../../../tanstack/hooks/mutations/productMutation";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../../components/Loader";
 
 const ViewFish = () => {
   const [search, setSearch] = useState("");
@@ -13,18 +14,27 @@ const ViewFish = () => {
   const [view, setView] = useState(false);
   const [selectedFish, setSelectedFish] = useState(null);
   const client = useQueryClient();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { mutate: deleteMutate, isPending } = useDeleteProduct();
-  
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   const filteredFish = data?.filter((fish) =>
     fish.name.toLowerCase().includes(search.toLowerCase()),
   );
+
   function deleteProductHandler(id) {
     deleteMutate(id, {
       onSuccess: () => {
-        client.invalidateQueries({ queryKey: ["products"]});
-        setView(false)
-        setSelectedFish(null)
+        client.invalidateQueries({ queryKey: ["products"] });
+        setView(false);
+        setSelectedFish(null);
         toast.success("Item removed successfully");
       },
       onError: () => {
@@ -54,7 +64,7 @@ const ViewFish = () => {
             placeholder="Search fish..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-(--color-accent) rounded-2xl pl-11 r-4 py-3 outline-none focus:border-(--color-surface)"
+            className="w-full border border-(--color-surface) rounded-2xl pl-11 r-4 py-3 outline-none focus:border-(--color-accent)"
           />
         </div>
       </div>
@@ -77,7 +87,7 @@ const ViewFish = () => {
             <div className="relative h-56 overflow-hidden">
               <img
                 src={fish.images}
-                alt={fish.title}
+                alt={fish.name}
                 className="w-full h-full object-cover hover:scale-105 transition duration-300"
               />
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-(--color-accent) shadow-sm border border-white/50">
@@ -89,15 +99,13 @@ const ViewFish = () => {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-bold text-gray-800">
-                    {fish.title}
+                    {fish.name}
                   </h2>
                   <p className="text-sm pt-1">Stock : {fish.stock}</p>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                  {/* <p className="bg-red-50 text-red-500 text-sm line-through px-4 py-2 rounded-xl  border border-red-100">
-                    ₹{fish.price}
-                  </p> */}
+
                   <p className="bg-green-50 text-black-500 text-sm font-medium px-4 py-2 rounded-xl  border border-green-200">
                     ₹{priceDiscounted(fish.price, fish.discountPercentage)}
                   </p>
@@ -112,7 +120,10 @@ const ViewFish = () => {
                   View
                 </button>
 
-                <button onClick={() => navigate(`/admin/editfish/${fish.id}`)} className="flex-1 flex cursor-pointer items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-600 py-2.5 rounded-xl text-sm font-medium transition">
+                <button
+                  onClick={() => navigate(`/admin/editfish/${fish.id}`)}
+                  className="flex-1 flex cursor-pointer items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-600 py-2.5 rounded-xl text-sm font-medium transition"
+                >
                   <Pencil size={16} /> Edit
                 </button>
 
@@ -129,7 +140,7 @@ const ViewFish = () => {
       </div>
 
       {filteredFish?.length === 0 && (
-        <div className="bg-white rounded-3xl p-12 mt-8 flex flex-col items-center justify-center text-center shadow-sm border border-gray-100">
+        <div className="rounded-3xl p-12 mt-8 flex flex-col items-center justify-center text-center">
           <Fish size={60} className="text-gray-300 mb-4" />
           <h2 className="text-2xl font-bold text-gray-700">No Fish Found</h2>
           <p className="text-gray-500 mt-2">
@@ -149,7 +160,7 @@ const ViewFish = () => {
             <div className="bg-gray-100 p-8 flex items-center justify-center">
               <img
                 src={selectedFish?.images}
-                alt={selectedFish?.title}
+                alt={selectedFish?.name}
                 className="w-full h-125 object-cover rounded-3xl"
               />
             </div>
@@ -160,7 +171,7 @@ const ViewFish = () => {
                 </span>
 
                 <h1 className="text-4xl font-bold text-gray-800 mt-5">
-                  {selectedFish?.title}
+                  {selectedFish?.name}
                 </h1>
 
                 <p className="text-green-600 font-medium mt-3">
@@ -194,19 +205,6 @@ const ViewFish = () => {
                     {selectedFish?.description}
                   </p>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-4 mt-10">
-                <button className="flex-1 bg-black cursor-pointer hover:bg-gray-800 text-white py-4 rounded-2xl font-semibold transition">
-                  Edit Product
-                </button>
-
-                <button
-                  onClick={() => deleteProductHandler(selectedFish?.id)}
-                  className="flex-1 bg-red-100 cursor-pointer hover:bg-red-200 text-red-600 py-4 rounded-2xl font-semibold transition"
-                >
-                  Delete Product
-                </button>
               </div>
             </div>
           </div>

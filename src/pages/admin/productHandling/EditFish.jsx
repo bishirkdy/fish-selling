@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEditProductById } from "../../../tanstack/hooks/mutations/productMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import Loader from "../../../components/Loader";
 const EditFish = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -43,6 +44,14 @@ const EditFish = () => {
     }
   }, [data]);
   const [error, setError] = useState({});
+
+      if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -301,6 +310,7 @@ const EditFish = () => {
 
               <button
                 type="button"
+                disabled={isPending}
                 onClick={() => setImage(null)}
                 className="absolute top-3 right-3 w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
               >

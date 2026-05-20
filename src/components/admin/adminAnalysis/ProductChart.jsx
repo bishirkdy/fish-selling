@@ -44,8 +44,8 @@ import { useLastMonthsProductCount } from '../../../tanstack/hooks/queries/analy
 // #endregion
 const SameDataComposedChart = () => {
   const {data : productChart , isLoading , isError} = useLastMonthsProductCount()
-  console.log(productChart);
-  
+    if (isLoading) return <p>Loading...</p>
+
   return (
     <ComposedChart
       style={{ width: '100%', maxWidth: '700px', maxHeight: '70vh', aspectRatio: 1.618 }}

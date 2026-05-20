@@ -4,10 +4,17 @@ import { SalesChart } from '../../components/admin/adminAnalysis/SalesCharts'
 import { ProfitChart } from '../../components/admin/adminAnalysis/ProfitChart'
 import { CategoryChart } from '../../components/admin/adminAnalysis/CategoryProductsAnalisys'
 import { useGetAllCartDataOfUser } from '../../tanstack/hooks/queries/analysisQueries'
+import Loader from '../../components/Loader'
 
 const AdminAnalysis = () => {
   const {data : topData , isLoading : topLoading , isError : topError} = useGetAllCartDataOfUser()  
-  
+     if (topLoading ) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6"> 
       <div className="mb-8">

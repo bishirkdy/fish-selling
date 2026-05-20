@@ -54,8 +54,9 @@ import { useLastMonthAnalysis } from '../../../tanstack/hooks/queries/analysisQu
 
 // #endregion
 export const ProfitChart = () => {
-  const {data : profitData} = useLastMonthAnalysis()
-  
+  const {data : profitData , isLoading} = useLastMonthAnalysis()
+    if (isLoading) return <p>Loading...</p>
+
   return (
     <div style={{ width: '100%', height: 300 }}>
       <ResponsiveContainer>

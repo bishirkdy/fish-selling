@@ -16,7 +16,8 @@ const style = {
 };
 
 export const CategoryChart = () => {
-  const { data: categoryData } = useLastMonthsProductCount();
+  const { data: categoryData, isLoading } = useLastMonthsProductCount();
+  if (isLoading) return <p>Loading...</p>;
 
   return (
     <div

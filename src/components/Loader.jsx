@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 const Loader = () => {
   return (
-    <StyledWrapper className="bg-(--color-background) z-100 w-screen h-screen flex items-center justify-center">
+    <StyledWrapper className=" z-100 w-screen h-screen flex items-center justify-center">
       <div>
-        <section className="loader bg-(--color-background)">
+        <section className="loader">
           <aside className="cap" />
           <aside className="shadow-top"/>
           <article className="circle" />
@@ -34,7 +34,7 @@ const Loader = () => {
             </g>
           </svg>
         </section>
-        <footer className="shadow-bottom" />
+        {/* <footer className="shadow-bottom" /> */}
       </div>
     </StyledWrapper>
   );

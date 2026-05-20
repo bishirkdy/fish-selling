@@ -13,6 +13,7 @@ import {
   Archive,
   Bike,
   CircleX,
+  ShoppingBagIcon,
 } from "lucide-react";
 import {
   useGetAllOrders,
@@ -21,6 +22,7 @@ import {
 import { useEditOrderStatus } from "../../tanstack/hooks/mutations/orderMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import Loader from "../../components/Loader";
 
 const statusStyle = {
   "Order Placed": "bg-blue-100 text-blue-700",
@@ -46,14 +48,20 @@ const OrdersList = () => {
   const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
-  if (data?.length === 0) {
+    if (isLoading || statusLoading) {
     return (
-      <div className="w-full flex flex-col h-screen items-center justify-center border border-dashed border-gray-300 rounded-2xl">
-        <h2 className="text-xl font-semibold text-gray-700">No Orders Found</h2>
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+  if (!data || data.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <ShoppingBagIcon size={60} className="mb-4" />
 
-        <p className="text-sm text-gray-500 mt-2">
-          You don’t have any orders yet.
-        </p>
+        <h1 className="text-2xl font-bold">No Orders Yet</h1>
+        <p className="text-gray-400 mt-2">All orders will appear here</p>
       </div>
     );
   }

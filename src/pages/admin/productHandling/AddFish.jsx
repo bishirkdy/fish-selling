@@ -260,6 +260,7 @@ const AddFish = () => {
 
             <button
               type="submit"
+              disabled={isPending}
               className="h-14 px-10 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition cursor-pointer shadow-lg"
             >
               Add Fish
