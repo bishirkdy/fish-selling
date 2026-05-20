@@ -22,7 +22,7 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const {user , loading} = useSelector(s => s.auth)
+  const { user, loading } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
   const cartFromSlice = useSelector((s) => s.cart.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
@@ -64,19 +64,16 @@ const Navbar = () => {
                 Explore
               </Link>
             </li>{" "}
-            <li>
-              <Link
-                to={`/orders/${user?.id}`}
-                className="cursor-pointer hover:text-gray-300"
-              >
-                Orders
-              </Link>
-            </li>
-            {/* <li>
-              <Link to="/shop" className="cursor-pointer hover:text-gray-300">
-                contact
-              </Link>
-            </li> */}
+            {loggedUser && (
+              <li>
+                <Link
+                  to={`/orders/${user?.id}`}
+                  className="cursor-pointer hover:text-gray-300"
+                >
+                  Orders
+                </Link>
+              </li>
+            )}
           </ul>
           <div className="relative">
             <input
@@ -127,9 +124,6 @@ const Navbar = () => {
                 >
                   Login
                 </button>
-                {/* <button onClick={() => navigate("/register")} className="text-sm px-4 py-2 rounded-lg cursor-pointer hover:bg-transparent hover:border hover:border-(--color-accent) transition duration-300 ease-in-out bg-(--color-accent)">
-                Register
-              </button> */}
               </div>
             )}
           </div>
@@ -195,13 +189,16 @@ const Navbar = () => {
               >
                 Explore
               </Link>
-              <Link
-                to={`/orders/${user?.id}`}
-                onClick={() => setOpen(false)}
-                className="bg-(--color-surface) px-4 py-3 rounded-xl transition text-zinc-400"
-              >
-                Orders
-              </Link>
+              {loggedUser && (
+                <Link
+                  to={`/orders/${user?.id}`}
+                  onClick={() => setOpen(false)}
+                  className="bg-(--color-surface) px-4 py-3 rounded-xl transition text-zinc-400"
+                >
+                  Orders
+                </Link>
+              )}
+
               {/* <Link
                 to="/contact"
                 onClick={() => setOpen(false)}
@@ -256,7 +253,7 @@ const Navbar = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center mt-4 w-full gap-2">
+              <div className="flex items-center mt-4 text-white w-full gap-2">
                 <button
                   onClick={() => navigate("/login")}
                   className="text-sm px-4 py-2 rounded-lg cursor-pointer hover:bg-transparent hover:border hover:border-(--color-accent) transition duration-300 ease-in-out bg-(--color-accent)"
@@ -273,12 +270,22 @@ const Navbar = () => {
             )}
 
             {loggedUser && (
-              <button
-                onClick={handleLogout}
-                className="mt-auto bg-(--color-accent) hover:bg-red-600 transition py-3 rounded-xl font-semibold"
-              >
-                Logout
-              </button>
+              <div className="flex items-start mt-4 text-white w-full gap-2">
+                {loggedUser && loggedUser?.role === "admin" && (
+                  <button
+                    onClick={() => navigate("/admin/dashboard")}
+                    className="mt-auto bg-(--color-accent) hover:bg-red-600 transition py-3 px-4 rounded-xl font-semibold"
+                  >
+                    Switch to Admin
+                  </button>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="mt-auto bg-(--color-accent) hover:bg-red-600 transition py-3 px-4 rounded-xl font-semibold"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -352,7 +359,15 @@ const Navbar = () => {
               </button>
             </div>
 
-            <div className="mt-auto pt-6 border-t border-zinc-800">
+            <div className="mt-auto pt-6 border-t border-zinc-800 space-y-2">
+              {loggedUser?.role === "admin" && (
+                <button
+                  onClick={() => navigate("/admin/dashboard")}
+                  className="w-full hover:bg-(--color-accent) bg-transparent border border-(--color-accent) cursor-pointer text-white py-3 rounded-xl font-semibold transition"
+                >
+                  Switch To Admin
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className="w-full bg-(--color-accent) hover:bg-transparent hover:border hover:border-(--color-accent) cursor-pointer text-white py-3 rounded-xl font-semibold transition"

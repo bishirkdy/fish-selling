@@ -22,7 +22,7 @@ const OneProduct = () => {
   const isCart = cartData.some((d) => d.productId === data?.id);
   if (isLoading) {
     return (
-      <div className="w-screen h-screen bg(--color-bg) flex items-center justify-center">
+      <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
         <Loader />
       </div>
     );

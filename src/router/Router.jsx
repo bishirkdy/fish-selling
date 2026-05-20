@@ -41,15 +41,16 @@ export const router = createBrowserRouter(
           <Route path="/favorite/:id" element={<Favorite />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/success" element={<Success />} />
-          <Route path="admin" element={<AdminProtectedRoute />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="orders" element={<OrdersList />} />
-            <Route path="addfish" element={<AddFish />} />
-            <Route path="viewfish" element={<ViewFish />} />
-            <Route path="customers" element={<ViewCustomer />} />
-            <Route path="analytics" element={<AdminAnalysis />} />
-            <Route path="editfish/:id" element={<EditFish />} />
-          </Route>
+        </Route>
+
+        <Route path="admin" element={<AdminProtectedRoute />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="orders" element={<OrdersList />} />
+          <Route path="addfish" element={<AddFish />} />
+          <Route path="viewfish" element={<ViewFish />} />
+          <Route path="customers" element={<ViewCustomer />} />
+          <Route path="analytics" element={<AdminAnalysis />} />
+          <Route path="editfish/:id" element={<EditFish />} />
         </Route>
       </Route>
     </>,

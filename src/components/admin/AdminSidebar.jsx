@@ -13,6 +13,10 @@ import {
   CircleX,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useGetUserById } from "../../tanstack/hooks/queries/userQueries";
+import { logout } from "../../redux/features/authSlice";
+import { toast } from "react-toastify";
 
 const menus = [
   {
@@ -61,6 +65,10 @@ const menus = [
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { user } = useSelector((S) => S.auth);
+  const { data } = useGetUserById(user?.id);
+
   const [open, setOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState("");
 
@@ -71,6 +79,12 @@ const AdminSidebar = () => {
       navigate(menu.path);
     }
   };
+
+  function logoutHandler() {
+    dispatch(logout());
+    navigate("/");
+    toast.success("Logout successfully");
+  }
 
   return (
     <>
@@ -175,22 +189,33 @@ const AdminSidebar = () => {
         </div>
 
         <div className="p-4 border-t border-white/10">
-          <div className="flex items-center justify-between bg-white/5 rounded-2xl p-3">
-            <div className="flex items-center gap-3">
-              <img
-                src="https://i.pravatar.cc/100"
-                alt=""
-                className="w-11 h-11 rounded-full object-cover"
-              />
-              <div>
-                <h3 className="text-sm font-semibold">Bishir</h3>
-                <p className="text-xs text-zinc-400">Administrator</p>
-              </div>
-            </div>
-
-            <button className="p-2 rounded-lg hover:bg-white/10 transition">
-              <LogOut size={18} />
+          <div className="bg-white/5 rounded-3xl p-4 space-y-4 backdrop-blur-md">
+            <button
+            onClick={() => navigate("/")}
+            className="w-full animate-pulse py-3 rounded-2xl bg-(--color-background) hover:bg-(--color-surface) text-white text-sm font-semibold cursor-pointer">
+              Go To Official Page
             </button>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img
+                  src="https://i.pravatar.cc/100"
+                  alt=""
+                  className="w-12 h-12 rounded-2xl object-cover border border-white/10"
+                />
+                <div>
+                  <h3 className="text-sm font-semibold text-white">
+                    {data?.name}
+                  </h3>
+                  <p className="text-xs text-gray-400 mt-0.3">Administrator</p>
+                </div>
+              </div>
+              <button
+                onClick={logoutHandler}
+                className="p-3 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all duration-200 cursor-pointer"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
         </div>
       </aside>

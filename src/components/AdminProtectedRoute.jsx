@@ -4,7 +4,10 @@ import AdminSidebar from "./admin/AdminSidebar";
 import { useSelector } from "react-redux";
 
 const AdminProtectedRoute = () => {
-  const {user} = useSelector(s => s.auth)
+  const {user , loading} = useSelector(s => s.auth)
+    if (loading) {
+    return <h1>Loading...</h1>;
+  }
   return user && user?.role === "admin" ? (
     <div className="flex">
       <AdminSidebar />
@@ -13,7 +16,7 @@ const AdminProtectedRoute = () => {
       </main>
     </div>
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/" replace />
   );
 };
 

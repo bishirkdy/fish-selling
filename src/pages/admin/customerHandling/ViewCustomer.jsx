@@ -52,7 +52,7 @@ const ViewCustomer = () => {
     }
   }, [userOrders, showOrderId]);
 
-  if (isLoading || userOrderLoading) {
+  if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Loader />
@@ -270,7 +270,7 @@ const ViewCustomer = () => {
                       className="inline-flex items-center cursor-pointer gap-2 bg-cyan-50 text-(--color-surface) px-4 py-2 rounded-xl font-semibold"
                     >
                       <BaggageClaim size={16} />
-                      Orders
+                      {userOrderLoading ? "Fetching..." : "Orders"}
                     </div>
                   </td>
                   <td className="py-5 pl-6">

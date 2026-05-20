@@ -6,7 +6,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     return config;
   },
   (error) => Promise.reject(error)
