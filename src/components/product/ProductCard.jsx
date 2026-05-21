@@ -13,6 +13,7 @@ import {
   setToFavorite,
   removeFromFavorite,
 } from "../../redux/features/favoriteSlice";
+import React from "react";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -112,7 +113,6 @@ const ProductCard = ({ product }) => {
 
   function removeFromFav(e, productId) {
     e.stopPropagation();
-
     const removableData = {
       userId: user?.id,
       productId,
@@ -136,7 +136,7 @@ const ProductCard = ({ product }) => {
   return (
     <div
       onClick={() => handleClick(product.id)}
-      className="bg-(--color-surface) rounded-2xl overflow-hidden border border-white/10 hover:border-(--color-accent) hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full shadow-lg hover:shadow-amber-500/20 cursor-pointer"
+      className="bg-(--color-surface) rounded-2xl overflow-hidden border border-white/10 hover:border-(--color-accent) hover:-translate-y-2 transition-transform duration-300 group flex flex-col h-full shadow-lg hover:shadow-amber-500/20 cursor-pointer"
     >
       <div className="relative overflow-hidden">
         <img
@@ -210,4 +210,4 @@ const ProductCard = ({ product }) => {
   );
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);

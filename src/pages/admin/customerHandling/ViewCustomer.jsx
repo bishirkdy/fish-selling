@@ -39,7 +39,8 @@ const ViewCustomer = () => {
     useUnblockUser();
   const { mutate, isPending } = useEditOrderStatus();
   const filteredCustomers = data?.filter((customer) =>
-    customer.name.toLowerCase().includes(search.toLowerCase()),
+    customer.name.toLowerCase().includes(search.toLowerCase()) ||
+    customer.email.toLowerCase().includes(search.toLowerCase())
   );
   useEffect(() => {
     if (showOrderId && userOrders) {
@@ -218,7 +219,7 @@ const ViewCustomer = () => {
             </thead>
 
             <tbody>
-              {filteredCustomers?.map((customer) => (
+              {filteredCustomers?.map((customer, index) => (
                 <tr
                   key={customer.id}
                   className="border-b hover:bg-gray-50 transition"
@@ -248,12 +249,7 @@ const ViewCustomer = () => {
 
                   <td className="px-6 py-5">
                     <span
-                      className={`
-                        px-4
-                        py-2
-                        rounded-full
-                        text-sm
-                        font-semibold
+                      className={`px-4 py-2 rounded-full text-sm font-semibold
                         ${
                           customer.isBlocked
                             ? "bg-red-100 text-red-600"
@@ -270,7 +266,7 @@ const ViewCustomer = () => {
                       className="inline-flex items-center cursor-pointer gap-2 bg-cyan-50 text-(--color-surface) px-4 py-2 rounded-xl font-semibold"
                     >
                       <BaggageClaim size={16} />
-                      {userOrderLoading ? "Fetching..." : "Orders"}
+                      {userOrderLoading  ? "Fetching..." : "Orders"}
                     </div>
                   </td>
                   <td className="py-5 pl-6">
@@ -280,12 +276,12 @@ const ViewCustomer = () => {
                           ? unblockUserHandler(customer.id)
                           : blockUserHandler(customer.id)
                       }
-                      className={`w-10 h-10 flex items-center justify-center rounded-xl transition cursor-pointer
-      ${
-        customer.isBlocked
-          ? "bg-green-100 hover:bg-green-200 text-green-600"
-          : "bg-red-100 hover:bg-red-200 text-red-600"
-      }
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl transition cursor-pointer 
+                        ${
+                          customer.isBlocked
+                            ? "bg-green-100 hover:bg-green-200 text-green-600"
+                            : "bg-red-100 hover:bg-red-200 text-red-600"
+                        }
     `}
                     >
                       {customer.isBlocked ? (

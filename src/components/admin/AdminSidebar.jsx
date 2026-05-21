@@ -54,12 +54,7 @@ const menus = [
     title: "Analytics",
     icon: BarChart3,
     path: "/admin/analytics",
-  },
-  {
-    title: "Settings",
-    icon: Settings,
-    path: "/admin/settings",
-  },
+  }
 ];
 
 const AdminSidebar = () => {

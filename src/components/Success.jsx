@@ -7,15 +7,17 @@ import Loader from "./Loader";
 const Success = () => {
   const navigate = useNavigate();
   const location = useLocation()
-const {data , isLoading} = useGetLatestOrder(location.state.id)
+const {data , isLoading} = useGetLatestOrder(location?.state?.id)
 if (isLoading) {
     return (
-      <div className="w-screen h-screen bg(--color-bg) flex items-center justify-center">
+      <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
         <Loader />
       </div>
     );
   }
-  
+  if(!data){
+    navigate("/")
+  }
   return (
     <div className="min-h-screen bg-(--color-background) flex items-center justify-center px-4">
       <div className="w-full max-w-lg bg-(--color-surface) border border-white/10 rounded-3xl p-8 text-center shadow-2xl">
@@ -40,11 +42,6 @@ if (isLoading) {
             <span className="text-green-400 font-semibold">{data.orderMethod}</span>
           </div>
 
-          <div className="flex items-center justify-between text-sm mb-3">
-            <span className="text-gray-400">Order Status</span>
-            <span className="text-yellow-400 font-semibold">{data.orderStatus}</span>
-          </div>
-
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-400">Delivery</span>
             <span className="text-white font-medium">Estimated 3-5 Days</span>
@@ -55,7 +52,7 @@ if (isLoading) {
             onClick={() => navigate(`/orders/${data.user}`)}
             className="flex-1 bg-white/10 hover:bg-white/15 text-white py-3 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <ShoppingBag size={18} />
+            <ShoppingBag size={18}/>
             View Orders
           </button>
 

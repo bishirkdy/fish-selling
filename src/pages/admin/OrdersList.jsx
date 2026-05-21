@@ -325,7 +325,7 @@ const OrdersList = () => {
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {order.paymentStatus}
+                      {order.paymentStatus ? order.paymentStatus : "PENDING"}
                     </span>
                   </td>
                   <td className="px-6 py-2">

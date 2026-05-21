@@ -9,14 +9,16 @@ import {
 } from "lucide-react";
 
 const TrackOrderDetail = ({ setViewTrack, data }) => {
-  console.log(data);
+  const isCancelled = data.orderStatus === "Cancelled";
   const trackingSteps = [
     {
       title: "Order Placed",
       description: "Your order has been placed successfully.",
       icon: <Clock size={18} />,
       completed: data.orderedDate ? true : false,
-      time:  data?.orderedDate ? new Date(data?.orderedDate).toLocaleString() : "",
+      time: data?.orderedDate
+        ? new Date(data?.orderedDate).toLocaleString()
+        : "",
     },
 
     {
@@ -24,7 +26,9 @@ const TrackOrderDetail = ({ setViewTrack, data }) => {
       description: "Seller confirmed your order.",
       icon: <CheckCircle size={18} />,
       completed: data.confirmTime ? true : false,
-      time:  data?.confirmTime ? new Date(data?.confirmTime).toLocaleString() : "",
+      time: data?.confirmTime
+        ? new Date(data?.confirmTime).toLocaleString()
+        : "",
     },
 
     {
@@ -32,7 +36,7 @@ const TrackOrderDetail = ({ setViewTrack, data }) => {
       description: "Your package has been packed.",
       icon: <Package size={18} />,
       completed: data.packedTime ? true : false,
-      time:  data?.packedTime ? new Date(data?.packedTime).toLocaleString() : "",
+      time: data?.packedTime ? new Date(data?.packedTime).toLocaleString() : "",
     },
 
     {
@@ -40,7 +44,9 @@ const TrackOrderDetail = ({ setViewTrack, data }) => {
       description: "Courier picked up your package.",
       icon: <Truck size={18} />,
       completed: data.shippingTime ? true : false,
-      time:  data?.shippingTime ? new Date(data?.shippingTime).toLocaleString() : "",
+      time: data?.shippingTime
+        ? new Date(data?.shippingTime).toLocaleString()
+        : "",
     },
 
     {
@@ -48,15 +54,23 @@ const TrackOrderDetail = ({ setViewTrack, data }) => {
       description: "Delivery partner is on the way.",
       icon: <MapPin size={18} />,
       completed: data.deliveryStartTime ? true : false,
-      time:  data?.deliveryStartTime ? new Date(data?.deliveryStartTime).toLocaleString() : "",
+      time: data?.deliveryStartTime
+        ? new Date(data?.deliveryStartTime).toLocaleString()
+        : "",
     },
 
     {
-      title: "Delivered",
-      description: "Package delivered successfully.",
-      icon: <CheckCircle size={18} />,
-      completed: data.deliveredTime ? true : false,
-      time:  data?.deliveredTime ? new Date(data?.deliveredTime).toLocaleString() : "",
+      title: isCancelled ? "Cancelled" : "Delivered",
+      description: isCancelled
+        ? "Your order has been cancelled."
+        : "Package delivered successfully.",
+      icon: isCancelled ? <CircleX size={18} /> : <CheckCircle size={18} />,
+      completed: isCancelled ? true : !!data.deliveredTime,
+      time: isCancelled
+        ? new Date(data.canceledTime).toLocaleString()
+        : data?.deliveredTime
+          ? new Date(data?.deliveredTime).toLocaleString()
+          : "",
     },
   ];
 
@@ -84,16 +98,22 @@ const TrackOrderDetail = ({ setViewTrack, data }) => {
               {index !== trackingSteps.length - 1 && (
                 <div
                   className={`absolute left-4.75 top-10 w-1 h-full ${
-                    step.completed ? "bg-green-500" : "bg-gray-700"
+                    isCancelled
+                      ? "bg-red-500"
+                      : step.completed
+                        ? "bg-green-500"
+                        : "bg-gray-700"
                   }`}
                 />
-             )}
+              )}
 
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 z-10 border ${
-                  step.completed
-                    ? "bg-green-500 border-green-500 text-black"
-                    : "bg-gray-900 border-gray-700 text-gray-500"
+                  isCancelled
+                    ? "bg-red-500 border-red-500 text-white"
+                    : step.completed
+                      ? "bg-green-500 border-green-500 text-black"
+                      : "bg-gray-900 border-gray-700 text-gray-500"
                 }`}
               >
                 {step.icon}
