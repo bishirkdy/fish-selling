@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getProductById,
   getProductsByFiltered,
-  getRatingCount,
   getSixFeaturedProduct,
 } from "../../api/productApi";
 
@@ -36,10 +35,3 @@ export const useGetProductById = (id) => {
 //     enabled : !!products
 //   })
 // }
-
-export const useGetRatingCount = () => {
-  return useQuery({
-    queryKey : ["rating-count"],
-    queryFn : getRatingCount,
-  })
-}

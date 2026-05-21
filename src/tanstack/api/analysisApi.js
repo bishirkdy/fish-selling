@@ -66,3 +66,47 @@ export const lastSevenMonthProduct = async () => {
     calculated,
   };
 };
+
+
+export const getRatingCount = async () => {
+  const res = await api.get("/reviews");
+  const ratings = {
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
+  };
+
+  res.data.forEach((review) => {
+    ratings[review.rating]++;
+  });
+
+  return [
+    {
+      name: "5 Star",
+      value: ratings[5],
+      fill: "#22c55e",
+    },
+    {
+      name: "4 Star",
+      value: ratings[4],
+      fill: "#3b82f6",
+    },
+    {
+      name: "3 Star",
+      value: ratings[3],
+      fill: "#eab308",
+    },
+    {
+      name: "2 Star",
+      value: ratings[2],
+      fill: "#f97316",
+    },
+    {
+      name: "1 Star",
+      value: ratings[1],
+      fill: "#ef4444",
+    },
+  ];
+};

@@ -1,5 +1,5 @@
 import {  useQuery } from "@tanstack/react-query";
-import { getCountOfTotalAndProfit, getLastSevenMonthAnalysis, lastSevenMonthProduct } from "../../api/analysisApi";
+import { getCountOfTotalAndProfit, getLastSevenMonthAnalysis, getRatingCount, lastSevenMonthProduct } from "../../api/analysisApi";
 
 export const useGetAllCartDataOfUser = () => {
   return useQuery({
@@ -20,4 +20,11 @@ export const useLastMonthsProductCount = () => {
     queryKey : ["profit-chart"],
     queryFn : lastSevenMonthProduct
    })
+}
+
+export const useGetRatingCount = () => {
+  return useQuery({
+    queryKey : ["rating-count"],
+    queryFn : getRatingCount,
+  })
 }

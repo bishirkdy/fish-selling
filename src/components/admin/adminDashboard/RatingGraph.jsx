@@ -6,7 +6,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useGetRatingCount } from "../../../tanstack/hooks/queries/productQueries";
+import { useGetRatingCount } from "../../../tanstack/hooks/queries/analysisQueries";
 
 
 const RatingChart = () => {
