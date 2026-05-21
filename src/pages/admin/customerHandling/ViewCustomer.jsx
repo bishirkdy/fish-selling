@@ -23,10 +23,11 @@ import {
 } from "../../../tanstack/hooks/mutations/userMutation";
 import Loader from "../../../components/Loader";
 const ViewCustomer = () => {
-  const [search, setSearch] = useState("");
   const [showOrderId, setShowOrderId] = useState(null);
   const [viewUserOrder, setViewUserOrder] = useState(false);
   const [orderedData, setOrderedData] = useState(null);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const { data, isLoading, isError } = useGetUsers();
   const client = useQueryClient();
   const {
@@ -38,10 +39,20 @@ const ViewCustomer = () => {
   const { mutate: userUnblockMutate, isPending: unblockPending } =
     useUnblockUser();
   const { mutate, isPending } = useEditOrderStatus();
-  const filteredCustomers = data?.filter((customer) =>
-    customer.name.toLowerCase().includes(search.toLowerCase()) ||
-    customer.email.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCustomers = data?.filter((customer) => {
+    const searchMatch =
+      customer.name.toLowerCase().includes(search.toLowerCase()) ||
+      customer.email.toLowerCase().includes(search.toLowerCase());
+
+    const statusMatch =
+      filter === "all"
+        ? true
+        : filter === "blocked"
+          ? customer.isBlocked
+          : !customer.isBlocked;
+
+    return searchMatch && statusMatch;
+  });
   useEffect(() => {
     if (showOrderId && userOrders) {
       setOrderedData(userOrders);
@@ -162,34 +173,56 @@ const ViewCustomer = () => {
         </div>
       </div>
 
-      <div className="border-(--color-background) border-2 rounded-2xl shadow-sm mb-6">
-        <div className="relative">
-          <Search
-            size={18}
+      <div className="border-(--color-background) rounded-2xl shadow-sm mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search
+              size={18}
+              className="
+        absolute
+        top-1/2
+        left-4
+        -translate-y-1/2
+      "
+            />
+
+            <input
+              type="text"
+              placeholder="Search customer..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="
+        w-full
+        border
+        border-gray-300
+        rounded-2xl
+        pl-11
+        pr-4
+        py-3
+        outline-none
+        focus:ring-2
+      "
+            />
+          </div>
+
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
             className="
-              absolute
-              top-1/2
-              left-4
-              -translate-y-1/2
-            "
-          />
-          <input
-            type="text"
-            placeholder="Search customer..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="
-              w-full
-              border
-              border-gray-300
-              rounded-2xl
-              pl-11
-              pr-4
-              py-3
-              outline-none
-              focus:ring-2
-            "
-          />
+      border
+      border-gray-300
+      rounded-2xl
+      px-4
+      py-3
+      outline-none
+      focus:ring-2
+      bg-white
+    "
+          >
+            <option value="all">All Users</option>
+            <option value="active">Active Users</option>
+            <option value="blocked">Blocked Users</option>
+          </select>
         </div>
       </div>
       <div className="bg-white rounded-3xl shadow-sm overflow-hidden">
@@ -266,7 +299,7 @@ const ViewCustomer = () => {
                       className="inline-flex items-center cursor-pointer gap-2 bg-cyan-50 text-(--color-surface) px-4 py-2 rounded-xl font-semibold"
                     >
                       <BaggageClaim size={16} />
-                      {userOrderLoading  ? "Fetching..." : "Orders"}
+                      {userOrderLoading ? "Fetching..." : "Orders"}
                     </div>
                   </td>
                   <td className="py-5 pl-6">

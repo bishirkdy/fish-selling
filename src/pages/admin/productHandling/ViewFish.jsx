@@ -21,6 +21,12 @@ const ViewFish = () => {
   const { data, isLoading, isError } = useGetProducts();
   const [view, setView] = useState(false);
   const [selectedFish, setSelectedFish] = useState(null);
+  const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState("");
+  const [stockFilter, setStockFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 8;
   const client = useQueryClient();
   const navigate = useNavigate();
   const { mutate: deleteMutate, isPending } = useDeleteProduct();
@@ -33,13 +39,37 @@ const ViewFish = () => {
     );
   }
 
-  const filteredFish = data?.filter(
-    (fish) =>
-      fish.name.toLowerCase().includes(search.toLowerCase()) ||
-      fish.category.toLowerCase().includes(search.toLowerCase()) ||
-      fish.price.toLowerCase().includes(search.toLowerCase()) ||
-      fish.discountPercentage.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredFish = data
+    ?.filter((fish) => {
+      const matchSearch =
+        fish.name.toLowerCase().includes(search.toLowerCase()) ||
+        fish.category.toLowerCase().includes(search.toLowerCase());
+
+      const matchCategory = category === "all" || fish.category === category;
+
+      const matchStock =
+        stockFilter === ""
+          ? true
+          : stockFilter === "instock"
+            ? fish.stock > 0
+            : fish.stock === 0;
+
+      return matchSearch && matchCategory && matchStock;
+    })
+    ?.sort((a, b) => {
+      if (sort === "low-high") {
+        return Number(a.price) - Number(b.price);
+      }
+      if (sort === "high-low") {
+        return Number(b.price) - Number(a.price);
+      }
+      return 0;
+    });
+
+  const totalPages = Math.ceil(filteredFish?.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFish = filteredFish?.slice(startIndex, endIndex);
 
   function deleteProductHandler(id) {
     deleteMutate(id, {
@@ -66,18 +96,50 @@ const ViewFish = () => {
           <h1 className="text-3xl font-bold text-gray-800">Fish Products</h1>
           <p className="text-gray-500">Manage all available fish products</p>
         </div>
-        <div className="relative">
-          <Search
-            size={18}
-            className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"
-          />
-          <input
-            type="text"
-            placeholder="Search fish..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-(--color-surface) rounded-2xl pl-11 r-4 py-3 outline-none focus:border-(--color-accent)"
-          />
+
+        <div className="flex flex-wrap gap-4 mb-6">
+          <div className="relative">
+            <Search
+              size={18}
+              className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="text"
+              placeholder="Search fish..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border border-(--color-surface) rounded-2xl pl-11 r-4 py-3 outline-none focus:border-(--color-accent)"
+            />
+          </div>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="border p-3 rounded-xl"
+          >
+            <option value="all">All Categories</option>
+            <option value="Fresh Fish">Fresh Fish</option>
+            <option value="Sea Fish">Sea Fish</option>
+          </select>
+
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="border p-3 rounded-xl"
+          >
+            <option value="">Sort By</option>
+            <option value="low-high">Price Low to High</option>
+            <option value="high-low">Price High to Low</option>
+          </select>
+
+          <select
+            value={stockFilter}
+            onChange={(e) => setStockFilter(e.target.value)}
+            className="border p-3 rounded-xl"
+          >
+            <option value="">All Stock</option>
+            <option value="instock">In Stock</option>
+            <option value="outstock">Out of Stock</option>
+          </select>
         </div>
       </div>
 
@@ -91,7 +153,7 @@ const ViewFish = () => {
           gap-6
         "
       >
-        {filteredFish?.map((fish) => (
+        {paginatedFish?.map((fish) => (
           <div
             key={fish.id}
             className="rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 border border-gray-100"
@@ -149,8 +211,36 @@ const ViewFish = () => {
           </div>
         ))}
       </div>
+      <div className="flex items-center justify-center gap-3 mt-10">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
+        >
+          Prev
+        </button>
 
-      {filteredFish?.length === 0 && (
+        {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            className={`w-10 h-10 rounded-xl ${
+              currentPage === index + 1 ? "bg-black text-white" : "bg-gray-200"
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+      {paginatedFish?.length === 0 && (
         <div className="rounded-3xl p-12 mt-8 flex flex-col items-center justify-center text-center">
           <Fish size={60} className="text-gray-300 mb-4" />
           <h2 className="text-2xl font-bold text-gray-700">No Fish Found</h2>

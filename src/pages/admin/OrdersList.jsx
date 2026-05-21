@@ -40,6 +40,8 @@ const OrdersList = () => {
   const [view, setView] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
 
   const {
     data: orderStatus,
@@ -49,13 +51,29 @@ const OrdersList = () => {
   const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
-    if (isLoading || statusLoading) {
+  if (isLoading || statusLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Loader />
       </div>
     );
   }
+  const filteredOrders = data?.filter((order) => {
+    const matchesSearch =
+      order.id.toLowerCase().includes(search.toLowerCase()) ||
+      order.orderMethod.toLowerCase().includes(search.toLowerCase()) ||
+      order.user_name.toLowerCase().includes(search.toLowerCase()) ||
+      order.shippingAddress?.email
+        ?.toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesFilter =
+      filterStatus === "All" ||
+      order.products.some((item) => item.orderStatus === filterStatus);
+
+    return matchesSearch && matchesFilter;
+  });
+
   if (!data || data.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -66,8 +84,7 @@ const OrdersList = () => {
       </div>
     );
   }
-  const currentOrder = data?.find((order) => order.id === selectedOrder?.id);
-
+  const currentOrder = selectedOrder;
   function viewOrderProducts(order) {
     setSelectedOrder(order);
     setOrderId(order.id);
@@ -227,23 +244,41 @@ const OrdersList = () => {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 border-b">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 border-b">
           <h2 className="text-xl font-semibold text-gray-800">Recent Orders</h2>
 
-          <div className="relative w-full md:w-75">
-            <Search
-              size={18}
-              className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <div className="relative w-full md:w-80">
+              <Search
+                size={18}
+                className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+              />
 
-            <input
-              type="text"
-              placeholder="Search orders..."
-              className="w-full border border-gray-300 rounded-xl py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-black"
-            />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search orders..."
+                className="w-full border border-gray-300 rounded-xl py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-black"
+              />
+            </div>
+
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
+            >
+              <option value="All">All Status</option>
+              <option value="Order Placed">Order Placed</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Packed">Packed</option>
+              <option value="Shipping">Shipping</option>
+              <option value="Out For Delivery">Out For Delivery</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
           </div>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full min-w-275">
             <thead className="bg-gray-50 border-b">
@@ -272,7 +307,7 @@ const OrdersList = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.map((order, index) => (
+              {filteredOrders?.map((order, index) => (
                 <tr
                   key={order.id || index}
                   className="border-b last:border-none transition"
@@ -340,6 +375,13 @@ const OrdersList = () => {
                   </td>
                 </tr>
               ))}
+              {filteredOrders?.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="text-center py-10 text-gray-500">
+                    No matching orders found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -407,71 +449,80 @@ const OrdersList = () => {
               </div>
 
               <div className="p-3 md:p-6 space-y-6">
-                {currentOrder?.products?.map((item, index) => (
-                  <div key={index} className="rounded-3xl overflow-hidden">
-                    <div className="p-3 md:p-6">
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <img
-                          src={item.product.images}
-                          alt={item.product.name}
-                          className="w-full sm:w-28 h-48 sm:h-28 object-cover rounded-2xl"
-                        />
+                {currentOrder?.products?.map((item, index) => {
+                  const product = item?.product;
 
-                        <div className="flex-1">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                            <div>
-                              <h1 className="font-bold text-base md:text-lg text-gray-800">
-                                {item.product.name}
-                              </h1>
+                  return (
+                    <div key={index} className="rounded-3xl overflow-hidden">
+                      <div className="p-3 md:p-6">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                          <img
+                            src={product?.images || "/no-image.png"}
+                            alt={product?.name || "Product"}
+                            className="w-full sm:w-28 h-48 sm:h-28 object-cover rounded-2xl"
+                          />
 
-                              <p className="text-xs md:text-sm text-gray-500 mt-1">
-                                {item.product.category}
-                              </p>
+                          <div className="flex-1">
+                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                              <div>
+                                <h1 className="font-bold text-base md:text-lg text-gray-800">
+                                  {product?.name || "Product Removed"}
+                                </h1>
+
+                                <p className="text-xs md:text-sm text-gray-500 mt-1">
+                                  {product?.category || "No Category"}
+                                </p>
+                              </div>
+
+                              <select
+                                disabled={isPending}
+                                value={item?.orderStatus}
+                                onChange={(e) =>
+                                  orderStatusHandler(
+                                    item?.productId,
+                                    e.target.value,
+                                  )
+                                }
+                                className="px-3 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-cyan-500"
+                              >
+                                <option value="Order Placed">
+                                  Order Placed
+                                </option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Packed">Packed</option>
+                                <option value="Shipping">Shipping</option>
+                                <option value="Out For Delivery">
+                                  Out For Delivery
+                                </option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                              </select>
                             </div>
-                            <select
-                              disabled={isPending}
-                              value={item.orderStatus}
-                              onChange={(e) =>
-                                orderStatusHandler(
-                                  item.productId,
-                                  e.target.value,
-                                )
-                              }
-                              className="px-3 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-cyan-500"
-                            >
-                              <option value="Order Placed">Order Placed</option>
-                              <option value="Confirmed">Confirmed</option>
-                              <option value="Packed">Packed</option>
-                              <option value="Shipping">Shipping</option>
-                              <option value="Out For Delivery">
-                                Out For Delivery
-                              </option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
-                            </select>
-                          </div>
-                          <p className="text-xs md:text-sm text-gray-500 mt-3">
-                            {item.product.description}
-                          </p>
 
-                          <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
-                            <span className="font-bold text-green-600 text-base md:text-lg">
-                              ₹ {item.product.price}
-                            </span>
+                            <p className="text-xs md:text-sm text-gray-500 mt-3">
+                              {product?.description ||
+                                "No description available"}
+                            </p>
 
-                            <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
-                              Qty : {item.quantity}
-                            </span>
+                            <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
+                              <span className="font-bold text-green-600 text-base md:text-lg">
+                                ₹ {product?.price || 0}
+                              </span>
 
-                            <span className="px-3 py-1 rounded-full bg-blue-100 text-(--color-surface) text-xs md:text-sm">
-                              {item.paymentStatus}
-                            </span>
+                              <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
+                                Qty : {item?.quantity}
+                              </span>
+
+                              <span className="px-3 py-1 rounded-full bg-blue-100 text-(--color-surface) text-xs md:text-sm">
+                                {item?.paymentStatus || "PENDING"}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

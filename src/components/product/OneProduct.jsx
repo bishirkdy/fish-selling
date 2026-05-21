@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
-import { Check, Truck } from "lucide-react";
+import { Check, Star, Truck } from "lucide-react";
 import { setToCart } from "../../redux/features/cartSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
@@ -9,16 +9,24 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader";
 import { priceDiscounted } from "../../utils/priceDescounted";
+import { useAddReview } from "../../tanstack/hooks/mutations/reviewMutation";
+import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/reviewQueries";
 
 const OneProduct = () => {
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+
   const { id } = useParams();
   const navigate = useNavigate();
-  const {user} = useSelector(s => s.auth)
+  const { user } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
   const { data, isLoading, isError } = useGetProductById(id);
+  const { data: reviews } = useGetReviewOfProduct(data?.id);
+
   const cartData = useSelector((s) => s.cart.cart);
   const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
+  const { mutate, isPending } = useAddReview();
   const isCart = cartData.some((d) => d.productId === data?.id);
   if (isLoading) {
     return (
@@ -56,8 +64,41 @@ const OneProduct = () => {
     });
   }
 
+  function reviewHandle() {
+    if (!user) {
+      toast.info("Please login");
+      return;
+    }
+    if (!comment.trim()) {
+      return toast.error("Comment required");
+    }
+
+    const review = {
+      productId: data.id,
+      userId: user.id,
+      rating,
+      comment,
+      createdAt: new Date().toISOString(),
+    };
+
+    mutate(review, {
+      onSuccess: () => {
+        toast.success("Review added");
+        setComment("");
+        setRating(5);
+
+        queryClient.invalidateQueries({
+          queryKey: ["reviews"],
+        });
+      },
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
+  }
+
   return (
-    <div className="min-h-screen flex items-center bg-(--color-background) text-(--color-text) p-6">
+    <div className="min-h-screen flex flex-col pt-24 items-center bg-(--color-background) text-(--color-text) p-6">
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
         <div className="rounded-xl overflow-hidden">
           <img
@@ -74,7 +115,7 @@ const OneProduct = () => {
 
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-(--color-accent)">
-              ₹{priceDiscounted(data.price , data.discountPercentage)}
+              ₹{priceDiscounted(data.price, data.discountPercentage)}
             </span>
 
             <span className="text-gray-500 line-through">₹{data.price}</span>
@@ -111,7 +152,7 @@ const OneProduct = () => {
                         quantity: 1,
                       },
                     ],
-                    total: priceDiscounted(data.price , data.discountPercentage),
+                    total: priceDiscounted(data.price, data.discountPercentage),
                   },
                 });
               }}
@@ -127,6 +168,76 @@ const OneProduct = () => {
               {!isCart ? "Add to cart" : " Added to cart"}
             </button>
           </div>
+        </div>
+      </div>
+      <div className="w-[90vw] mx-auto mt-14 border-t border-white/10 pt-10">
+        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+
+        <div className="bg-white/5 rounded-2xl p-5 mb-10">
+          <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
+
+          <div className="flex items-center gap-2 mb-4">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                onClick={() => setRating(star)}
+                className={`text-2xl transition ${
+                  star <= rating ? "text-yellow-400" : "text-gray-500"
+                }`}
+              >
+                <Star fill={star <= rating ? "currentColor" : "none"} />
+              </button>
+            ))}
+          </div>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Write your comment..."
+            className="w-full h-32 bg-black/20 border border-white/10 rounded-xl p-4 outline-none resize-none"
+          />
+
+          <button
+            disabled={isPending}
+            onClick={reviewHandle}
+            className="mt-4 bg-(--color-accent) px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition"
+          >
+            {isPending ? "Submitting..." : "Submit Review"}
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          {reviews?.length > 0 ? (
+            reviews.map((review) => (
+              <div
+                key={review.id}
+                className="bg-white/5 border border-white/10 rounded-2xl p-5"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold">
+                    {review.user?.name || "Unknown User"}
+                  </h4>
+
+                  <div className="flex text-yellow-400">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} size={18} fill="currentColor" />
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {review.comment}
+                </p>
+
+                <p className="text-xs text-gray-500 mt-3">
+                  {new Date(review.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-gray-500 py-10">
+              No reviews yet
+            </div>
+          )}
         </div>
       </div>
     </div>
