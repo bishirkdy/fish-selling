@@ -65,6 +65,9 @@ const AddFish = () => {
 
       const finalData = {
         ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        discountPercentage: Number(formData.discountPercentage),
         createdAt: Date.now(),
         isActive: true,
         images: res.data.secure_url,
@@ -87,7 +90,7 @@ const AddFish = () => {
             discountPercentage: "",
             description: "",
           });
-          setImage(null)
+          setImage(null);
         },
       });
     } catch (error) {

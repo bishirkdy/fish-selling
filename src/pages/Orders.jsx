@@ -91,11 +91,8 @@ const Orders = () => {
     return (
       <div className="min-h-screen text-white bg-(--color-background) flex flex-col items-center justify-center">
         <ShoppingBagIcon size={60} className="text-green-500 mb-4" />
-
         <h1 className="text-2xl font-bold">No Orders Yet</h1>
-
         <p className="text-gray-400 mt-2">Your orders will appear here</p>
-
         <button
           onClick={() => navigate("/")}
           className="md:hidden px-4 py-2 rounded-lg mt-4 bg-(--color-accent)"
@@ -106,13 +103,12 @@ const Orders = () => {
     );
   }
 
-  function handleRemove(orderId) {
-    removeMutate(orderId, {
+  function handleRemove(orderId , productId) {    
+    removeMutate({orderId , productId}, {
       onSuccess: () => {
         client.invalidateQueries({
           queryKey: ["orders", id],
         });
-
         toast.success("Order canceled");
       },
     });
@@ -152,7 +148,6 @@ const Orders = () => {
                     className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm w-fit ${style?.bg} ${style?.text}`}
                   >
                     {style?.icon}
-
                     <span>{item.orderStatus}</span>
                   </div>
                 </div>
@@ -224,11 +219,11 @@ const Orders = () => {
                       </button>
 
                       <button
-                        disabled={isPending}
-                        onClick={() => handleRemove(order.id)}
+                        disabled={isPending || item.orderStatus === "Cancelled"}
+                        onClick={() => handleRemove(order.id , item.product.id)}
                         className="w-full sm:w-auto border cursor-pointer border-gray-700 hover:border-red-500 hover:text-red-400 px-4 py-2 rounded-xl text-sm transition disabled:opacity-50"
                       >
-                        Cancel
+                        {item.orderStatus === "Cancelled" ? <span className="text-red-500">Cancelled</span> : "Cancel"}
                       </button>
                     </div>
                   </div>

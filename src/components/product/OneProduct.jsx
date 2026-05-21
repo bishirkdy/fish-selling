@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
-import { Check, Star, Truck } from "lucide-react";
+import { Check, Star, Truck, X } from "lucide-react";
 import { setToCart } from "../../redux/features/cartSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
@@ -131,8 +131,19 @@ const OneProduct = () => {
 
           <div className="text-sm flex flex-col gap-2 text-gray-400">
             <p className="flex items-center gap-2">
-              <Check size={16} className="text-green-500" />
-              <span>In Stock</span>
+              {data.stock > 0 ? (
+                <>
+                  <Check size={16} className="text-green-500" />
+                  <span>In Stock</span>
+                </>
+              ) : (
+                <>
+                  <X size={16} className="text-red-500" />
+                  <span className="line-through text-red-500">
+                    Out of Stock
+                  </span>
+                </>
+              )}
             </p>
 
             <p className="flex items-center gap-2">
@@ -144,21 +155,28 @@ const OneProduct = () => {
           <div className="flex gap-4 mt-4">
             <button
               onClick={() => {
-                navigate("/payment/cart", {
-                  state: {
-                    items: [
-                      {
-                        productId: data.id,
-                        quantity: 1,
-                      },
-                    ],
-                    total: priceDiscounted(data.price, data.discountPercentage),
-                  },
-                });
+                if (data.stock > 0) {
+                  navigate("/payment/cart", {
+                    state: {
+                      items: [
+                        {
+                          productId: data.id,
+                          quantity: 1,
+                        },
+                      ],
+                      total: priceDiscounted(
+                        data.price,
+                        data.discountPercentage,
+                      ),
+                    },
+                  });
+                }else{
+                  toast.info("Out of Stock")
+                }
               }}
               className="flex-1 bg-(--color-accent) text-(--color-text) py-3 rounded-lg font-semibold hover:opacity-90 cursor-pointer transition"
             >
-              Buy Now
+              {data.stock > 0 ? "Buy Now" : "Out of Stock"}
             </button>
 
             <button

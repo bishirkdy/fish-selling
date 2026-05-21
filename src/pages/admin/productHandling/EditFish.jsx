@@ -93,6 +93,9 @@ const EditFish = () => {
       );
       const final = {
         ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock),
+        discountPercentage: Number(formData.discountPercentage),
         images: res.data.secure_url,
       };
 

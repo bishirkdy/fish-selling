@@ -117,8 +117,11 @@ const ViewFish = () => {
             className="border p-3 rounded-xl"
           >
             <option value="all">All Categories</option>
-            <option value="Fresh Fish">Fresh Fish</option>
-            <option value="Sea Fish">Sea Fish</option>
+            <option value="Freshwater Fish">Freshwater Fish</option>
+            <option value="Saltwater Fish">Saltwater Fish</option>
+            <option value="Exotic Fish">Exotic Fish</option>
+            <option value="Beginner Friendly">Beginner Friendly</option>
+            <option value="Popular Fish">Popular Fish</option>
           </select>
 
           <select
@@ -175,7 +178,16 @@ const ViewFish = () => {
                   <h2 className="text-xl font-bold text-gray-800">
                     {fish.name}
                   </h2>
-                  <p className="text-sm pt-1">Stock : {fish.stock}</p>
+                  <p className="text-sm pt-1">
+                    Stock :{" "}
+                    {fish.stock === 0 ? (
+                      <span className="line-through text-red-500">
+                        Out of Stock
+                      </span>
+                    ) : (
+                      fish.stock
+                    )}
+                  </p>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
@@ -211,35 +223,40 @@ const ViewFish = () => {
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-center gap-3 mt-10">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage((prev) => prev - 1)}
-          className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
-        >
-          Prev
-        </button>
-
-        {[...Array(totalPages)].map((_, index) => (
+      {paginatedFish.length > 0 && (
+        <div className="flex items-center justify-center gap-3 mt-10">
           <button
-            key={index}
-            onClick={() => setCurrentPage(index + 1)}
-            className={`w-10 h-10 rounded-xl ${
-              currentPage === index + 1 ? "bg-black text-white" : "bg-gray-200"
-            }`}
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
           >
-            {index + 1}
+            Prev
           </button>
-        ))}
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage((prev) => prev + 1)}
-          className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index + 1)}
+              className={`w-10 h-10 rounded-xl ${
+                currentPage === index + 1
+                  ? "bg-black text-white"
+                  : "bg-gray-200"
+              }`}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
+
       {paginatedFish?.length === 0 && (
         <div className="rounded-3xl p-12 mt-8 flex flex-col items-center justify-center text-center">
           <Fish size={60} className="text-gray-300 mb-4" />

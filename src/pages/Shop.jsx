@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 const Shop = () => {
   const [params, setParams] = useSearchParams();
-const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -19,7 +19,7 @@ const [fetching, setFetching] = useState(false);
   const price = params.get("price") || "";
 
   const { data, isLoading, isError } = useGetProducts(
-    buildParam(query, category, price, page, sort)
+    buildParam(query, category, price, page, sort),
   );
 
   useEffect(() => {
@@ -28,54 +28,41 @@ const [fetching, setFetching] = useState(false);
     setHasMore(true);
   }, [query, category, price, sort]);
 
- useEffect(() => {
-  if (data) {
-    if (data.length < 6) {
-      setHasMore(false);
+  useEffect(() => {
+    if (data) {
+      if (data.length < 6) {
+        setHasMore(false);
+      }
+
+      setProducts((prev) => {
+        const ids = new Set(prev.map((item) => item.id));
+
+        const filtered = data.filter((item) => !ids.has(item.id));
+
+        return [...prev, ...filtered];
+      });
+
+      setFetching(false);
     }
+  }, [data]);
 
-    setProducts((prev) => {
-      const ids = new Set(
-        prev.map((item) => item.id)
-      );
+  useEffect(() => {
+    const handleScroll = () => {
+      const reachedBottom =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
 
-      const filtered = data.filter(
-        (item) => !ids.has(item.id)
-      );
+      if (reachedBottom && !isLoading && !fetching && hasMore) {
+        setFetching(true);
+        setPage((prev) => prev + 1);
+      }
+    };
 
-      return [...prev, ...filtered];
-    });
+    window.addEventListener("scroll", handleScroll);
 
-    setFetching(false);
-  }
-}, [data]);
-
-useEffect(() => {
-  const handleScroll = () => {
-    const reachedBottom =
-      window.innerHeight + window.scrollY >=
-      document.body.offsetHeight - 300;
-
-    if (
-      reachedBottom &&
-      !isLoading &&
-      !fetching &&
-      hasMore
-    ) {
-      setFetching(true);
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  window.addEventListener("scroll", handleScroll);
-
-  return () => {
-    window.removeEventListener(
-      "scroll",
-      handleScroll
-    );
-  };
-}, [isLoading, fetching, hasMore]);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isLoading, fetching, hasMore]);
   if (isLoading && products.length === 0) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
@@ -138,16 +125,16 @@ useEffect(() => {
     <div className="flex flex-col min-h-screen lg:flex-row gap-6 p-4 pt-22 sm:p-6 lg:p-6 lg:pt-24 lg:px-16 bg-(--color-background) text-white">
       <div className="w-full lg:w-64 bg-(--color-surface) rounded-xl p-5 shadow-md lg:sticky lg:top-12 h-fit">
         <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-3">
-            Category
-          </h2>
+          <h2 className="font-semibold text-lg mb-3">Category</h2>
 
           <div className="flex flex-wrap lg:flex-col gap-2">
             {[
               "",
+              "Freshwater Fish",
               "Saltwater Fish",
               "Exotic Fish",
               "Beginner Friendly",
+              "Popular Fish",
             ].map((cat) => (
               <button
                 key={cat || "all"}
@@ -165,9 +152,7 @@ useEffect(() => {
         </div>
 
         <div className="mb-2">
-          <h2 className="font-semibold text-lg mb-3">
-            Price
-          </h2>
+          <h2 className="font-semibold text-lg mb-3">Price</h2>
 
           <div className="flex flex-wrap lg:flex-col gap-2">
             {[
@@ -216,50 +201,31 @@ useEffect(() => {
         <div className="flex justify-start sm:justify-end mb-4">
           <select
             value={sort}
-            onChange={(e) =>
-              handleSort(e.target.value)
-            }
+            onChange={(e) => handleSort(e.target.value)}
             className="w-full sm:w-auto p-3 border border-white/10 bg-(--color-surface) rounded-lg outline-none"
           >
             <option value="">Default</option>
-            <option value="price-asc">
-              Price Low → High
-            </option>
-            <option value="price-desc">
-              Price High → Low
-            </option>
-            <option value="rating">
-              Top Rated
-            </option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+            <option value="rating">Top Rated</option>
           </select>
         </div>
 
         {products.length === 0 && !isLoading && (
           <div className="text-white h-[60vh] flex flex-col items-center justify-center">
-            <FishSymbol
-              size={60}
-              className="text-green-500 mb-4"
-            />
+            <FishSymbol size={60} className="text-green-500 mb-4" />
 
-            <h1 className="text-2xl font-bold">
-              No Fish Available
-            </h1>
+            <h1 className="text-2xl font-bold">No Fish Available</h1>
 
-            <p className="text-gray-400 mt-2">
-              Available fishes display here
-            </p>
+            <p className="text-gray-400 mt-2">Available fishes display here</p>
           </div>
         )}
 
         {products.length > 0 && (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                />
+                <ProductCard key={product.id} product={product} />
               ))}
             </div>
           </>

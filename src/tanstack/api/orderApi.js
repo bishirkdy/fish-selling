@@ -1,14 +1,30 @@
 import { api } from "../../config/apiClient";
 
 export const addOrders = async (data) => {
+  await Promise.all(
+    data.products.map(async (item) => {
+      const productRes = await api.get(`/products/${item.productId}`);
+      const currentStock = productRes.data.stock;
+      if (currentStock < item.quantity) {
+        throw new Error(`${productRes.data.name} is ${currentStock} Stock and you are trying to buy ${item.quantity} `);
+      }
+    }),
+  );
   const res = await api.post("/orders", data);
+  await Promise.all(
+    data.products.map(async (item) => {
+      const productRes = await api.get(`/products/${item.productId}`);
+      const currentStock = productRes.data.stock;
+      await api.patch(`/products/${item.productId}`, {
+        stock: currentStock - item.quantity,
+      });
+    }),
+  );
   return res.data;
 };
 
-
 export const getOrderByUser = async (user) => {
   const orderRes = await api.get(`/orders?user=${user}`);
-
   const productIds = [];
   orderRes.data.forEach((order) => {
     order.products.forEach((item) => {
@@ -56,8 +72,24 @@ export const getLatestOrderOfUser = async (id) => {
   return res.data;
 };
 
-export const removeOrder = async (id) => {
-  const res = await api.delete(`/orders/${id}`);
+export const removeOrder = async ({
+  orderId,
+  productId,
+}) => {
+  const orderRes = await api.get(`/orders/${orderId}`);
+  const order = orderRes.data;
+  const updatedProducts = order.products.map((item) =>
+    item.productId === productId
+      ? {
+          ...item,
+          orderStatus: "Cancelled",
+          canceledTime: Date.now(),
+        }
+      : item
+  );
+  const res = await api.patch(`/orders/${orderId}`, {
+    products: updatedProducts,
+  });
   return res.data;
 };
 
@@ -97,8 +129,8 @@ export const getAllOrders = async () => {
 
       return {
         ...order,
-        user_name : user.data.name,
-        email : user.data.email,
+        user_name: user.data.name,
+        email: user.data.email,
         shippingAddress: shippingAddressRes.data,
         products: updatedProducts,
       };

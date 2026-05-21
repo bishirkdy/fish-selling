@@ -404,74 +404,64 @@
   ],
   "products": [
     {
-      "id": "1",
       "name": "Clownfish",
-      "description": "Bright orange saltwater fish popular in marine aquariums.",
+      "category": "Saltwater Fish",
       "price": 1500,
-      "discountPercentage": 5,
-      "rating": 4.8,
-      "stock": 40,
-      "brand": "Aquora",
-      "isActive": true,
-      "category": "Saltwater Fish",
-      "thumbnail": "https://source.unsplash.com/400x300/?clownfish",
-      "images": "https://images.unsplash.com/photo-1516408388733-2f8364f2e00b?q=80&w=1114&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-    },
-    {
-      "id": "2",
-      "name": "Blue Tang",
-      "description": "Vibrant blue saltwater fish known from reef aquariums.",
-      "price": 1200,
-      "discountPercentage": 8,
-      "rating": 4.7,
-      "stock": 20,
-      "brand": "Aquora",
-      "isActive": true,
-      "category": "Saltwater Fish",
-      "thumbnail": "https://source.unsplash.com/400x300/?blue-tang",
-      "images": "https://plus.unsplash.com/premium_photo-1664304342009-bdf3fb35a466?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDEyfHx8ZW58MHx8fHx8"
-    },
-    {
-      "id": "3",
-      "name": "Lionfish",
-      "description": "Exotic saltwater fish with striking fins and venomous spines.",
-      "price": 1050,
-      "discountPercentage": 10,
-      "rating": 4.6,
       "stock": 10,
-      "brand": "Aquora",
+      "discountPercentage": 5,
+      "description": "Bright orange saltwater fish popular in marine aquariums",
+      "createdAt": 1779344193127,
       "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779344190/q5jdmyr63re5jdudfz6i.avif",
+      "id": 1
+    },
+    {
+      "name": "Blue Tang",
+      "category": "Saltwater Fish",
+      "price": 1300,
+      "stock": 9,
+      "discountPercentage": 10,
+      "description": "Vibrant blue saltwater fish known from reef aquariums",
+      "createdAt": 1779344323233,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779347345/y9cpzetscnde5yjxskab.avif",
+      "id": 2
+    },
+    {
+      "name": "Lionfish",
       "category": "Exotic Fish",
-      "thumbnail": "https://source.unsplash.com/400x300/?lionfish",
-      "images": "https://plus.unsplash.com/premium_photo-1684933348916-eb63726b6557?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww"
+      "price": 1050,
+      "stock": 5,
+      "discountPercentage": 10,
+      "description": "Exotic saltwater fish with striking fins and venomous spines",
+      "createdAt": 1779344387475,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779344384/slhgflsid5j61e45bs2h.avif",
+      "id": 3
     },
     {
-      "id": "4",
       "name": "Betta Fish",
-      "description": "Colorful freshwater fish ideal for beginners.",
-      "price": 975,
-      "discountPercentage": 3,
-      "rating": 4.9,
-      "stock": 100,
-      "brand": "Aquora",
-      "isActive": true,
       "category": "Beginner Friendly",
-      "thumbnail": "https://source.unsplash.com/400x300/?betta-fish",
-      "images": "https://plus.unsplash.com/premium_photo-1661826882164-0b73f6cdd63d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHRyb3BpY2FsJTIwZmlzaHxlbnwwfHwwfHx8MA%3D%3D"
+      "price": 975,
+      "stock": 30,
+      "discountPercentage": 3,
+      "description": "Colorful freshwater fish ideal for beginners",
+      "createdAt": 1779344528786,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779344526/f6yue228hmca6h8rebsy.avif",
+      "id": 4
     },
     {
-      "id": "5",
       "name": "Goldfish",
-      "description": "Classic beginner fish, easy to care for and maintain.",
-      "price": 760,
-      "discountPercentage": 2,
-      "rating": 4.5,
-      "stock": 150,
-      "brand": "Aquora",
-      "isActive": true,
       "category": "Beginner Friendly",
-      "thumbnail": "https://source.unsplash.com/400x300/?goldfish",
-      "images": "https://plus.unsplash.com/premium_photo-1661964031223-c071fc3dfc31?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHRyb3BpY2FsJTIwZmlzaHxlbnwwfHwwfHx8MA%3D%3D"
+      "price": 760,
+      "stock": 30,
+      "discountPercentage": 3,
+      "description": "Classic beginner fish, easy to care for and maintain",
+      "createdAt": 1779344600137,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779344597/c7q2jiwcne9vldhimmfi.avif",
+      "id": 5
     },
     {
       "id": "6",
@@ -481,7 +471,6 @@
       "discountPercentage": 0,
       "rating": 4.7,
       "stock": 200,
-      "brand": "Aquora",
       "isActive": true,
       "category": "Popular Fish",
       "thumbnail": "https://source.unsplash.com/400x300/?neon-tetra",
@@ -684,364 +673,59 @@
       "images": "https://images.unsplash.com/photo-1749041871044-33b8facf4c35?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NjJ8fHRyb3BpY2FsJTIwZmlzaHxlbnwwfHwwfHx8Mg%3D%3D"
     },
     {
-      "name": "",
-      "category": "",
-      "price": "",
-      "stock": "",
-      "discountPercentage": "",
-      "description": "",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778846994/obvk0p68gfeah7xdofa2.jpg",
-      "id": "zPfp2W_"
-    },
-    {
-      "name": "gold fish",
+      "name": "Biginer simply",
       "category": "Freshwater Fish",
-      "price": "500",
-      "stock": "50",
-      "discountPercentage": "10",
-      "description": "this is good fish",
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1778847675/qyqorhjzyo7njchcd6ct.jpg",
-      "id": "KnDJlzj"
-    },
-    {
-      "name": "Clownfish",
-      "category": "Saltwater Fish",
-      "price": "1500",
-      "stock": "10",
-      "discountPercentage": "5",
-      "description": "Bright orange saltwater fish popular in marine aquariums",
-      "createdAt": 1779259641019,
+      "price": 200,
+      "stock": 30,
+      "discountPercentage": 20,
+      "description": "simple fish live in simple pool",
+      "createdAt": 1779345328154,
       "isActive": true,
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263317/mh9jef7zzomti9c7s4vy.jpg",
-      "id": 1
-    },
-    {
-      "name": "abcd",
-      "category": "Freshwater Fish",
-      "price": "1500",
-      "stock": "2",
-      "discountPercentage": "10",
-      "description": "hello",
-      "createdAt": 1779260113252,
-      "isActive": true,
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263259/gef0hfcttjotlliyitwt.jpg",
-      "id": 4
-    },
-    {
-      "name": "Clownfish",
-      "category": "Beginner Friendly",
-      "price": "100",
-      "stock": "10",
-      "discountPercentage": "2",
-      "description": "he",
-      "createdAt": 1779262271313,
-      "isActive": true,
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779262269/pkipetnebzgpnpbt3iog.jpg",
-      "id": 5
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779345325/jmxu1mtmafvpsyyrlryb.avif",
+      "id": "dnwUaSi"
     }
   ],
-  "carts": [
-    {
-      "user": "j9-opmG",
-      "productId": 1,
-      "price": "1500",
-      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263317/mh9jef7zzomti9c7s4vy.jpg",
-      "discountPercentage": "5",
-      "quantity": 1,
-      "id": 1
-    },
-    {
-      "user": "j9-opmG",
-      "productId": 4,
-      "price": "1500",
-      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779263259/gef0hfcttjotlliyitwt.jpg",
-      "discountPercentage": "10",
-      "quantity": 1,
-      "id": 2
-    },
-    {
-      "user": "j9-opmG",
-      "productId": 5,
-      "price": "100",
-      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779262269/pkipetnebzgpnpbt3iog.jpg",
-      "discountPercentage": "2",
-      "quantity": 1,
-      "id": 3
-    }
-  ],
-  "favorites": [
-    {
-      "userId": "j9-opmG",
-      "productId": 4,
-      "id": 1
-    },
-    {
-      "userId": "j9-opmG",
-      "productId": 1,
-      "id": 2
-    }
-  ],
+  "carts": [],
+  "favorites": [],
   "orders": [
     {
       "user": "j9-opmG",
-      "shippingAddress": 2,
+      "shippingAddress": 1,
       "products": [
         {
-          "productId": 1,
-          "quantity": 1,
-          "paymentStatus": "PAID",
-          "orderStatus": "Shipping",
-          "confirmTime": 1779271247211,
-          "packedTime": 1779270270611,
-          "shippingTime": 1779271392643,
-          "deliveryStartTime": 1779271239422,
-          "deliveredTime": 1779271241922,
-          "canceledTime": 1779271243994
-        }
-      ],
-      "orderMethod": "RAZOR PAY",
-      "totalAmount": 1425,
-      "orderedDate": 1779267732342,
-      "id": "ORD-1779267732342-578",
-      "paymentId": "pay_SrYtZl7cmDWA1B",
-      "paymentStatus": "PAID"
-    },
-    {
-      "user": "j9-opmG",
-      "shippingAddress": 3,
-      "products": [
-        {
-          "productId": 1,
+          "productId": 2,
           "quantity": 1,
           "paymentStatus": "PENDING",
           "orderStatus": "Cancelled",
-          "canceledTime": 1779276419602
-        },
-        {
-          "productId": 4,
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Cancelled",
-          "canceledTime": 1779277046375
-        },
-        {
-          "productId": 5,
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Order Placed"
+          "confirmTime": 1779347646196,
+          "packedTime": 1779347680972,
+          "shippingTime": 1779347691395,
+          "canceledTime": 1779352031537
         }
       ],
       "orderMethod": "CASH",
-      "totalAmount": 2873,
-      "orderedDate": 1779270624613,
-      "id": "ORD-1779270624613-134"
-    },
-    {
-      "user": "j9-opmG",
-      "shippingAddress": 4,
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1,
-          "paymentStatus": "PAID",
-          "orderStatus": "Order Placed"
-        }
-      ],
-      "orderMethod": "RAZOR PAY",
-      "totalAmount": 1425,
-      "orderedDate": 1779277437550,
-      "id": "ORD-1779277437550-711",
-      "paymentId": "pay_SrbeREuTnvUNNU",
-      "paymentStatus": "PAID"
-    },
-    {
-      "user": "USR001",
-      "shippingAddress": 5,
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1,
-          "paymentStatus": "PAID",
-          "orderStatus": "Order Placed"
-        }
-      ],
-      "orderMethod": "RAZOR PAY",
-      "totalAmount": 1425,
-      "orderedDate": 1779285535508,
-      "id": "ORD-1779285535508-758",
-      "paymentId": "pay_SrdxDgnI4lwBFX",
-      "paymentStatus": "PAID"
-    },
-    {
-      "user": "j9-opmG",
-      "shippingAddress": 6,
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Order Placed"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 1104,
-      "orderedDate": 1779333373295,
-      "id": "ORD-1779333373295-190"
-    },
-    {
-      "user": "j9-opmG",
-      "shippingAddress": 7,
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1,
-          "paymentStatus": "PENDING",
-          "orderStatus": "Order Placed"
-        }
-      ],
-      "orderMethod": "CASH",
-      "totalAmount": 1104,
-      "orderedDate": 1779333389892,
-      "id": "ORD-1779333389892-54"
+      "totalAmount": 1170,
+      "orderedDate": 1779347604294,
+      "id": "ORD-1779347604294-648"
     }
   ],
   "analysis": [
     {
-      "total": 1425,
-      "profit": 214,
-      "paymentMethod": "ONLINE",
+      "user": "j9-opmG",
+      "total": 1170,
+      "profit": 176,
+      "paymentMethod": "COD",
       "products": [
         {
-          "productId": 1,
+          "productId": 2,
           "quantity": 1
         }
       ],
-      "date": 1779263703904,
+      "date": 1779347604294,
       "id": 1
-    },
-    {
-      "user": "j9-opmG",
-      "total": 1425,
-      "profit": 214,
-      "paymentMethod": "ONLINE",
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1
-        }
-      ],
-      "date": 1779267732342,
-      "id": 2
-    },
-    {
-      "user": "j9-opmG",
-      "total": 2873,
-      "profit": 431,
-      "paymentMethod": "COD",
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1
-        },
-        {
-          "productId": 4,
-          "quantity": 1
-        },
-        {
-          "productId": 5,
-          "quantity": 1
-        }
-      ],
-      "date": 1779270624613,
-      "id": 3
-    },
-    {
-      "user": "j9-opmG",
-      "total": 1425,
-      "profit": 214,
-      "paymentMethod": "ONLINE",
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1
-        }
-      ],
-      "date": 1779277437550,
-      "id": 4
-    },
-    {
-      "user": "USR001",
-      "total": 1425,
-      "profit": 214,
-      "paymentMethod": "ONLINE",
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1
-        }
-      ],
-      "date": 1779285535508,
-      "id": 5
-    },
-    {
-      "user": "j9-opmG",
-      "total": 1104,
-      "profit": 166,
-      "paymentMethod": "COD",
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1
-        }
-      ],
-      "date": 1779333373295,
-      "id": 6
-    },
-    {
-      "user": "j9-opmG",
-      "total": 1104,
-      "profit": 166,
-      "paymentMethod": "COD",
-      "products": [
-        {
-          "productId": "2",
-          "quantity": 1
-        }
-      ],
-      "date": 1779333389892,
-      "id": 7
     }
   ],
   "addresses": [
-    {
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "kakkandathil",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 1
-    },
-    {
-      "user": "j9-opmG",
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "kakkandathil",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 2
-    },
     {
       "user": "j9-opmG",
       "name": "bishir Mhd",
@@ -1055,85 +739,17 @@
         "pincode": "673572",
         "landmark": "house"
       },
-      "id": 3
-    },
-    {
-      "user": "j9-opmG",
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "kakkandathil",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 4
-    },
-    {
-      "user": "USR001",
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "palazhi",
-        "post": "2505200",
-        "district": "kozhikode",
-        "state": "KERALA",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 5
-    },
-    {
-      "user": "j9-opmG",
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "kakkandathil",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 6
-    },
-    {
-      "user": "j9-opmG",
-      "name": "bishir",
-      "email": "bishirbishi1@gmail.com",
-      "phone": "09048931894",
-      "address": {
-        "street": "kakkandathil",
-        "post": "karuvanpoyil",
-        "district": "kozhikode",
-        "state": "Kerala",
-        "pincode": "673572",
-        "landmark": "house"
-      },
-      "id": 7
+      "id": 1
     }
   ],
   "reviews": [
     {
-      "productId": "2",
+      "productId": 1,
       "userId": "j9-opmG",
-      "rating": 5,
-      "comment": "aas",
-      "createdAt": "2026-05-21T04:29:33.443Z",
+      "rating": 4,
+      "comment": "this fish was good and it is cheap rite in here ",
+      "createdAt": "2026-05-21T06:51:07.757Z",
       "id": 1
-    },
-    {
-      "productId": "1",
-      "userId": "j9-opmG",
-      "rating": 5,
-      "comment": "f",
-      "createdAt": "2026-05-21T04:40:20.739Z",
-      "id": 2
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
