@@ -1,4 +1,3 @@
-import React from "react";
 import ProductCard from "../product/ProductCard";
 import { useGetSixProduct } from "../../tanstack/hooks/queries/productQueries";
 import Loader from "../Loader";
@@ -23,7 +22,7 @@ const SixProductSection = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-        {data?.map((item) => (
+        {data?.data.map((item) => (
           <ProductCard
             key={item.id}
             product={item}

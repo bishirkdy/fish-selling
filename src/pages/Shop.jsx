@@ -13,38 +13,40 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const query = params.get("q") || "";
+  const query = params.get("search") || "";
   const category = params.get("category") || "";
   const sort = params.get("sort") || "";
   const price = params.get("price") || "";
 
-  const { data, isLoading, isError } = useGetProducts(
-    buildParam(query, category, price, page, sort),
-  );
+const { data, isLoading, isError } = useGetProducts(
+  buildParam(query, category, price, page, sort)
+);
+// Reset when filters change
+useEffect(() => {
+  setProducts([]);
+  setPage(1);
+  setHasMore(true);
+}, [query, category, price, sort]);
 
-  useEffect(() => {
-    setProducts([]);
-    setPage(1);
-    setHasMore(true);
-  }, [query, category, price, sort]);
+// Add newly fetched products
+useEffect(() => {
+  if (!data) return;
 
-  useEffect(() => {
-    if (data) {
-      if (data.length < 6) {
-        setHasMore(false);
-      }
+  if (data.length < 6) {
+    setHasMore(false);
+  }
 
-      setProducts((prev) => {
-        const ids = new Set(prev.map((item) => item.id));
+  setProducts((prev) => {
+    const ids = new Set(prev.map((item) => item.id));
 
-        const filtered = data.filter((item) => !ids.has(item.id));
+    const filtered = data.filter((item) => !ids.has(item.id));
 
-        return [...prev, ...filtered];
-      });
+    return [...prev, ...filtered];
+  });
 
-      setFetching(false);
-    }
-  }, [data]);
+  setFetching(false);
+}, [data]);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -184,7 +186,7 @@ const Shop = () => {
                 label: "Clear",
                 value: "",
               },
-            ].map((p) => (
+            ].map((p) => ( 
               <button
                 key={p.value}
                 onClick={() => handlePrice(p.value)}

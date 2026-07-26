@@ -139,6 +139,7 @@ export const getAllOrders = async () => {
   return updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate);
 };
 
+
 export const statesOfOrders = async () => {
   const res = await api.get("/orders");
   const orders = res.data;

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import fish from "../../assets/header.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { generateToken } from "../../utils/generateToken";
 import { useLogin } from "../../tanstack/hooks/mutations/userMutation";
 import { login } from "../../redux/features/authSlice";
 const Login = () => {
@@ -14,7 +13,6 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const loginMutation = useLogin();
-  const token = generateToken();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -23,18 +21,14 @@ const Login = () => {
     e.preventDefault();
     loginMutation.mutate(form, {
       onSuccess: (user) => {
-        const userWithToken = {
-          id: user.id,
-          token,
-          role : user?.role
-        };
+ 
 
-        if (user.role === "admin") {
+        if (user.role === "Admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/");
         }
-        dispatch(login(userWithToken));
+        dispatch(login(user));
         toast.success("Login successful");
       },
       onError: (err) => {

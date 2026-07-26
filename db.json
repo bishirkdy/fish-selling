@@ -406,20 +406,20 @@
     {
       "name": "Clownfish",
       "category": "Saltwater Fish",
-      "price": 1500,
+      "price": 600,
       "stock": 10,
       "discountPercentage": 5,
       "description": "Bright orange saltwater fish popular in marine aquariums",
       "createdAt": 1779344193127,
       "isActive": true,
-      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779344190/q5jdmyr63re5jdudfz6i.avif",
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779353744/cqep3cqqssbwh5i8th3m.avif",
       "id": 1
     },
     {
       "name": "Blue Tang",
       "category": "Saltwater Fish",
       "price": 1300,
-      "stock": 9,
+      "stock": 8,
       "discountPercentage": 10,
       "description": "Vibrant blue saltwater fish known from reef aquariums",
       "createdAt": 1779344323233,
@@ -497,7 +497,7 @@
       "price": 150,
       "discountPercentage": 5,
       "rating": 4.7,
-      "stock": 60,
+      "stock": 58,
       "brand": "Aquora",
       "isActive": true,
       "category": "Popular Fish",
@@ -620,7 +620,7 @@
       "id": "17",
       "name": "Butterfly Fish",
       "description": "Graceful saltwater fish with striking patterns.",
-      "price": 690,
+      "price": 799,
       "discountPercentage": 6,
       "rating": 4.7,
       "stock": 20,
@@ -628,7 +628,7 @@
       "isActive": true,
       "category": "Saltwater Fish",
       "thumbnail": "https://source.unsplash.com/400x300/?butterflyfish",
-      "images": "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8dHJvcGljYWwlMjBmaXNofGVufDB8fDB8fHww"
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779353711/yafk5b32m5am97of0nxz.jpg"
     },
     {
       "id": "18",
@@ -683,10 +683,47 @@
       "isActive": true,
       "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779345325/jmxu1mtmafvpsyyrlryb.avif",
       "id": "dnwUaSi"
+    },
+    {
+      "name": "test fish",
+      "category": "Popular Fish",
+      "price": 200,
+      "stock": 10,
+      "discountPercentage": 2,
+      "description": "this is simple fish",
+      "createdAt": 1779353823622,
+      "isActive": true,
+      "images": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779353821/i8sgo8xuxruzlbbmon2v.avif",
+      "id": "F7t0KJo"
     }
   ],
-  "carts": [],
-  "favorites": [],
+  "carts": [
+    {
+      "user": "j9-opmG",
+      "productId": "8",
+      "price": 150,
+      "image": "https://images.unsplash.com/photo-1509414293116-618c336fdcc2?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzh8fHRyb3BpY2FsJTIwZmlzaHxlbnwwfHwwfHx8Mg%3D%3D",
+      "discountPercentage": 5,
+      "quantity": 1,
+      "id": 1
+    },
+    {
+      "user": "j9-opmG",
+      "productId": 1,
+      "price": 600,
+      "image": "https://res.cloudinary.com/dztjqqoyw/image/upload/v1779353744/cqep3cqqssbwh5i8th3m.avif",
+      "discountPercentage": 5,
+      "quantity": 1,
+      "id": 2
+    }
+  ],
+  "favorites": [
+    {
+      "userId": "j9-opmG",
+      "productId": 4,
+      "id": 1
+    }
+  ],
   "orders": [
     {
       "user": "j9-opmG",
@@ -707,6 +744,62 @@
       "totalAmount": 1170,
       "orderedDate": 1779347604294,
       "id": "ORD-1779347604294-648"
+    },
+    {
+      "user": "WB7CFhZ",
+      "shippingAddress": 2,
+      "products": [
+        {
+          "productId": "8",
+          "quantity": 1,
+          "paymentStatus": "PAID",
+          "orderStatus": "Cancelled",
+          "canceledTime": 1779862448720
+        }
+      ],
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 143,
+      "orderedDate": 1779862181993,
+      "id": "ORD-1779862181993-333",
+      "paymentId": "pay_SuHhCt9rnXAQx2",
+      "paymentStatus": "PAID"
+    },
+    {
+      "user": "j9-opmG",
+      "shippingAddress": 3,
+      "products": [
+        {
+          "productId": "8",
+          "quantity": 1,
+          "paymentStatus": "PAID",
+          "orderStatus": "Cancelled",
+          "canceledTime": 1781857325458
+        }
+      ],
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 143,
+      "orderedDate": 1781857230278,
+      "id": "ORD-1781857230278-784",
+      "paymentId": "pay_T3QD7A9W9umM29",
+      "paymentStatus": "PAID"
+    },
+    {
+      "user": "WB7CFhZ",
+      "shippingAddress": 7,
+      "products": [
+        {
+          "productId": 2,
+          "quantity": 1,
+          "paymentStatus": "PAID",
+          "orderStatus": "Order Placed"
+        }
+      ],
+      "orderMethod": "RAZOR PAY",
+      "totalAmount": 1170,
+      "orderedDate": 1781858108752,
+      "id": "ORD-1781858108752-762",
+      "paymentId": "pay_T3QSZIFYdCZy3S",
+      "paymentStatus": "PAID"
     }
   ],
   "analysis": [
@@ -723,6 +816,90 @@
       ],
       "date": 1779347604294,
       "id": 1
+    },
+    {
+      "user": "WB7CFhZ",
+      "total": 143,
+      "profit": 21,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": "8",
+          "quantity": 1
+        }
+      ],
+      "date": 1779862181993,
+      "id": 2
+    },
+    {
+      "user": "j9-opmG",
+      "total": 143,
+      "profit": 21,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": "8",
+          "quantity": 1
+        }
+      ],
+      "date": 1781857230278,
+      "id": 3
+    },
+    {
+      "user": "WB7CFhZ",
+      "total": 1170,
+      "profit": 176,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 2,
+          "quantity": 1
+        }
+      ],
+      "date": 1781858049317,
+      "id": 4
+    },
+    {
+      "user": "WB7CFhZ",
+      "total": 1170,
+      "profit": 176,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 2,
+          "quantity": 1
+        }
+      ],
+      "date": 1781858067521,
+      "id": 5
+    },
+    {
+      "user": "WB7CFhZ",
+      "total": 1170,
+      "profit": 176,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 2,
+          "quantity": 1
+        }
+      ],
+      "date": 1781858081798,
+      "id": 6
+    },
+    {
+      "user": "WB7CFhZ",
+      "total": 1170,
+      "profit": 176,
+      "paymentMethod": "ONLINE",
+      "products": [
+        {
+          "productId": 2,
+          "quantity": 1
+        }
+      ],
+      "date": 1781858108752,
+      "id": 7
     }
   ],
   "addresses": [
@@ -740,6 +917,96 @@
         "landmark": "house"
       },
       "id": 1
+    },
+    {
+      "user": "WB7CFhZ",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "kakkandathil",
+        "post": "karuvanpoyil",
+        "district": "kozhikode",
+        "state": "Kerala",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 2
+    },
+    {
+      "user": "j9-opmG",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "palazhi",
+        "post": "2505200",
+        "district": "kozhikode",
+        "state": "KERALA",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 3
+    },
+    {
+      "user": "WB7CFhZ",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "palazhi",
+        "post": "2505200",
+        "district": "kozhikode",
+        "state": "KERALA",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 4
+    },
+    {
+      "user": "WB7CFhZ",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "palazhi",
+        "post": "2505200",
+        "district": "kozhikode",
+        "state": "KERALA",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 5
+    },
+    {
+      "user": "WB7CFhZ",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "palazhi",
+        "post": "2505200",
+        "district": "kozhikode",
+        "state": "KERALA",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 6
+    },
+    {
+      "user": "WB7CFhZ",
+      "name": "bishir",
+      "email": "bishirbishi1@gmail.com",
+      "phone": "09048931894",
+      "address": {
+        "street": "palazhi",
+        "post": "2505200",
+        "district": "kozhikode",
+        "state": "KERALA",
+        "pincode": "673572",
+        "landmark": "house"
+      },
+      "id": 7
     }
   ],
   "reviews": [
@@ -750,6 +1017,22 @@
       "comment": "this fish was good and it is cheap rite in here ",
       "createdAt": "2026-05-21T06:51:07.757Z",
       "id": 1
+    },
+    {
+      "productId": "8",
+      "userId": "WB7CFhZ",
+      "rating": 4,
+      "comment": "hi",
+      "createdAt": "2026-05-27T06:08:53.762Z",
+      "id": 2
+    },
+    {
+      "productId": "8",
+      "userId": "j9-opmG",
+      "rating": 5,
+      "comment": "dfdf",
+      "createdAt": "2026-06-19T08:18:28.568Z",
+      "id": 3
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

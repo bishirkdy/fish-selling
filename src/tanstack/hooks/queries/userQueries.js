@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllUser, getUserById, loginUser } from "../../api/userApi";
+import { getAllUser, getCurrentUser, getUserById } from "../../api/userApi";
 
 export const useGetUserById = (id) => {
   return useQuery({
@@ -12,5 +12,12 @@ export const useGetUsers = () => {
   return useQuery({
     queryKey: ["users"],
     queryFn: getAllUser
+  });
+};
+
+export const useGetCurrentUser = () => {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUser,
   });
 };

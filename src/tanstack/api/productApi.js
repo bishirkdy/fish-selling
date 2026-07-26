@@ -1,55 +1,25 @@
 import { api } from "../../config/apiClient";
-import { attachProductRatings } from "../../utils/productRiting";
+const PRODUCT = "/Products";
+
 
 export const getProductsByFiltered = async (params = {}) => {
-  const [productRes, reviewRes] = await Promise.all([
-    api.get("/products", { params }),
-    api.get("/reviews"),
-  ]);
-
-  return attachProductRatings(
-    productRes.data,
-    reviewRes.data
-  );
+  const product = await api.get(`${PRODUCT}`, { params })
+  return product.data.data;
 };
 
 export const getSixFeaturedProduct = async () => {
-  const [productRes, reviewRes] = await Promise.all([
-    api.get("/products"),
-    api.get("/reviews"),
-  ]);
-
-  return attachProductRatings(
-    productRes.data,
-    reviewRes.data
-  )
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 6);
+  const product = await api.get(`${PRODUCT}/six-product`)
+  return product.data;  
 };
 
 export const getProductById = async (id) => {
-  const [productRes, reviewRes] = await Promise.all([
-    api.get(`/products/${id}`),
-    api.get("/reviews", {
-      params: {
-        productId: id,
-      },
-    }),
-  ]);
-
-  return attachProductRatings(
-    [productRes.data],
-    reviewRes.data
-  )[0];
+  const product = await api.get(`${PRODUCT}/${id}`)
+  return product.data;
 };
 
-// export const getUserProductForCart = async (productId) => {
-//     const res = await api.get(`/products/${productId}`)
-//     return res.data
-// }
 
 export const removeProduct = async (id) => {
-    const res = await api.delete(`/products/${id}`)
+    const res = await api.delete(`/${PRODUCT}/${id}`)
     return res.data
 }
 

@@ -6,13 +6,12 @@ import {
   Heart,
   X,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import  {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useGetUserById } from "../tanstack/hooks/queries/userQueries";
+import { useGetCurrentUser } from "../tanstack/hooks/queries/userQueries";
 import Cart from "../pages/Cart";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, clearCart } from "../redux/features/cartSlice";
-import { useGetAllCartDataOfUser } from "../tanstack/hooks/queries/cartQueries";
+import {  clearCart } from "../redux/features/cartSlice";
 import { clearFavorite } from "../redux/features/favoriteSlice";
 import { logout } from "../redux/features/authSlice";
 
@@ -26,7 +25,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const cartFromSlice = useSelector((s) => s.cart.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
-  const { data: loggedUser, isLoading } = useGetUserById(user?.id);
+  const { data: loggedUser , isLoading, isError } = useGetCurrentUser();
 
   function handleSearch(e) {
     navigate(`/shop?q=${search}`);

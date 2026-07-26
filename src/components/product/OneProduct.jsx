@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
 import { Check, Star, Truck, X } from "lucide-react";
@@ -20,9 +20,9 @@ const OneProduct = () => {
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
-  const { data, isLoading, isError } = useGetProductById(id);
+  const { data : response, isLoading, isError } = useGetProductById(id);
+  const data = response?.data;
   const { data: reviews } = useGetReviewOfProduct(data?.id);
-
   const cartData = useSelector((s) => s.cart.cart);
   const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
@@ -102,7 +102,7 @@ const OneProduct = () => {
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
         <div className="rounded-xl overflow-hidden">
           <img
-            src={data.images}
+            src={data.imageUrls[0]}
             alt={data.title}
             className="w-full h-100 object-cover"
           />

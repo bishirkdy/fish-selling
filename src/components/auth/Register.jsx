@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import fish from "../../assets/header.jpg";
 import { useCreateUser } from "../../tanstack/hooks/mutations/userMutation";
 import { useNavigate } from "react-router-dom";
-import { generateToken } from "../../utils/generateToken";
 import { checkUser } from "../../utils/authCheck";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/authSlice";
@@ -17,7 +16,6 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const token = generateToken();
   const { mutate, isPending } = useCreateUser();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,7 +30,6 @@ const Register = () => {
       onSuccess: (user) => {
         toast.success("User added successfully");
         dispatch(login({
-          token,
           id: user.id,
         }));
         navigate("/");

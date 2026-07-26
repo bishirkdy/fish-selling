@@ -1,36 +1,30 @@
 import { api } from "../../config/apiClient";
+const USER = "/User";
 
 export const addUser = async (data) => {
-  const res = await api.post("/users", data);
+  const res = await api.post(`${USER}/register`, data);
   return res.data;
 };
 
 export const getUserById = async (id) => {
-  const res = await api.get(`/users/${id}`);
-  return res.data;
+  const res = await api.get(`/${USER}/${id}`);
+  return res.data.data;
 };
 
+export const getCurrentUser = async () => {
+  const response = await api.get("/user/profile");
+  return response.data.data;
+};
+
+
 export const loginUser = async (data) => {
-  const res = await api.get(`/users?email=${data.email}`);
-  const user = res.data[0];
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (user.isBlocked) {
-    throw new Error("User has been blocked by admin");
-  }
-  if (user.password !== data.password) {
-    throw new Error("Invalid password");
-  }
-  return user;
+  const res = await api.post(`${USER}/login`, data);
+  return res.data.data;
 };
 
 export const getAllUser = async () => {
-  const res = await api.get(`/users`);
-  const filtered = res.data.filter((data) => {
-    return data.role !== "admin";
-  });
-  return filtered;
+  const res = await api.get(`${USER}`);
+  return res.data;
 };
 
 export const blockUser = async (id) => {
