@@ -1,17 +1,12 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Trash2, Heart } from "lucide-react";
-import { removeFromFavorite } from "../redux/features/favoriteSlice";
+import { useSelector } from "react-redux";
+import {  Heart } from "lucide-react";
 import ProductCard from "../components/product/ProductCard";
 import { useNavigate } from "react-router-dom";
 
 const Favorite = () => {
-  const dispatch = useDispatch();
   const favData = useSelector((state) => state.favorite.favorite);
   const navigate = useNavigate()
-  const handleRemove = (id) => {
-    dispatch(removeFromFavorite(id));
-  };
+
 
   if (!favData || favData.length === 0) {
     return (

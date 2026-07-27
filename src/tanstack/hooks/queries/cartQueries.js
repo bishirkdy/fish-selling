@@ -1,11 +1,11 @@
 import {  useQuery } from "@tanstack/react-query";
 import { getAllCartDataOfUser } from "../../api/cartApi";
 
-export const useGetAllCartDataOfUser = (userId) => {
+export const useGetAllCartDataOfUser = ({ enabled = true } = {}) => {
   return useQuery({
-    queryKey: ["carts", userId],
-    queryFn: () => getAllCartDataOfUser(userId),
-    enabled: !!userId,
+    queryKey: ["cart"],
+    queryFn: () => getAllCartDataOfUser(),
+    enabled
   });
 };
 

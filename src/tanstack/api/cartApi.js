@@ -1,43 +1,24 @@
 import { api } from "../../config/apiClient";
-
+const CART = "/Cart"
 export const addToCartDB = async (data) => {
-  const isExisted = await api.get(
-    `/carts?productId=${data.productId}&user=${data.user}`,
-  );
-  
-  if (isExisted.data.length > 0) {
-    throw new Error("Data already added to cart");
-  }
-  const res = await api.post("/carts", data);
+  const res = await api.post(`${CART}`, data);
   return res.data;
 };
 
-export const getAllCartDataOfUser = async (user) => {
-  const res = await api.get(`/carts?user=${user}`);
-  return res.data;
+export const getAllCartDataOfUser = async () => {
+  const res = await api.get(`${CART}`); 
+  return res.data.data;
 };
 
-export const removeDataFromCart = async (data) => {
-  const item = await api.get(`/carts?user=${data.user}&productId=${data.id}`);
-  const cartItem = item.data[0];
-  if (!cartItem) {
-    throw new Error("Cart item not found");
-  }
-  const res = await api.delete(`/carts/${cartItem.id}`);
-  return res.data;
+export const removeDataFromCart = async (id) => {
+  const res = await api.delete(`${CART}/${id}`);
+  return res.data.data;
 };
 
-export const quantityUpdating = async (data) => {
-  const item = await api.get(
-    `/carts?user=${data.user}&productId=${data.productId}`,
-  );
-
-  const cartItem = item.data[0];
-  if (!cartItem) {
-    throw new Error("Cart item not found");
-  }
-  const res = await api.patch(`/carts/${cartItem.id}`, {
-    quantity: data.quantity,
+export const quantityUpdating = async ({id, quantity}) => {
+  const res = await api.patch(`${CART}/${id}`, {
+    quantity: quantity,
   });
+
   return res.data;
 };

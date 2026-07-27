@@ -1,12 +1,11 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
 import { Check, Star, Truck, X } from "lucide-react";
-import { setToCart } from "../../redux/features/cartSlice";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
 import { toast } from "react-toastify";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import Loader from "../Loader";
 import { priceDiscounted } from "../../utils/priceDescounted";
 import { useAddReview } from "../../tanstack/hooks/mutations/reviewMutation";
@@ -19,8 +18,7 @@ const OneProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const dispatch = useDispatch();
-  const { data : response, isLoading, isError } = useGetProductById(id);
+  const { data: response, isLoading, isError } = useGetProductById(id);
   const data = response?.data;
   const { data: reviews } = useGetReviewOfProduct(data?.id);
   const cartData = useSelector((s) => s.cart.cart);
@@ -39,30 +37,30 @@ const OneProduct = () => {
     return <div className="text-red-500 p-10">Error loading product</div>;
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
 
-  function cartHandle(product) {
-    const cart = {
-      user: user.id,
-      productId: product.id,
-      title: product.title,
-      price: product.price,
-      image: product.images,
-      discountPercentage: product.discountPercentage,
-      quantity: 1,
-    };
-
-    addToCartMutation.mutate(cart, {
-      onSuccess: () => {
-        toast.success(`${product.title} added to cart`);
-        dispatch(setToCart(cart));
-        queryClient.invalidateQueries({ queryKey: ["carts"], exact: true });
-      },
-      onError: (err) => {
-        toast.error(
-          `${err.message || `Failed to add ${product.title} to cart`}`,
-        );
-      },
-    });
+function cartHandle(product) {
+  if (isCart) {
+    toast.info("Product is already in your cart");
+    return;
   }
+
+  const cart = {
+    productId: product.id,
+    quantity: 1,
+  };
+
+  addToCartMutation.mutate(cart, {
+    onSuccess: () => {
+      toast.success(`${product.title} added to cart`);
+      queryClient.invalidateQueries({
+        queryKey: ["cart"],
+      });
+    },
+
+    onError: (err) => {
+      toast.error(err.message || "Failed to add product");
+    },
+  });
+}
 
   function reviewHandle() {
     if (!user) {
@@ -170,8 +168,8 @@ const OneProduct = () => {
                       ),
                     },
                   });
-                }else{
-                  toast.info("Out of Stock")
+                } else {
+                  toast.info("Out of Stock");
                 }
               }}
               className="flex-1 bg-(--color-accent) text-(--color-text) py-3 rounded-lg font-semibold hover:opacity-90 cursor-pointer transition"
@@ -181,7 +179,11 @@ const OneProduct = () => {
 
             <button
               onClick={() => cartHandle(data)}
-              className="flex-1 border border-(--color-accent) py-3 rounded-lg font-semibold hover:bg-(--color-accent) cursor-pointer transition"
+              className={`flex-1 py-3 rounded-lg font-semibold transition ${
+                isCart
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "border border-(--color-accent) hover:bg-(--color-accent) cursor-pointer"
+              }`}
             >
               {!isCart ? "Add to cart" : " Added to cart"}
             </button>

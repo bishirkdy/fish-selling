@@ -1,36 +1,79 @@
-import React, { useEffect } from "react";
-import { data, Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
 import Navbar from "./components/Navbar";
-import { useDispatch, useSelector } from "react-redux";
+
+import { login, logout, setLoading } from "./redux/features/authSlice";
 import { addToCart } from "./redux/features/cartSlice";
-import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cartQueries";
 import { addToFavorite } from "./redux/features/favoriteSlice";
+
+import { useGetCurrentUser } from "./tanstack/hooks/queries/userQueries";
+import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cartQueries";
 import { useFavDataOfUser } from "./tanstack/hooks/queries/favoriteQueries";
 
 const App = () => {
-  const {user} = useSelector((s) => s.auth)
   const dispatch = useDispatch();
-  const { data: cartData } = useGetAllCartDataOfUser(user?.id);
-  const { data: favData } = useFavDataOfUser(user?.id);
   const location = useLocation();
+
   const isAdmin = location.pathname.startsWith("/admin");
 
+  // Restore logged-in user
+  const {
+    data: currentUser,
+    isLoading: userLoading,
+    isSuccess,
+    isError,
+  } = useGetCurrentUser();
+
+  // Load cart only after user is restored
+  const { data: cartData } = useGetAllCartDataOfUser({
+    enabled: !!currentUser,
+  });
+
+  // Load favourites only after user is restored
+  const { data: favData } = useFavDataOfUser({
+    enabled: !!currentUser,
+  });
+
+  // Restore user
+  useEffect(() => {
+      console.log("currentUser", currentUser);
+
+    if (isSuccess && currentUser) {
+          console.log("Dispatching login");
+
+      dispatch(login(currentUser));
+    }
+
+    if (isError) {
+          console.log("Dispatching logout");
+
+      dispatch(logout());
+    }
+
+    dispatch(setLoading(userLoading));
+  }, [currentUser, userLoading, isSuccess, isError, dispatch]);
+
+  // Store cart in Redux
   useEffect(() => {
     if (cartData) {
       dispatch(addToCart(cartData));
     }
   }, [cartData, dispatch]);
 
+  // Store favourites in Redux
   useEffect(() => {
     if (favData) {
       dispatch(addToFavorite(favData));
     }
   }, [favData, dispatch]);
+
   return (
-    <div>
+    <>
       {!isAdmin && <Navbar />}
       <Outlet />
-    </div>
+    </>
   );
 };
 

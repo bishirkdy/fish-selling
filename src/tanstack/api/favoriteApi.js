@@ -1,29 +1,23 @@
 import { api } from "../../config/apiClient";
+const FAVORITE = "/Favorite";
 
-export const addToFavDB = async (data) => {
-  const res = await api.post("/favorites", data);
+export const addToFavDB = async (productId) => {
+  console.log(productId);
+  
+  const res = await api.post(FAVORITE, {
+    productId,
+  });
+
   return res.data;
 };
-export const getFavData = async (userId) => {
-  const productIds = await api.get(`/favorites?userId=${userId}`);
-  const userFavProductData = await Promise.all(
-    productIds.data.map(async (dta) => {
-      const productId = dta.productId;
-      const res = await api.get(`/products/${productId}`);
-      return res.data;
-    }),
-  );
-  return userFavProductData;
+
+export const getFavData = async () => {
+  const res = await api.get(`${FAVORITE}`);
+  return res.data.data;
 };
 
-export const removeFromFav = async (data) => {
-  const existing = await api.get(
-    `/favorites?userId=${data.userId}&productId=${data.productId}`,
-  );
-  if (existing.data.length === 0) {
-    throw new Error("Favorite not found");
-  }
-  const favId = existing.data[0].id;
-  const res = await api.delete(`/favorites/${favId}`);
+export const removeFromFav = async (id) => {
+  const res = await api.delete(`${FAVORITE}/${id}`);
   return res.data;
 };
+

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
 import { X } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   decreaseQuantity,
   increaseQuantity,
@@ -12,23 +11,15 @@ import {
 } from "../tanstack/hooks/mutations/cartMutation";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-const Cart = ({ closeCart, cart, user }) => {
-  const [quantityUpdate, setQuantity] = useState();
+const Cart = ({ closeCart, cart , grandTotal}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const removeMutation = useRemoveFromCart();
   const quantityMutation = useUpdateQuantity();
-  const total = cart.reduce(
-    (acc, item) => acc + Math.round(item.price - (item.price * item.discountPercentage) / 100) * (item.quantity || 1),
-    0,
-  );
 
+  
   function removeHandler(id) {
-    const data = {
-      user,
-      id,
-    };
-    removeMutation.mutate(data, {
+    removeMutation.mutate(id, {
       onSuccess: () => {
         toast.success("Data removed from cart");
         dispatch(removeFromCart(id));
@@ -38,25 +29,24 @@ const Cart = ({ closeCart, cart, user }) => {
       },
     });
   }
-  function quantityHandler(type, productId, quantity) {
+
+  function quantityHandler(type, cartItemId, quantity) {
     let updatedQuantity;
 
     if (type === "increment") {
       updatedQuantity = quantity + 1;
-      dispatch(increaseQuantity(productId));
+      dispatch(increaseQuantity(cartItemId));
     }
     if (type === "decrement") {
       if (quantity <= 1) return;
       updatedQuantity = quantity - 1;
-      dispatch(decreaseQuantity(productId));
+      dispatch(decreaseQuantity(cartItemId));
     }
 
-    const data = {
-      user,
-      productId,
+    quantityMutation.mutate({
+      id: cartItemId,
       quantity: updatedQuantity,
-    };
-    quantityMutation.mutate(data);
+    });
   }
   return (
     <div className="md:w-90 w-screen md:pl-0 pl-8 h-screen bg-(--color-surface)  text-(--color-text) shadow-xl flex flex-col">
@@ -74,7 +64,7 @@ const Cart = ({ closeCart, cart, user }) => {
           cart?.map((item) => (
             <div key={item.id} className="flex gap-3 bg-white/5 p-3 rounded-lg">
               <img
-                src={item.image}
+                src={item.imageUrl ?? null}
                 alt={item.title}
                 className="w-16 h-16 object-cover rounded-md"
               />
@@ -85,16 +75,23 @@ const Cart = ({ closeCart, cart, user }) => {
                 </h3>
 
                 <p className="text-xs text-gray-400">
-                  ₹{Math.round(item.price - (item.price * item.discountPercentage) / 100)} × {item.quantity || 1}
+                  ₹
+                  {Math.round(
+                    item.price - (item.price * item.discountPercentage) / 100,
+                  )}{" "}
+                  × {item.quantity || 1}
                 </p>
 
                 <p className="text-sm font-bold mt-1">
-                  ₹{Math.round(item.price - (item.price * item.discountPercentage) / 100) * item.quantity || 1}
+                  ₹
+                  {Math.round(
+                    item.price - (item.price * item.discountPercentage) / 100,
+                  ) * item.quantity || 1}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2 justify-between">
                 <X
-                  onClick={() => removeHandler(item.productId)}
+                  onClick={() => removeHandler(item.cartItemId)}
                   className="text-red-400 cursor-pointer text-xs"
                 ></X>
 
@@ -103,7 +100,7 @@ const Cart = ({ closeCart, cart, user }) => {
                     onClick={() =>
                       quantityHandler(
                         "decrement",
-                        item.productId,
+                        item.cartItemId,
                         item.quantity,
                       )
                     }
@@ -120,7 +117,7 @@ const Cart = ({ closeCart, cart, user }) => {
                     onClick={() =>
                       quantityHandler(
                         "increment",
-                        item.productId,
+                        item.cartItemId,
                         item.quantity,
                       )
                     }
@@ -138,16 +135,16 @@ const Cart = ({ closeCart, cart, user }) => {
       <div className="p-4 mb-4 border-t border-white/10 flex flex-col gap-3">
         <div className="flex justify-between font-semibold">
           <span>Total</span>
-          <span>₹{total}</span>
+          <span>₹{grandTotal}</span>
         </div>
         <button
-        disabled={cart?.length === 0}
+          disabled={cart?.length === 0}
           onClick={() => {
             closeCart();
             navigate("/payment/cart", {
               state: {
                 items: cart,
-                total,
+                grandTotal,
               },
             });
           }}

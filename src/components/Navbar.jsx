@@ -23,10 +23,13 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, loading } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
-  const cartFromSlice = useSelector((s) => s.cart.cart);
+  const {cart : cartFromSlice  ,  grandTotal } = useSelector((s) => s.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
   const { data: loggedUser , isLoading, isError } = useGetCurrentUser();
 
+  if(isLoading || loading) {
+    return "loading.."
+  }
   function handleSearch(e) {
     navigate(`/shop?q=${search}`);
     setOpen(false);
@@ -300,6 +303,7 @@ const Navbar = () => {
             <Cart
               closeCart={() => setCartOpen(false)}
               cart={cartFromSlice}
+              grandTotal={grandTotal}
               user={loggedUser?.id}
             />
           </div>
