@@ -7,8 +7,6 @@ export const useAddOrders = () => {
   });
 };
 
-
-
 export const useRemoveUserById = () => {
   return useMutation({
     mutationFn: removeOrder,

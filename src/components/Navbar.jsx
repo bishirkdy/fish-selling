@@ -21,15 +21,13 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
-  const { user, loading } = useSelector((s) => s.auth);
+  const { user } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
   const {cart : cartFromSlice  ,  grandTotal } = useSelector((s) => s.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
-  const { data: loggedUser , isLoading, isError } = useGetCurrentUser();
+  const { data: loggedUser  } = useGetCurrentUser();
 
-  if(isLoading || loading) {
-    return "loading.."
-  }
+
   function handleSearch(e) {
     navigate(`/shop?q=${search}`);
     setOpen(false);

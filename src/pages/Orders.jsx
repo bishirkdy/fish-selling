@@ -1,245 +1,351 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Truck,
   CheckCircle,
   Clock,
   MapPin,
-  ShoppingBagIcon,
+  ShoppingBag,
+  XCircle,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/orderQueries";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+
 import Loader from "../components/Loader";
-import { useRemoveUserById } from "../tanstack/hooks/mutations/orderMutation";
-import { dataTagErrorSymbol, useQueryClient } from "@tanstack/react-query";
-import { priceDiscounted } from "../utils/priceDescounted";
 import ViewOrderDetail from "../components/orders/ViewOrderDetail";
 import TrackOrderDetail from "../components/orders/TrackOrderDetail";
 
-const statusStyles = {
-  ORDERED: {
+import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/orderQueries";
+import { useRemoveUserById } from "../tanstack/hooks/mutations/orderMutation";
+import { priceDiscounted } from "../utils/priceDescounted";
+
+const STATUS = {
+  OrderPlaced: {
+    label: "Ordered",
+    icon: <Clock size={14} />,
     bg: "bg-yellow-500/10",
     text: "text-yellow-400",
-    icon: <Clock size={14} />,
-    label: "Order Placed",
   },
 
-  CONFIRMED: {
+  Confirmed: {
+    label: "Confirmed",
+    icon: <CheckCircle size={14} />,
     bg: "bg-blue-500/10",
     text: "text-blue-400",
-    icon: <CheckCircle size={14} />,
-    label: "Confirmed",
   },
 
-  PACKED: {
+  Packed: {
+    label: "Packed",
+    icon: <ShoppingBag size={14} />,
     bg: "bg-purple-500/10",
     text: "text-purple-400",
-    icon: <ShoppingBagIcon size={14} />,
-    label: "Packed",
   },
 
-  SHIPPING: {
+  Shipping: {
+    label: "Shipping",
+    icon: <Truck size={14} />,
     bg: "bg-cyan-500/10",
     text: "text-cyan-400",
-    icon: <Truck size={14} />,
-    label: "Shipping",
   },
 
-  OUT_FOR_DELIVERY: {
+  OutForDelivery: {
+    label: "Out For Delivery",
+    icon: <MapPin size={14} />,
     bg: "bg-orange-500/10",
     text: "text-orange-400",
-    icon: <MapPin size={14} />,
-    label: "Out For Delivery",
   },
 
-  DELIVERED: {
+  Delivered: {
+    label: "Delivered",
+    icon: <CheckCircle size={14} />,
     bg: "bg-green-500/10",
     text: "text-green-400",
-    icon: <CheckCircle size={14} />,
-    label: "Delivered",
   },
 
-  CANCELLED: {
+  Cancelled: {
+    label: "Cancelled",
+    icon: <XCircle size={14} />,
     bg: "bg-red-500/10",
     text: "text-red-400",
-    icon: <Clock size={14} />,
-    label: "Cancelled",
+  },
+};
+
+const PAYMENT_STATUS = {
+  Pending: {
+    text: "Pending",
+    color: "text-yellow-400",
+  },
+
+  Paid: {
+    text: "Paid",
+    color: "text-green-400",
+  },
+
+  Failed: {
+    text: "Failed",
+    color: "text-red-500",
+  },
+
+  Refunded: {
+    text: "Refunded",
+    color: "text-blue-400",
   },
 };
 
 const Orders = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [viewDetail, setViewDetail] = useState(false);
   const [viewTrack, setViewTrack] = useState(false);
-  const [trackableData, setTrackableData] = useState(null);
   const [viewableData, setViewableData] = useState(null);
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const client = useQueryClient();
+  const [trackableData, setTrackableData] = useState(null);
 
-  const { mutate: removeMutate, isPending } = useRemoveUserById();
-  const { data, isLoading } = useGetAllOrdersOfUser(id);
+  const { data = [], isLoading } = useGetAllOrdersOfUser();
+  const { mutate: cancelOrder, isPending } = useRemoveUserById();
 
   if (isLoading) {
     return (
-      <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
+      <div className="w-screen h-screen flex items-center justify-center bg-(--color-background)">
         <Loader />
       </div>
     );
   }
 
-  if (!data || data.length === 0) {
+  console.log(data);
+
+  if (data.length === 0) {
     return (
-      <div className="min-h-screen text-white bg-(--color-background) flex flex-col items-center justify-center">
-        <ShoppingBagIcon size={60} className="text-green-500 mb-4" />
+      <div className="min-h-screen bg-(--color-background) text-white flex flex-col items-center justify-center">
+        <ShoppingBag size={60} className="text-green-500 mb-4" />
         <h1 className="text-2xl font-bold">No Orders Yet</h1>
-        <p className="text-gray-400 mt-2">Your orders will appear here</p>
+
         <button
           onClick={() => navigate("/")}
-          className="md:hidden px-4 py-2 rounded-lg mt-4 bg-(--color-accent)"
+          className="mt-5 bg-(--color-accent) px-5 py-2 rounded-lg"
         >
-          Back to Home
+          Continue Shopping
         </button>
       </div>
     );
   }
 
-  function handleRemove(orderId , productId) {    
-    removeMutate({orderId , productId}, {
-      onSuccess: () => {
-        client.invalidateQueries({
-          queryKey: ["orders", id],
-        });
-        toast.success("Order canceled");
+  const handleCancel = (orderId, productId) => {
+    cancelOrder(
+      { orderId, productId },
+      {
+        onSuccess: () => {
+          toast.success("Order cancelled");
+          queryClient.invalidateQueries({
+            queryKey: ["user-orders"],
+          });
+        },
       },
-    });
-  }
+    );
+  };
 
   return (
-    <div className="min-h-screen pt-24 pb-16 bg-(--color-background) text-white px-3 sm:px-4">
-      <div className="w-full max-w-6xl mx-auto mb-6">
-        <h1 className="text-2xl font-bold">My Orders</h1>
-      </div>
+    <div className="min-h-screen bg-(--color-background) text-white pt-24 pb-16 px-3">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">My Orders</h1>
 
-      <div className="space-y-5">
-        {data?.map((order) =>
-          order.products.map((item, index) => {
-            const style = statusStyles[item.orderStatus];
-            return (
-              <div
-                key={`${order?.id}-${index}`}
-                className="mx-auto w-full max-w-6xl border border-(--color-tertiary) rounded-2xl p-3 sm:p-5 hover:border-(--color-accent) transition"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-                  <div>
-                    <h2 className="text-lg font-semibold">
-                      {item.product?.name}
-                    </h2>
+        <div className="space-y-5">
+          {data.map((order) =>
+            order.items.map((item) => {
+              const status = STATUS[item.orderStatus] ?? {
+                label: item.orderStatus,
+                icon: <Clock size={14} />,
+                bg: "bg-gray-500/10",
+                text: "text-gray-400",
+              };
 
-                    <p className="text-zinc-400 text-sm mt-1 break-all">
-                      Order ID : {order.id}
-                    </p>
+              const payment = PAYMENT_STATUS[order.paymentStatus] ?? {
+                text: order.paymentStatus,
+                color: "text-gray-400",
+              };
 
-                    <p className="text-zinc-500 text-xs mt-1">
-                      {new Date(order.orderedDate).toLocaleDateString()}
-                    </p>
-                  </div>
+              return (
+                <div
+                  key={`${order.id}-${item.productId}`}
+                  className="border border-(--color-tertiary) rounded-2xl p-5"
+                >
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                    <div>
+                      <h2 className="text-xl font-semibold">
+                        {item.productName}
+                      </h2>
 
-                  <div
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm w-fit ${style?.bg} ${style?.text}`}
-                  >
-                    {style?.icon}
-                    <span>{item.orderStatus}</span>
-                  </div>
-                </div>
+                      <div className="mt-2 space-y-1">
+                        <p className="text-sm text-gray-400">
+                          <span className="font-medium text-white">
+                            Order ID :
+                          </span>{" "}
+                          {order.id}
+                        </p>
 
-                <div className="flex flex-col sm:flex-row gap-5">
-                  <div className="w-full sm:w-36 h-52 sm:h-32 rounded-xl overflow-hidden shrink-0 border border-(--color-tertiary)">
-                    <img
-                      src={item.product?.images}
-                      alt={item.product?.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-zinc-400 text-sm line-clamp-3">
-                      {item.product?.description}
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-5 text-sm">
-                      <p>
-                        Quantity :
-                        <span className="ml-1 text-cyan-400">
-                          {item.quantity}
-                        </span>
-                      </p>
-                      <p>
-                        Price :
-                        <span className="ml-1 text-cyan-400">
-                          ₹
-                          {priceDiscounted(
-                            item.product?.price,
-                            item.product?.discountPercentage,
-                          )}
-                        </span>
-                      </p>
-                      <p>
-                        Payment :
-                        <span className="ml-1 text-yellow-400">
-                          {item.paymentStatus}
-                        </span>
-                      </p>
-                      <p>
-                        Method :
-                        <span className="ml-1 text-green-400">
-                          {order.orderMethod}
-                        </span>
-                      </p>
+                        <p className="text-sm text-gray-400">
+                          <span className="font-medium text-white">
+                            Ordered :
+                          </span>{" "}
+                          {new Date(order.orderedAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 mt-5">
-                      <button
-                        onClick={() => {
-                          setViewableData({
-                            ...item,
-                            orderedId: order.id,
-                            orderedDate: order.orderedDate,
-                            orderMethod: order.orderMethod,
-                            address: order.shippingAddress,
-                          });
-                          setViewDetail(true);
-                        }}
-                        className="w-full sm:w-auto bg-(--color-primary) hover:bg-(--color-secondary) cursor-pointer text-black px-4 py-2 rounded-xl text-sm font-medium transition"
+                    <div className="flex flex-col gap-2 items-start md:items-end">
+                      <div
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full ${status.bg} ${status.text}`}
                       >
-                        View Details
-                      </button>
+                        {status.icon}
+                        <span className="font-medium">{status.label}</span>
+                      </div>
 
-                      <button onClick={() => {setViewTrack(true)
-                        setTrackableData({...item , orderedDate : order.orderedDate})
-                      }} className="w-full cursor-pointer sm:w-auto border border-gray-700 hover:border-(--color-primary) px-4 py-2 rounded-xl text-sm transition">
-                        Track Order
-                      </button>
-
-                      <button
-                        disabled={isPending || item.orderStatus === "Cancelled"}
-                        onClick={() => handleRemove(order.id , item.product.id)}
-                        className="w-full sm:w-auto border cursor-pointer border-gray-700 hover:border-red-500 hover:text-red-400 px-4 py-2 rounded-xl text-sm transition disabled:opacity-50"
+                      <div
+                        className={`px-4 py-2 rounded-full bg-gray-800 ${payment.color}`}
                       >
-                        {item.orderStatus === "Cancelled" ? <span className="text-red-500">Cancelled</span> : "Cancel"}
-                      </button>
+                        {payment.text}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex gap-5 flex-col md:flex-row">
+                    <div className="w-36 h-36 rounded-xl overflow-hidden border border-gray-700 shadow-md shrink-0">
+                      <img
+                        src={item.productImage ?? "/no-image.png"}
+                        alt={item.productName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    <div className="flex-1">
+                      <div className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm mt-1">
+                        <div>
+                          <p className="text-gray-400">Quantity</p>
+                          <p className="font-medium">{item.quantity}</p>
+                        </div>
+
+                        <div>
+                          <p className="text-gray-400">Unit Price</p>
+                          <p className="font-medium">
+                            ₹{priceDiscounted(item.price, item.discount)}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-gray-400">Total Amount</p>
+                          <p className="font-semibold text-green-400">
+                            ₹{item.totalPrice}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-gray-400">Payment Method</p>
+                          <p className="font-medium">{order.paymentMethod}</p>
+                        </div>
+
+                        <div>
+                          <p className="text-gray-400">Payment Status</p>
+
+                          <p className={`font-medium ${payment.color}`}>
+                            {payment.text}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-gray-400">Ordered On</p>
+
+                          <p className="font-medium">
+                            {new Date(order.orderedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex flex-wrap gap-3">
+                        <button
+                          onClick={() => {
+                            setViewableData({
+                              ...item,
+                              orderId: order.id,
+                              orderedAt: order.orderedAt,
+                              shippingAddress: order.shippingAddress,
+                              paymentMethod: order.paymentMethod,
+                              paymentStatus: order.paymentStatus,
+                              totalAmount: order.totalAmount,
+                            });
+
+                            setViewDetail(true);
+                          }}
+                          className="px-5 py-2 rounded-lg bg-(--color-primary) hover:opacity-90 transition font-medium"
+                        >
+                          View Details
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setTrackableData({
+                              ...item,
+                              orderedAt: order.orderedAt,
+                            });
+
+                            setViewTrack(true);
+                          }}
+                          className="px-5 py-2 rounded-lg border border-(--color-primary) hover:bg-(--color-primary) hover:text-white transition font-medium"
+                        >
+                          Track Order
+                        </button>
+
+                        <button
+                          disabled={
+                            isPending ||
+                            item.orderStatus === "Cancelled" ||
+                            item.orderStatus === "Delivered"
+                          }
+                          onClick={() => handleCancel(order.id, item.productId)}
+                          className="
+                           px-5
+                           py-2
+                           rounded-lg
+                           border
+                           border-red-500
+                           text-red-500
+                           hover:bg-red-500
+                           hover:text-white
+                            transition
+                            disabled:opacity-50
+                            disabled:cursor-not-allowed
+                            disabled:hover:bg-transparent
+                           disabled:hover:text-red-500
+                            "
+                        >
+                          {item.orderStatus === "Cancelled"
+                            ? "Cancelled"
+                            : item.orderStatus === "Delivered"
+                              ? "Delivered"
+                              : "Cancel Order"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          }),
-        )}
+              );
+            }),
+          )}
+        </div>
       </div>
+
       {viewDetail && (
         <ViewOrderDetail
           viewableData={viewableData}
           setViewDetail={setViewDetail}
         />
       )}
-      {viewTrack && <TrackOrderDetail setViewTrack={() => setViewTrack(false)} data={trackableData}/>}
+
+      {viewTrack && (
+        <TrackOrderDetail
+          data={trackableData}
+          setViewTrack={() => setViewTrack(false)}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { api } from "../../config/apiClient";
-
+const ADDRESS = "/Address";
 export const addShippingAddress = async (data) => {
-  const res = await api.post("/addresses", data);
-  return res.data;
+  console.log(data)
+  const res = await api.post(`${ADDRESS}`, data);
+  return res.data.data;
 };

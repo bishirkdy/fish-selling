@@ -1,60 +1,36 @@
-import React, { useState } from "react";
-import {
-  useAddOrders,
-} from "../tanstack/hooks/mutations/orderMutation";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useAddOrders } from "../tanstack/hooks/mutations/orderMutation";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useGetProductById } from "../tanstack/hooks/queries/productQueries";
 import { useRazorpay } from "react-razorpay";
 import { handleOnlinePayment } from "../utils/razonPay";
-import { priceDiscounted } from "../utils/priceDescounted";
-import { usePostAnalysis } from "../tanstack/hooks/mutations/analisysMutation";
 import { useAddShippingAddress } from "../tanstack/hooks/mutations/shippingAddress";
-import { useSelector } from "react-redux";
 
 const Payment = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    address: {
-      street: "",
-      post: "",
-      district: "",
-      state: "",
-      pincode: "",
-      landmark: "",
-    },
+    street: "",
+    post: "",
+    district: "",
+    state: "",
+    pincode: "",
+    landmark: "",
   });
-  const {user} = useSelector(s => s.auth);
-  const [shippingId, setShippingId] = useState("");
+
   const { state } = useLocation();
-  const { id } = useParams();
   const navigate = useNavigate();
   const { Razorpay } = useRazorpay();
-  const { data: product } = useGetProductById(id);
   const orderMutation = useAddOrders();
-  const { mutate: analysisMutate, isPending: analysisIsPending } = usePostAnalysis();
-  const { mutate: addressMutate, isPending: addressPending } =
-    useAddShippingAddress();
+  const { mutate: addressMutate, isPending: addressPending } = useAddShippingAddress();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name.startsWith("address.")) {
-      const field = name.split(".")[1];
-      setFormData({
-        ...formData,
-        address: {
-          ...formData.address,
-          [field]: value,
-        },
-      });
-    } else {
+    const { name, value } = e.target;  
       setFormData({
         ...formData,
         [name]: value,
       });
-    }
   };
 
   const validateForm = () => {
@@ -62,10 +38,10 @@ const Payment = () => {
       !formData.name ||
       !formData.email ||
       !formData.phone ||
-      !formData.address.street ||
-      !formData.address.district ||
-      !formData.address.state ||
-      !formData.address.pincode
+      !formData.street ||
+      !formData.district ||
+      !formData.state ||
+      !formData.pincode
     ) {
       toast.error("Please fill all required fields");
       return false;
@@ -75,41 +51,23 @@ const Payment = () => {
 
   const handlePayment = (type) => {
     if (!validateForm()) return;
+
     const addressData = {
-      user: user?.id,
       ...formData,
+      fullName : formData.name,
+      PhoneNumber : formData.phone
     };
 
     addressMutate(addressData, {
-      onSuccess: (data) => {
+      onSuccess: (address) => {
         const orderData = {
-          user: user.id,
-          shippingAddress: data.id,
-          products: state?.items?.map((item) => ({
+          addressId: address.id,
+          paymentMethod: type === "COD" ? "Cash" : "RazorPay",
+          items: state.items.map((item) => ({
             productId: item.productId,
             quantity: item.quantity,
-            paymentStatus: type === "COD" ? "PENDING" : "PAID",
-            orderStatus: "Order Placed",
           })),
-
-          orderMethod: type === "COD" ? "CASH" : "RAZOR PAY",
-          totalAmount: state?.total,
-          orderedDate: Date.now(),
-          id: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         };
-
-        const analysisObj = {
-          user: user?.id,
-          total: state?.total,
-          profit: Math.round((state.total * 15) / 100),
-          paymentMethod: type,
-          products: state?.items.map(p => ({
-            productId : p.productId,
-            quantity : p.quantity
-          })),
-          date: Date.now(),
-        };
-        analysisMutate(analysisObj);
 
         if (type === "COD") {
           orderMutation.mutate(orderData, {
@@ -124,14 +82,13 @@ const Payment = () => {
             },
 
             onError: (err) => {
-              toast.error(err.message || "Error while ordering");
+              toast.error(err.message || "Failed to place order");
             },
           });
         } else {
           handleOnlinePayment({
             Razorpay,
             orderData,
-            mutation: orderMutation,
             navigate,
             toast,
           });
@@ -181,18 +138,18 @@ const Payment = () => {
 
             <input
               type="text"
-              name="address.street"
+              name="street"
               placeholder="Street / Area / Locality"
-              value={formData.address.street}
+              value={formData.street}
               onChange={handleChange}
               className="w-full border p-3 rounded-lg outline-none"
             />
 
             <input
               type="text"
-              name="address.post"
+              name="post"
               placeholder="Post Office"
-              value={formData.address.post}
+              value={formData.post}
               onChange={handleChange}
               className="w-full border p-3 rounded-lg outline-none"
             />
@@ -200,18 +157,18 @@ const Payment = () => {
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
-                name="address.district"
+                name="district"
                 placeholder="District"
-                value={formData.address.district}
+                value={formData.district}
                 onChange={handleChange}
                 className="w-full border p-3 rounded-lg outline-none"
               />
 
               <input
                 type="text"
-                name="address.state"
+                name="state"
                 placeholder="State"
-                value={formData.address.state}
+                value={formData.state}
                 onChange={handleChange}
                 className="w-full border p-3 rounded-lg outline-none"
               />
@@ -220,18 +177,18 @@ const Payment = () => {
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
-                name="address.pincode"
+                name="pincode"
                 placeholder="PIN Code"
-                value={formData.address.pincode}
+                value={formData.pincode}
                 onChange={handleChange}
                 className="w-full border p-3 rounded-lg outline-none"
               />
 
               <input
                 type="text"
-                name="address.landmark"
+                name="landmark"
                 placeholder="Landmark"
-                value={formData.address.landmark}
+                value={formData.landmark}
                 onChange={handleChange}
                 className="w-full border p-3 rounded-lg outline-none"
               />
@@ -264,7 +221,7 @@ const Payment = () => {
           <div className="mt-10 border-t border-gray-700 pt-5">
             <div className="flex justify-between mb-2">
               <span>Total</span>
-              <span>₹ {state.total}</span>
+              <span>₹ {state.grandTotal}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-400">
               <span>Delivery</span>

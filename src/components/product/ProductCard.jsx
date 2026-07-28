@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
 import { toast } from "react-toastify";
@@ -8,14 +8,10 @@ import {
   useAddToFav,
   useRemoveFromFav,
 } from "../../tanstack/hooks/mutations/favMutation";
-import {
-  removeFromFavorite,
-} from "../../redux/features/favoriteSlice";
 import React from "react";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const { user } = useSelector((s) => s.auth);
   const addToCartMutation = useAddToCart();
@@ -23,8 +19,15 @@ const ProductCard = ({ product }) => {
   const removeFavMutation = useRemoveFromFav();
   const favProduct = useSelector((s) => s.favorite.favorite);
   const cartProduct = useSelector((s) => s.cart.cart);
-  const isFavorite = favProduct.some((item) => item.id === product.id);
-  const isCart = cartProduct.some((item) => item.productId === product.id);
+  const isFavorite = React.useMemo(
+    () => favProduct.some((item) => item.id === product.id),
+    [favProduct, product.id],
+  );
+  
+  const isCart = React.useMemo(
+    () => cartProduct.some((item) => item.productId === product.id),
+    [cartProduct, product.id],
+  );
   const discountedPrice = Math.round(
     product.price - (product.price * product.discountPercentage) / 100,
   );
@@ -77,6 +80,7 @@ const ProductCard = ({ product }) => {
 
     addToFavMutation.mutate(productId, {
       onSuccess: () => {
+        toast.success("Added to favorites");
         queryClient.invalidateQueries({
           queryKey: ["favorites"],
         });
@@ -89,11 +93,10 @@ const ProductCard = ({ product }) => {
 
   function removeFromFav(e, productId) {
     e.stopPropagation();
-  
+
     removeFavMutation.mutate(productId, {
       onSuccess: () => {
-        dispatch(removeFromFavorite(productId));
-
+        toast.success("Removed from favorites");
         queryClient.invalidateQueries({
           queryKey: ["favorites"],
         });
@@ -112,7 +115,7 @@ const ProductCard = ({ product }) => {
     >
       <div className="relative overflow-hidden">
         <img
-          src={(product?.imageUrls?.[0] || product.imageUrl ) ?? null}
+          src={(product?.imageUrls?.[0] || product.imageUrl) ?? null}
           alt={product.title}
           className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
         />
@@ -126,6 +129,9 @@ const ProductCard = ({ product }) => {
         <div className="absolute right-3 top-3">
           {user && (
             <button
+              disabled={
+                addToFavMutation.isPending || removeFavMutation.isPending
+              }
               onClick={(e) =>
                 isFavorite
                   ? removeFromFav(e, product.id)

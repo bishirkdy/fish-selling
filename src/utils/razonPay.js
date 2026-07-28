@@ -1,55 +1,76 @@
-export const handleOnlinePayment = ({
+import {
+  createOrderWithPaymentApi,
+  verifyPaymentApi,
+} from "../tanstack/api/paymentApi";
+
+export const handleOnlinePayment = async ({
   Razorpay,
   orderData,
-  mutation,
   navigate,
   toast,
 }) => {
-  const options = {
-    key: "rzp_test_SmMxUHSNpRAev1",
-    amount: orderData.totalAmount * 100,
-    currency: "INR",
-    name: "Aquora",
-    description: "Online Payment",
-    handler: function (response) {
-      const finalOrder = {
-        ...orderData,
-        paymentId: response.razorpay_payment_id,
-        paymentStatus: "PAID",
-      };
-      mutation.mutate(finalOrder, {
-        onSuccess: (order) => {
+  try {
+    // Create Razorpay Order
+    const payment = await createOrderWithPaymentApi(orderData);
+
+    const options = {
+      key: payment.key,
+      amount: payment.amount,
+      currency: payment.currency,
+      order_id: payment.razorpayOrderId,
+
+      name: "Aquora",
+      description: "Online Payment",
+
+      handler: async function (response) {
+        try {
+          console.log(
+            JSON.stringify(
+              {
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+                order: orderData,
+              },
+              null,
+              2,
+            ),
+          );
+          const order = await verifyPaymentApi({
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature,
+            order: orderData,
+          });
+
           toast.success("Payment Successful");
+
           navigate("/success", {
             state: {
               id: order.id,
             },
           });
-        },
-        onError: (err) => {
-          toast.error(err.message || "Error happened while ordering");
-        },
-      });
-    },
+        } catch (err) {
+          toast.error(
+            err.response?.data?.message || "Payment verification failed",
+          );
+        }
+      },
 
-    prefill: {
-      name: orderData.shippingAddress.name,
-      email: orderData.shippingAddress.email,
-      contact: orderData.shippingAddress.phone,
-    },
+      theme: {
+        color: "#3399cc",
+      },
+    };
 
-    theme: {
-      color: "#3399cc",
-    },
-  };
+    const razorpay = new Razorpay(options);
 
-  const razorpay = new Razorpay(options);
+    razorpay.on("payment.failed", function (response) {
+      toast.error(response.error.description);
+    });
 
-  razorpay.on("payment.failed", function (response) {
-    console.log(response.error);
-
-    toast.error(response.error.description);
-  });
-
-  razorpay.open();
+    razorpay.open();
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Unable to initiate payment");
+    console.log(err);
+  }
 };

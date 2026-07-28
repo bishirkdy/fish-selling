@@ -1,125 +1,276 @@
-import { CircleX } from 'lucide-react'
-import React from 'react'
-import { priceDiscounted } from '../../utils/priceDescounted'
+import { CircleX } from "lucide-react";
+import React from "react";
+import { priceDiscounted } from "../../utils/priceDescounted";
 
-const ViewOrderDetail = ({viewableData ,setViewDetail }) => {
+const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
   return (
-     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center px-3">
-          <div className="w-full max-w-4xl bg-(--color-surface) border border-(--color-tertiary) rounded-2xl p-5 sm:p-7 relative no-scrollbar overflow-y-auto max-h-[90vh]">
-            <button
-              onClick={() => setViewDetail(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer text-xl"
-            >
-              <CircleX />
-            </button>
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      <div
+        className="
+        relative
+        w-full
+        max-w-5xl
+        max-h-[92vh]
+        overflow-y-auto
+        rounded-3xl
+        border
+        border-(--color-tertiary)
+        bg-(--color-surface)
+        shadow-2xl
+        p-8
+        no-scrollbar
+      "
+      >
+        {/* Close Button */}
 
-            <div className="flex flex-col sm:flex-row gap-5">
-              <div className="w-full sm:w-58 h-auto rounded-2xl overflow-hidden ">
-                <img
-                  src={viewableData?.product?.images}
-                  alt={viewableData?.product?.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+        <button
+          onClick={() => setViewDetail(false)}
+          className="
+          absolute
+          right-6
+          top-6
+          w-10
+          h-10
+          rounded-full
+          bg-(--color-background)
+          flex
+          items-center
+          justify-center
+          hover:bg-red-500
+          hover:text-white
+          transition
+        "
+        >
+          <CircleX size={22} />
+        </button>
 
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold">
-                  {viewableData?.product?.name}
-                </h1>
-                <p className="text-gray-400 leading-relaxed">
-                  {viewableData?.product?.description}
+        {/* Product Section */}
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Image */}
+
+          <div
+            className="
+            aspect-square
+            rounded-2xl
+            overflow-hidden
+            border
+            border-(--color-tertiary)
+            bg-(--color-background)
+            shadow-lg
+          "
+          >
+            <img
+              src={viewableData?.productImage || "/no-image.png"}
+              alt={viewableData?.productName}
+              className="
+              w-full
+              h-full
+              object-cover
+              hover:scale-105
+              transition
+              duration-300
+            "
+            />
+          </div>
+
+          {/* Product Details */}
+
+          <div className="lg:col-span-2">
+            <h1 className="text-3xl font-bold text-white">
+              {viewableData?.productName}
+            </h1>
+
+            <p className="mt-3 text-gray-400 leading-relaxed">
+              Premium quality product ordered from our store.
+            </p>
+
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 mt-8">
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Quantity
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-sm">
-                  <div className="border border-(--color-tertiary) rounded-xl p-3">
-                    <p className="text-zinc-400">Quantity</p>
-
-                    <h2 className="text-(--color-primary) font-semibold mt-1">
-                      {viewableData?.quantity}
-                    </h2>
-                  </div>
-
-                  <div className="border border-(--color-tertiary) rounded-xl p-3">
-                    <p className="text-zinc-400">Price</p>
-
-                    <h2 className="text-(--color-primary) font-semibold mt-1">
-                      ₹
-                      {priceDiscounted(
-                        viewableData?.product?.price,
-                        viewableData?.product?.discountPercentage,
-                      )}
-                    </h2>
-                  </div>
-
-                  <div className="border border-(--color-tertiary) rounded-xl p-3">
-                    <p className="text-zinc-400">Payment Status</p>
-
-                    <h2 className="text-yellow-400 font-semibold mt-1">
-                      {viewableData?.paymentStatus}
-                    </h2>
-                  </div>
-
-                  <div className="border border-(--color-tertiary) rounded-xl p-3">
-                    <p className="text-zinc-400">Order Status</p>
-
-                    <h2 className="text-green-400 font-semibold mt-1">
-                      {viewableData?.orderStatus}
-                    </h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-4">
-              <div className="border border-(--color-tertiary) rounded-xl p-4">
-                <p className="text-zinc-400 text-sm">Order ID</p>
-                <h2 className="mt-1 break-all">{viewableData?.orderedId}</h2>
-              </div>
-
-              <div className="border border-(--color-tertiary) rounded-xl p-4">
-                <p className="text-zinc-400 text-sm">Ordered Date</p>
-                <h2 className="mt-1">
-                  {new Date(viewableData?.orderedDate).toLocaleDateString()}
+                <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
+                  {viewableData?.quantity}
                 </h2>
               </div>
 
-              <div className="border border-(--color-tertiary) rounded-xl p-4">
-                <p className="text-zinc-400 text-sm">Payment Method</p>
-                <h2 className="mt-1">{viewableData?.orderMethod}</h2>
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Unit Price
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
+                  ₹
+                  {priceDiscounted(viewableData?.price, viewableData?.discount)}
+                </h2>
               </div>
 
-              <div className="border border-(--color-tertiary) rounded-xl p-4">
-                <p className="text-zinc-400 text-sm mb-4">Shipping Address</p>
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Total Price
+                </p>
 
-                <div className="space-y-4 text-sm sm:text-base">
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-white font-semibold text-lg">
-                      {viewableData?.address?.name}
-                    </h2>
-                    <p className="text-zinc-300 break-all">
-                      {viewableData?.address?.email}
-                    </p>
-                    <p className="text-zinc-300">
-                      {viewableData?.address?.phone}
-                    </p>
-                  </div>
-                  <div className="border-t border-(--color-tertiary) pt-4 text-zinc-300 leading-relaxed">
-                    <p>
-                      {viewableData?.address?.address?.street},{" "}
-                      {viewableData?.address?.address?.post}
-                    </p>
-                    <p>
-                      {viewableData?.address?.address?.district},{" "}
-                      {viewableData?.address?.address?.state}
-                    </p>
-                    <p>PIN : {viewableData?.address?.address?.pincode}</p>
-                  </div>
-                </div>
+                <h2 className="text-2xl font-bold mt-2 text-green-400">
+                  ₹{viewableData?.totalPrice}
+                </h2>
+              </div>
+
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Payment Method
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2">
+                  {viewableData?.paymentMethod}
+                </h2>
+              </div>
+
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Payment Status
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2 text-yellow-400">
+                  {viewableData?.paymentStatus}
+                </h2>
+              </div>
+
+              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
+                <p className="text-xs uppercase tracking-wider text-gray-500">
+                  Order Status
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2 text-green-400">
+                  {viewableData?.orderStatus}
+                </h2>
               </div>
             </div>
           </div>
         </div>
-  )
-}
 
-export default ViewOrderDetail
+        <div className="my-8 border-t border-(--color-tertiary)" />
+        {/* Order Information */}
+
+        <section>
+          <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
+            Order Information
+          </h2>
+
+          <div className="grid lg:grid-cols-3 gap-5">
+            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
+              <p className="text-xs uppercase tracking-wider text-gray-500">
+                Order ID
+              </p>
+
+              <h3 className="mt-3 break-all text-sm font-medium">
+                {viewableData?.orderId}
+              </h3>
+            </div>
+
+            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
+              <p className="text-xs uppercase tracking-wider text-gray-500">
+                Ordered On
+              </p>
+
+              <h3 className="mt-3 text-lg font-semibold">
+                {new Date(viewableData?.orderedAt).toLocaleDateString()}
+              </h3>
+            </div>
+
+            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
+              <p className="text-xs uppercase tracking-wider text-gray-500">
+                Total Amount
+              </p>
+
+              <h3 className="mt-3 text-3xl font-bold text-(--color-primary)">
+                ₹{viewableData?.totalAmount}
+              </h3>
+            </div>
+          </div>
+        </section>
+
+        <div className="my-8 border-t border-(--color-tertiary)" />
+
+        {/* Shipping Address */}
+
+        <section>
+          <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
+            Shipping Address
+          </h2>
+
+          <div
+            className="
+            rounded-2xl
+            border
+            border-(--color-tertiary)
+            bg-(--color-background)
+            p-6
+          "
+          >
+            <div className="space-y-4">
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">Full Name</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.fullName}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">Phone</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.phoneNumber}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">Street</span>
+                <span className="font-medium text-right">
+                  {viewableData?.shippingAddress?.street}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">Post</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.post}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">District</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.district}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">State</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.state}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                <span className="text-gray-400">PIN Code</span>
+                <span className="font-medium">
+                  {viewableData?.shippingAddress?.pincode}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-start">
+                <span className="text-gray-400">Landmark</span>
+                <span className="font-medium text-right max-w-sm">
+                  {viewableData?.shippingAddress?.landmark || "N/A"}
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default ViewOrderDetail;

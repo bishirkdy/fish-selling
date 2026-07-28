@@ -1,96 +1,22 @@
 import { api } from "../../config/apiClient";
-
+const ORDER = "/Order"
 export const addOrders = async (data) => {
-  await Promise.all(
-    data.products.map(async (item) => {
-      const productRes = await api.get(`/products/${item.productId}`);
-      const currentStock = productRes.data.stock;
-      if (currentStock < item.quantity) {
-        throw new Error(`${productRes.data.name} is ${currentStock} Stock and you are trying to buy ${item.quantity} `);
-      }
-    }),
-  );
-  const res = await api.post("/orders", data);
-  await Promise.all(
-    data.products.map(async (item) => {
-      const productRes = await api.get(`/products/${item.productId}`);
-      const currentStock = productRes.data.stock;
-      await api.patch(`/products/${item.productId}`, {
-        stock: currentStock - item.quantity,
-      });
-    }),
-  );
+  const res = await api.post(`${ORDER}` , data )
   return res.data;
 };
 
-export const getOrderByUser = async (user) => {
-  const orderRes = await api.get(`/orders?user=${user}`);
-  const productIds = [];
-  orderRes.data.forEach((order) => {
-    order.products.forEach((item) => {
-      productIds.push(item.productId);
-    });
-  });
-  const uniqueProductIds = [...new Set(productIds)];
-
-  const products = await Promise.all(
-    uniqueProductIds.map(async (id) => {
-      const res = await api.get(`/products/${id}`);
-      return res.data;
-    }),
-  );
-
-  const updatedOrders = await Promise.all(
-    orderRes.data.map(async (order) => {
-      const shippingAddressRes = await api.get(
-        `/addresses/${order.shippingAddress}`,
-      );
-
-      const updatedProducts = order.products.map((item) => {
-        const productData = products.find(
-          (product) => product.id === item.productId,
-        );
-
-        return {
-          ...item,
-          product: productData,
-        };
-      });
-
-      return {
-        ...order,
-        shippingAddress: shippingAddressRes.data,
-        products: updatedProducts,
-      };
-    }),
-  );
-  return updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate);
-};
-
+export const getOrderByUser = async () => {
+  const orderRes = await api.get(`${ORDER}/me`);
+      return orderRes.data.data;
+ };
 export const getLatestOrderOfUser = async (id) => {
   const res = await api.get(`/orders/${id}`);
   return res.data;
 };
 
-export const removeOrder = async ({
-  orderId,
-  productId,
-}) => {
-  const orderRes = await api.get(`/orders/${orderId}`);
-  const order = orderRes.data;
-  const updatedProducts = order.products.map((item) =>
-    item.productId === productId
-      ? {
-          ...item,
-          orderStatus: "Cancelled",
-          canceledTime: Date.now(),
-        }
-      : item
-  );
-  const res = await api.patch(`/orders/${orderId}`, {
-    products: updatedProducts,
-  });
-  return res.data;
+export const removeOrder = async ({ orderId, productId}) => {
+  const orderRes = await api.get(`${orderId}/cancel/${productId}`);
+  return orderRes.data;
 };
 
 export const getAllOrders = async () => {

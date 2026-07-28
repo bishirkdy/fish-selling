@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
 import { getAllOrders, getLatestOrderOfUser, getOrderByUser , statesOfOrders } from "../../api/orderApi"
 
-export const useGetAllOrdersOfUser = (userId) => {
+export const useGetAllOrdersOfUser = () => {
     return useQuery({
-        queryKey : ["orders" , userId],
-        queryFn : () => getOrderByUser(userId)
+        queryKey : ["user-orders" ],
+        queryFn :  getOrderByUser
     })
 }
 
