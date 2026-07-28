@@ -20,9 +20,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     loginMutation.mutate(form, {
-      onSuccess: (user) => {
- 
-
+      onSuccess: (user) => { 
         if (user.role === "Admin") {
           navigate("/admin/dashboard");
         } else {

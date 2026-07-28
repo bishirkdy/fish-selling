@@ -1,5 +1,6 @@
 import { api } from "../../config/apiClient";
 const ORDER = "/Order"
+const ADMIN = "/admin/order"
 export const addOrders = async (data) => {
   const res = await api.post(`${ORDER}` , data )
   return res.data;
@@ -20,50 +21,10 @@ export const removeOrder = async ({ orderId, productId}) => {
 };
 
 export const getAllOrders = async () => {
-  const orderRes = await api.get(`/orders`);
-
-  const productIds = [];
-  orderRes.data.forEach((order) => {
-    order.products.forEach((item) => {
-      productIds.push(item.productId);
-    });
-  });
-  const uniqueProductIds = [...new Set(productIds)];
-
-  const products = await Promise.all(
-    uniqueProductIds.map(async (id) => {
-      const res = await api.get(`/products/${id}`);
-      return res.data;
-    }),
-  );
-
-  const updatedOrders = await Promise.all(
-    orderRes.data.map(async (order) => {
-      const shippingAddressRes = await api.get(
-        `/addresses/${order.shippingAddress}`,
-      );
-      const user = await api.get(`/users/${order.user}`);
-      const updatedProducts = order.products.map((item) => {
-        const productData = products.find(
-          (product) => product.id === item.productId,
-        );
-        return {
-          ...item,
-          product: productData,
-        };
-      });
-
-      return {
-        ...order,
-        user_name: user.data.name,
-        email: user.data.email,
-        shippingAddress: shippingAddressRes.data,
-        products: updatedProducts,
-      };
-    }),
-  );
-  return updatedOrders.sort((a, b) => b.orderedDate - a.orderedDate);
-};
+  const orderRes = await api.get(`${ADMIN}`);
+  console.log(orderRes)
+  return orderRes.data.data;
+ };
 
 
 export const statesOfOrders = async () => {

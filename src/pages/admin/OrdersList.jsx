@@ -61,15 +61,15 @@ const OrdersList = () => {
   const filteredOrders = data?.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(search.toLowerCase()) ||
-      order.orderMethod.toLowerCase().includes(search.toLowerCase()) ||
-      order.user_name.toLowerCase().includes(search.toLowerCase()) ||
-      order.shippingAddress?.email
+      order.paymentMethod.toLowerCase().includes(search.toLowerCase()) ||
+      order.shippingAddress.fullName.toLowerCase().includes(search.toLowerCase()) ||
+      order.shippingAddress?.phoneNumberNumber
         ?.toLowerCase()
         .includes(search.toLowerCase());
 
     const matchesFilter =
       filterStatus === "All" ||
-      order.products.some((item) => item.orderStatus === filterStatus);
+      order.items.some((item) => item.orderStatus === filterStatus);
 
     return matchesSearch && matchesFilter;
   });
@@ -137,6 +137,8 @@ const OrdersList = () => {
       },
     );
   }
+  console.log(currentOrder);
+  
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="mb-6">
@@ -321,17 +323,17 @@ const OrdersList = () => {
                   <td className="px-6 py-2">
                     <div className="space-y-1">
                       <h3 className="font-semibold text-gray-800">
-                        {order.user_name}
+                        {order.shippingAddress.fullName}
                       </h3>
 
                       <p className="text-sm text-gray-500">
-                        {order.shippingAddress?.email}
+                        {order.shippingAddress?.phoneNumberNumber}
                       </p>
                     </div>
                   </td>
 
                   <td className="px-6 py-2 text-gray-600">
-                    {new Date(order.orderedDate).toLocaleDateString()}
+                    {new Date(order.orderedAt).toLocaleDateString()}
                   </td>
 
                   <td className="px-6 py-2">
@@ -343,12 +345,12 @@ const OrdersList = () => {
                   <td className="px-6 py-2">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.orderMethod === "RAZOR PAY"
+                        order.paymentMethod === "RazorPay"
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
                       }`}
                     >
-                      {order.orderMethod}
+                      {order.paymentMethod}
                     </span>
                   </td>
 
@@ -394,7 +396,7 @@ const OrdersList = () => {
                     Order Products
                   </h1>
                   <p className="text-gray-500 text-sm mt-1">
-                    Total Products : {currentOrder?.products.length}
+                    Total Products : {currentOrder?.items?.length}
                   </p>
                 </div>
                 <button
@@ -417,48 +419,48 @@ const OrdersList = () => {
                   <div className="space-y-2">
                     <p>
                       <span className="font-semibold">Name :</span>{" "}
-                      {currentOrder?.shippingAddress?.name}
+                      {currentOrder?.shippingAddress?.fullName}
                     </p>
                     <p>
                       <span className="font-semibold">Phone :</span>{" "}
-                      {currentOrder?.shippingAddress?.phone}
+                      {currentOrder?.shippingAddress?.phoneNumber}
                     </p>
                     <p>
                       <span className="font-semibold">Email :</span>{" "}
-                      {currentOrder?.shippingAddress?.email}
+                      {currentOrder?.shippingAddress?.phoneNumberNumber}
                     </p>
                   </div>
 
                   <div className="space-y-2">
                     <p>
-                      {currentOrder?.shippingAddress?.address?.street},
-                      {currentOrder?.shippingAddress?.address?.post},{" "}
-                      {currentOrder?.shippingAddress?.address?.district},{" "}
-                      {currentOrder?.shippingAddress?.address?.state}
+                      {currentOrder?.shippingAddress?.street},
+                      {currentOrder?.shippingAddress?.post},{" "}
+                      {currentOrder?.shippingAddress?.district},{" "}
+                      {currentOrder?.shippingAddress?.state}
                     </p>
                     <p>
                       Pincode :{" "}
-                      {currentOrder?.shippingAddress?.address?.pincode}
+                      {currentOrder?.shippingAddress?.pincode}
                     </p>
                     <p>
                       Landmark :{" "}
-                      {currentOrder?.shippingAddress?.address?.landmark}
+                      {currentOrder?.shippingAddress?.landmark}
                     </p>
                   </div>
                 </div>
               </div>
 
               <div className="p-3 md:p-6 space-y-6">
-                {currentOrder?.products?.map((item, index) => {
-                  const product = item?.product;
+                {currentOrder?.items?.map((item, index) => {
+                  
 
                   return (
                     <div key={index} className="rounded-3xl overflow-hidden">
                       <div className="p-3 md:p-6">
                         <div className="flex flex-col sm:flex-row gap-4">
                           <img
-                            src={product?.images || "/no-image.png"}
-                            alt={product?.name || "Product"}
+                            src={item?.productImage || "/no-image.png"}
+                            alt={item?.productName || "Product"}
                             className="w-full sm:w-28 h-48 sm:h-28 object-cover rounded-2xl"
                           />
 
@@ -466,11 +468,11 @@ const OrdersList = () => {
                             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                               <div>
                                 <h1 className="font-bold text-base md:text-lg text-gray-800">
-                                  {product?.name || "Product Removed"}
+                                  {item?.productName || "Product Removed"}
                                 </h1>
 
                                 <p className="text-xs md:text-sm text-gray-500 mt-1">
-                                  {product?.category || "No Category"}
+                                  
                                 </p>
                               </div>
 
@@ -500,13 +502,12 @@ const OrdersList = () => {
                             </div>
 
                             <p className="text-xs md:text-sm text-gray-500 mt-3">
-                              {product?.description ||
-                                "No description available"}
+                              
                             </p>
 
                             <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
                               <span className="font-bold text-green-600 text-base md:text-lg">
-                                ₹ {product?.price || 0}
+                                ₹ {item?.price || 0}
                               </span>
 
                               <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
@@ -514,7 +515,7 @@ const OrdersList = () => {
                               </span>
 
                               <span className="px-3 py-1 rounded-full bg-blue-100 text-(--color-surface) text-xs md:text-sm">
-                                {item?.paymentStatus || "PENDING"}
+                                {currentOrder?.paymentStatus || "PENDING"}
                               </span>
                             </div>
                           </div>

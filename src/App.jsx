@@ -38,17 +38,12 @@ const App = () => {
 
   // Restore user
   useEffect(() => {
-      console.log("currentUser", currentUser);
 
     if (isSuccess && currentUser) {
-          console.log("Dispatching login");
-
       dispatch(login(currentUser));
     }
 
     if (isError) {
-          console.log("Dispatching logout");
-
       dispatch(logout());
     }
 
