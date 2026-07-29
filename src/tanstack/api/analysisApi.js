@@ -1,7 +1,7 @@
 import { api } from "../../config/apiClient";
 import { analysisCalculation } from "../../utils/lastMonthSales";
 import { lastSevenMonthProductCalculation } from "../../utils/lastSevenMonthProduct";
-
+const ANALYSISURL = "/admin/analysis"
 export const addOrderAnalysis = async (data) => {
   const res = await api.post("/analysis", data);
 };
@@ -36,9 +36,10 @@ export const getCountOfTotalAndProfit = async () => {
 };
 
 export const getLastSevenMonthAnalysis = async () => {
-  const res = await api.get("/analysis");
-  const calculated = analysisCalculation(res.data);
-  return calculated;
+  const res = await api.get(`ANALYSISURL`);
+  console.log(res.data.data);
+  
+  return res.data.data;
 };
 
 export const lastSevenMonthProduct = async () => {

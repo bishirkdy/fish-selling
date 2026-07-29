@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, SquareX } from "lucide-react";
 import { useGetProductById } from "../../../tanstack/hooks/queries/productQueries";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,6 +12,7 @@ const EditFish = () => {
     name: "",
     category: "",
     price: "",
+    costPrice: "",
     stock: "",
     discountPercentage: "",
     description: "",
@@ -30,15 +31,16 @@ const EditFish = () => {
         name: data.name || "",
         category: data.categoryId || "",
         price: data.price || "",
+        costPrice: data.costPrice || "",
         stock: data.stock || "",
         discountPercentage: data.discountPercentage || "",
         description: data.description || "",
       });
-    setImage(data.imageUrls[0] || "");
-    setPreview(data.imageUrls[0] || "");    }
+      setImage(data.imageUrls[0] || "");
+      setPreview(data.imageUrls[0] || "");
+    }
   }, [data]);
   const [error, setError] = useState({});
-
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -46,7 +48,6 @@ const EditFish = () => {
       </div>
     );
   }
-
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -65,6 +66,7 @@ const EditFish = () => {
     if (!formData.category) errors.category = "Category is required";
     if (!formData.price) errors.price = "Price is required";
     if (!formData.stock) errors.stock = "Stock is required";
+    if (!formData.costPrice) errors.costPrice = "Cost Price is required";
     if (!formData.discountPercentage)
       errors.discountPercentage = "Discount is required";
     if (!formData.description) errors.description = "Description is required";
@@ -79,6 +81,7 @@ const EditFish = () => {
       form.append("name", formData.name);
       form.append("description", formData.description);
       form.append("price", Number(formData.price));
+      form.append("costPrice", Number(formData.costPrice));
       form.append("stock", Number(formData.stock));
       form.append("discountPercentage", Number(formData.discountPercentage));
       form.append("categoryId", formData.category);
@@ -105,6 +108,7 @@ const EditFish = () => {
               name: "",
               category: "",
               price: "",
+              costPrice: "",
               stock: "",
               discountPercentage: "",
               description: "",
@@ -116,7 +120,6 @@ const EditFish = () => {
       toast.error(error.message);
     }
   };
-console.log(image);
 
   return (
     <div className="w-full min-h-screen bg-gray-200 p-6">
@@ -191,32 +194,41 @@ console.log(image);
               </div>
 
               <div className="space-y-5">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                    Price
-                  </label>
-
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder="₹ Enter price"
-                    className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                      error?.price
-                        ? "border-red-500 focus:ring-red-300"
-                        : "border-gray-300 focus:ring-(--color-surface)"
-                    }`}
-                  />
-
-                  {error?.price && (
-                    <p className="text-red-500 text-sm pl-1">{error.price}</p>
-                  )}
-                </div>
-
+                {/* Price + Cost Price */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <label className="block text-sm font-semibold">
+                      Selling Price
+                    </label>
+
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="w-full h-14 px-5 rounded-2xl border"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold">
+                      Cost Price
+                    </label>
+
+                    <input
+                      type="number"
+                      name="costPrice"
+                      value={formData.costPrice}
+                      onChange={handleChange}
+                      className="w-full h-14 px-5 rounded-2xl border"
+                    />
+                  </div>
+                </div>
+
+                {/* Discount + Stock */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold">
                       Discount %
                     </label>
 
@@ -225,42 +237,20 @@ console.log(image);
                       name="discountPercentage"
                       value={formData.discountPercentage}
                       onChange={handleChange}
-                      placeholder="Discount"
-                      className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                        error?.discountPercentage
-                          ? "border-red-500 focus:ring-red-300"
-                          : "border-gray-300 focus:ring-(--color-surface)"
-                      }`}
+                      className="w-full h-14 px-5 rounded-2xl border"
                     />
-
-                    {error?.discountPercentage && (
-                      <p className="text-red-500 text-sm pl-1">
-                        {error.discountPercentage}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                      Stock
-                    </label>
+                    <label className="block text-sm font-semibold">Stock</label>
 
                     <input
                       type="number"
                       name="stock"
                       value={formData.stock}
                       onChange={handleChange}
-                      placeholder="Qty"
-                      className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                        error?.stock
-                          ? "border-red-500 focus:ring-red-300"
-                          : "border-gray-300 focus:ring-(--color-surface)"
-                      }`}
+                      className="w-full h-14 px-5 rounded-2xl border"
                     />
-
-                    {error?.stock && (
-                      <p className="text-red-500 text-sm pl-1">{error.stock}</p>
-                    )}
                   </div>
                 </div>
               </div>

@@ -21,6 +21,7 @@ const AddFish = () => {
     stock: "",
     discountPercentage: "",
     description: "",
+    costPrice: "",
   });
   const [image, setImage] = useState(null);
   const { mutate, isPending } = useAddProduct();
@@ -49,6 +50,7 @@ const AddFish = () => {
       errors.discountPercentage = "Discount percentage is required";
     if (!formData.description) errors.description = "Description is required";
     if (!image) errors.image = "Image is required";
+    if (!formData.costPrice) errors.costPrice = "Cost price is required";
     if (Object.keys(errors).length > 0) {
       setError(errors);
       return;
@@ -59,6 +61,7 @@ const AddFish = () => {
       finalData.append("name", formData.name);
       finalData.append("description", formData.description);
       finalData.append("price", Number(formData.price));
+      finalData.append("costPrice", Number(formData.costPrice));
       finalData.append("stock", Number(formData.stock));
       finalData.append(
         "discountPercentage",
@@ -88,6 +91,7 @@ const AddFish = () => {
             stock: "",
             discountPercentage: "",
             description: "",
+            costPrice: "",
           });
           setImage(null);
         },
@@ -171,31 +175,40 @@ const AddFish = () => {
               </div>
 
               <div className="space-y-5">
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
-                    Price
-                  </label>
+                {/* Price + Cost Price */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Selling Price
+                    </label>
 
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleChange}
-                    placeholder="₹ Enter price"
-                    className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                      error?.price
-                        ? "border-red-500 focus:ring-red-300"
-                        : "border-gray-300 focus:ring-(--color-surface)"
-                    }`}
-                  />
+                    <input
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleChange}
+                      placeholder="₹ Selling Price"
+                      className="w-full h-14 px-5 rounded-2xl border border-gray-300"
+                    />
+                  </div>
 
-                  {error?.price && (
-                    <p className="text-red-500 text-sm font-medium pl-1">
-                      {error.price}
-                    </p>
-                  )}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      Cost Price
+                    </label>
+
+                    <input
+                      type="number"
+                      name="costPrice"
+                      value={formData.costPrice}
+                      onChange={handleChange}
+                      placeholder="₹ Cost Price"
+                      className="w-full h-14 px-5 rounded-2xl border border-gray-300"
+                    />
+                  </div>
                 </div>
 
+                {/* Discount + Stock */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-semibold text-gray-700">
@@ -208,18 +221,8 @@ const AddFish = () => {
                       value={formData.discountPercentage}
                       onChange={handleChange}
                       placeholder="Discount"
-                      className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                        error?.discountPercentage
-                          ? "border-red-500 focus:ring-red-300"
-                          : "border-gray-300 focus:ring-(--color-surface)"
-                      }`}
+                      className="w-full h-14 px-5 rounded-2xl border border-gray-300"
                     />
-
-                    {error?.discountPercentage && (
-                      <p className="text-red-500 text-sm font-medium pl-1">
-                        {error.discountPercentage}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -232,19 +235,9 @@ const AddFish = () => {
                       name="stock"
                       value={formData.stock}
                       onChange={handleChange}
-                      placeholder="Qty"
-                      className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
-                        error?.stock
-                          ? "border-red-500 focus:ring-red-300"
-                          : "border-gray-300 focus:ring-(--color-surface)"
-                      }`}
+                      placeholder="Stock"
+                      className="w-full h-14 px-5 rounded-2xl border border-gray-300"
                     />
-
-                    {error?.stock && (
-                      <p className="text-red-500 text-sm font-medium pl-1">
-                        {error.stock}
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
