@@ -1,21 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {
-  Image,
-  SquareX,
-  Save,
-  Fish,
-  Package,
-  Percent,
-  DollarSign,
-  FileText,
-} from "lucide-react";
+import  { useEffect, useState } from "react";
+import { Image, SquareX } from "lucide-react";
 import { useGetProductById } from "../../../tanstack/hooks/queries/productQueries";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEditProductById } from "../../../tanstack/hooks/mutations/productMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import axios from "axios";
+import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
 const EditFish = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -25,26 +16,26 @@ const EditFish = () => {
     discountPercentage: "",
     description: "",
   });
-  const [isUploading, setUploading] = useState(false);
   const { id } = useParams();
   const { data, isLoading, isError } = useGetProductById(id);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
   const [preview, setPreview] = useState("");
   const { mutate, isPending } = useEditProductById();
+  const { data: category } = useGetCategories();
   const client = useQueryClient();
   const navigate = useNavigate();
   useEffect(() => {
     if (data) {
       setFormData({
         name: data.name || "",
-        category: data.category || "",
+        category: data.categoryId || "",
         price: data.price || "",
         stock: data.stock || "",
         discountPercentage: data.discountPercentage || "",
         description: data.description || "",
       });
-      setImage(data.images || "");
-    }
+    setImage(data.imageUrls[0] || "");
+    setPreview(data.imageUrls[0] || "");    }
   }, [data]);
   const [error, setError] = useState({});
 
@@ -83,24 +74,22 @@ const EditFish = () => {
       return;
     }
     try {
-      setUploading(true);
-      const cloudItem = new FormData();
-      cloudItem.append("file", image);
-      cloudItem.append("upload_preset", "fish-shop");
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dztjqqoyw/image/upload",
-        cloudItem,
-      );
-      const final = {
-        ...formData,
-        price: Number(formData.price),
-        stock: Number(formData.stock),
-        discountPercentage: Number(formData.discountPercentage),
-        images: res.data.secure_url,
-      };
+      const form = new FormData();
+
+      form.append("name", formData.name);
+      form.append("description", formData.description);
+      form.append("price", Number(formData.price));
+      form.append("stock", Number(formData.stock));
+      form.append("discountPercentage", Number(formData.discountPercentage));
+      form.append("categoryId", formData.category);
+      form.append("isPrimary", true);
+
+      if (image) {
+        form.append("image", image);
+      }
 
       mutate(
-        { data: final, id },
+        { id, data: form },
         {
           onSuccess: () => {
             toast.success("Product edited successfully");
@@ -111,24 +100,23 @@ const EditFish = () => {
             toast.error(err.message);
           },
           onSettled: () => {
-            setUploading(false);
             setImage(null);
             setFormData({
-              name: data.name || "",
-              category: data.category || "",
-              price: data.price || "",
-              stock: data.stock || "",
-              discountPercentage: data.discountPercentage || "",
-              description: data.description || "",
+              name: "",
+              category: "",
+              price: "",
+              stock: "",
+              discountPercentage: "",
+              description: "",
             });
           },
         },
       );
     } catch (error) {
-      setUploading(false);
       toast.error(error.message);
     }
   };
+console.log(image);
 
   return (
     <div className="w-full min-h-screen bg-gray-200 p-6">
@@ -186,11 +174,12 @@ const EditFish = () => {
                     }`}
                   >
                     <option value="">Select Category</option>
-                    <option value="Freshwater Fish">Freshwater Fish</option>
-                    <option value="Saltwater Fish">Saltwater Fish</option>
-                    <option value="Exotic Fish">Exotic Fish</option>
-                    <option value="Beginner Friendly">Beginner Friendly</option>
-                    <option value="Popular Fish">Popular Fish</option>
+
+                    {category?.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
                   </select>
 
                   {error?.category && (
@@ -304,7 +293,7 @@ const EditFish = () => {
               type="submit"
               className="h-14 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition flex items-center justify-center gap-3 shadow-lg cursor-pointer"
             >
-              {isPending || isUploading ? "Updating..." : "Save Change"}
+              {isPending ? "Updating..." : "Save Change"}
             </button>
           </form>
         </div>

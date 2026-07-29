@@ -9,12 +9,11 @@ import {
   Tag,
   SquareX,
 } from "lucide-react";
-import axios from "axios";
 import { useAddProduct } from "../../../tanstack/hooks/mutations/productMutation";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
 const AddFish = () => {
-  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -25,6 +24,7 @@ const AddFish = () => {
   });
   const [image, setImage] = useState(null);
   const { mutate, isPending } = useAddProduct();
+  const { data: category } = useGetCategories();
   const [error, setError] = useState();
   const client = useQueryClient();
   const handleChange = (e) => {
@@ -54,24 +54,24 @@ const AddFish = () => {
       return;
     }
     try {
-      setUploading(true);
-      const cloudItem = new FormData();
-      cloudItem.append("file", image);
-      cloudItem.append("upload_preset", "fish-shop");
-      const res = await axios.post(
-        "https://api.cloudinary.com/v1_1/dztjqqoyw/image/upload",
-        cloudItem,
+      const finalData = new FormData();
+
+      finalData.append("name", formData.name);
+      finalData.append("description", formData.description);
+      finalData.append("price", Number(formData.price));
+      finalData.append("stock", Number(formData.stock));
+      finalData.append(
+        "discountPercentage",
+        Number(formData.discountPercentage),
       );
 
-      const finalData = {
-        ...formData,
-        price: Number(formData.price),
-        stock: Number(formData.stock),
-        discountPercentage: Number(formData.discountPercentage),
-        createdAt: Date.now(),
-        isActive: true,
-        images: res.data.secure_url,
-      };
+      finalData.append("isActive", true);
+      finalData.append("isPrimary", true);
+      finalData.append("categoryId", formData.category);
+
+      if (image) {
+        finalData.append("image", image);
+      }
       mutate(finalData, {
         onSuccess: () => {
           toast.success("Product added successfully");
@@ -81,7 +81,6 @@ const AddFish = () => {
           toast.error(error.message);
         },
         onSettled: () => {
-          setUploading(false);
           setFormData({
             name: "",
             category: "",
@@ -94,7 +93,6 @@ const AddFish = () => {
         },
       });
     } catch (error) {
-      setUploading(false);
       console.log(error.message);
     }
   };
@@ -156,11 +154,12 @@ const AddFish = () => {
                     }`}
                   >
                     <option value="">Select Category</option>
-                    <option value="Freshwater Fish">Freshwater Fish</option>
-                    <option value="Saltwater Fish">Saltwater Fish</option>
-                    <option value="Exotic Fish">Exotic Fish</option>
-                    <option value="Beginner Friendly">Beginner Friendly</option>
-                    <option value="Popular Fish">Popular Fish</option>
+
+                    {category?.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
                   </select>
 
                   {error?.category && (
@@ -281,7 +280,7 @@ const AddFish = () => {
               disabled={isPending}
               className="h-14 px-10 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition cursor-pointer shadow-lg"
             >
-              {isPending || uploading ? "Adding..." : "Add Fish"}
+              {isPending ? "Adding..." : "Add Fish"}
             </button>
           </form>
         </div>

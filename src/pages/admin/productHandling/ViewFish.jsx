@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loader";
+import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
 
 const ViewFish = () => {
   const [search, setSearch] = useState("");
@@ -25,6 +26,7 @@ const ViewFish = () => {
   const [sort, setSort] = useState("");
   const [stockFilter, setStockFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { data: categoryData } = useGetCategories();
 
   const itemsPerPage = 8;
   const client = useQueryClient();
@@ -38,14 +40,14 @@ const ViewFish = () => {
       </div>
     );
   }
-
   const filteredFish = data
     ?.filter((fish) => {
       const matchSearch =
         fish.name.toLowerCase().includes(search.toLowerCase()) ||
-        fish.category.toLowerCase().includes(search.toLowerCase());
+        fish.categoryName.toLowerCase().includes(search.toLowerCase());
 
-      const matchCategory = category === "all" || fish.category === category;
+      const matchCategory =
+        category === "all" || fish.categoryId === category;
 
       const matchStock =
         stockFilter === ""
@@ -116,12 +118,13 @@ const ViewFish = () => {
             onChange={(e) => setCategory(e.target.value)}
             className="border p-3 rounded-xl"
           >
-            <option value="all">All Categories</option>
-            <option value="Freshwater Fish">Freshwater Fish</option>
-            <option value="Saltwater Fish">Saltwater Fish</option>
-            <option value="Exotic Fish">Exotic Fish</option>
-            <option value="Beginner Friendly">Beginner Friendly</option>
-            <option value="Popular Fish">Popular Fish</option>
+            <option value="">All Categories</option>
+
+            {categoryData?.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
+              </option>
+            ))}
           </select>
 
           <select
@@ -163,12 +166,12 @@ const ViewFish = () => {
           >
             <div className="relative h-56 overflow-hidden">
               <img
-                src={fish.images}
+                src={fish.imageUrls?.[0] || null}
                 alt={fish.name}
                 className="w-full h-full object-cover hover:scale-105 transition duration-300"
               />
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold text-(--color-accent) shadow-sm border border-white/50">
-                {fish.category}
+                {fish.categoryName}
               </div>
             </div>
 
@@ -277,7 +280,7 @@ const ViewFish = () => {
             </button>
             <div className="bg-gray-100 p-8 flex items-center justify-center">
               <img
-                src={selectedFish?.images}
+                src={selectedFish?.imageUrls?.[0] || null}
                 alt={selectedFish?.name}
                 className="w-full h-125 object-cover rounded-3xl"
               />
@@ -285,7 +288,7 @@ const ViewFish = () => {
             <div className="p-10 flex flex-col justify-between">
               <div>
                 <span className="bg-blue-100 text-(--color-surface) px-4 py-2 rounded-full text-sm font-medium">
-                  {selectedFish?.category}
+                  {selectedFish?.categoryName}
                 </span>
 
                 <h1 className="text-4xl font-bold text-gray-800 mt-5">

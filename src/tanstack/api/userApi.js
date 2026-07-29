@@ -1,5 +1,6 @@
 import { api } from "../../config/apiClient";
 const USER = "/User";
+const ADMINUSER = "/admin/users";
 
 export const addUser = async (data) => {
   const res = await api.post(`${USER}/register`, data);
@@ -23,8 +24,8 @@ export const loginUser = async (data) => {
 };
 
 export const getAllUser = async () => {
-  const res = await api.get(`${USER}`);
-  return res.data;
+  const res = await api.get(`${ADMINUSER}`);
+  return res.data.data;
 };
 
 export const blockUser = async (id) => {
