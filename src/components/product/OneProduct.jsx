@@ -37,7 +37,7 @@ const OneProduct = () => {
   if (isError)
     return <div className="text-red-500 p-30">Error loading product</div>;
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
-
+console.log(reviews);
   
 function cartHandle(product) {
   if (isCart) {
@@ -75,10 +75,8 @@ function cartHandle(product) {
 
     const review = {
       productId: data.id,
-      userId: user.id,
       rating,
       comment,
-      createdAt: new Date().toISOString(),
     };
 
     mutate(review, {
@@ -236,7 +234,7 @@ function cartHandle(product) {
               >
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold">
-                    {review.user?.name || "Unknown User"}
+                    {review.userName || "Unknown User"}
                   </h4>
 
                   <div className="flex text-yellow-400">
