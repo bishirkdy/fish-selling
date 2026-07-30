@@ -6,7 +6,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { useLastMonthsProductCount } from "../../../tanstack/hooks/queries/analysisQueries";
+import { useCategoryDistribution } from "../../../tanstack/hooks/queries/analysisQueries";
 
 const style = {
   top: "50%",
@@ -16,7 +16,7 @@ const style = {
 };
 
 export const CategoryChart = () => {
-  const { data: categoryData, isLoading } = useLastMonthsProductCount();
+  const { data: categoryData, isLoading } = useCategoryDistribution();
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -35,7 +35,7 @@ export const CategoryChart = () => {
           cx="30%"
           cy="50%"
           barSize={14}
-          data={categoryData?.categoryCount}
+          data={categoryData}
         >
           <RadialBar
             // background

@@ -24,13 +24,14 @@ import { useEditOrderStatus } from "../../tanstack/hooks/mutations/orderMutation
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
+import { useGetTotalOrderStatus  } from "../../tanstack/hooks/queries/analysisQueries";
 
 const statusStyle = {
   "Order Placed": "bg-blue-100 text-blue-700",
   Confirmed: "bg-cyan-100 text-cyan-700",
   Packed: "bg-yellow-100 text-yellow-700",
   Shipping: "bg-purple-100 text-purple-700",
-  "Out For Delivery": "bg-orange-100 text-orange-700",
+  Shipped: "bg-orange-100 text-orange-700",
   Delivered: "bg-green-100 text-green-700",
   Cancelled: "bg-red-100 text-red-700",
 };
@@ -47,7 +48,7 @@ const OrdersList = () => {
     data: orderStatus,
     isLoading: statusLoading,
     isError: statusError,
-  } = useGetOrderedStatus();
+  } = useGetTotalOrderStatus();
   const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
@@ -58,6 +59,7 @@ const OrdersList = () => {
       </div>
     );
   }
+  
   const filteredOrders = data?.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -104,7 +106,7 @@ const OrdersList = () => {
         updatedTime.shippingTime = Date.now();
         break;
       case "Out For Delivery":
-        updatedTime.deliveryStartTime = Date.now();
+        updatedTime.shippedTime  = Date.now();
         break;
       case "Delivered":
         updatedTime.deliveredTime = Date.now();
@@ -137,7 +139,6 @@ const OrdersList = () => {
       },
     );
   }
-  console.log(currentOrder);
   
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
@@ -150,7 +151,7 @@ const OrdersList = () => {
           <div>
             <p className="text-gray-500 text-sm">Total Orders</p>
             <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.orderedCount}
+              {orderStatus?.totalOrders}
             </h2>
           </div>
 
@@ -162,7 +163,7 @@ const OrdersList = () => {
         <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-gray-500 text-sm">Order Placed</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.ordered}</h2>
+            <h2 className="text-2xl font-bold mt-1">{orderStatus?.orderPlaced}</h2>
           </div>
 
           <div className="bg-blue-100 p-3 rounded-xl">
@@ -197,7 +198,7 @@ const OrdersList = () => {
         <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-gray-500 text-sm">Shipping</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipped}</h2>
+            <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipping}</h2>
           </div>
 
           <div className="bg-purple-100 p-3 rounded-xl">
@@ -206,13 +207,10 @@ const OrdersList = () => {
         </div>
 
         <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Out For Delivery</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.outOfDelivery}
-            </h2>
+      <div>
+            <p className="text-gray-500 text-sm">Shipped</p>
+            <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipped}</h2>
           </div>
-
           <div className="bg-orange-100 p-3 rounded-xl">
             <Bike className="text-orange-600" />
           </div>
@@ -275,7 +273,7 @@ const OrdersList = () => {
               <option value="Confirmed">Confirmed</option>
               <option value="Packed">Packed</option>
               <option value="Shipping">Shipping</option>
-              <option value="Out For Delivery">Out For Delivery</option>
+              <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
@@ -338,7 +336,7 @@ const OrdersList = () => {
 
                   <td className="px-6 py-2">
                     <span className="font-bold text-gray-800">
-                      ₹{order.totalAmount}
+                      ₹{Math.round(order.totalAmount)}
                     </span>
                   </td>
 

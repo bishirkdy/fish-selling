@@ -8,11 +8,11 @@ import {
   Boxes,
   HandCoins,
 } from "lucide-react";
-import { useGetAllCartDataOfUser } from "../../../tanstack/hooks/queries/analysisQueries";
+import { useDashboardTopData, } from "../../../tanstack/hooks/queries/analysisQueries";
 import Loader from "../../Loader";
 
 const TopDashboard = () => {
-  const { data: analysisData, isLoading, isError } = useGetAllCartDataOfUser();
+  const { data: analysisData, isLoading, isError } = useDashboardTopData();
 
   if (isLoading) {
     return (
@@ -25,22 +25,22 @@ const TopDashboard = () => {
   const dashboardData = [
     {
       title: "Total Revenue",
-      value: analysisData?.profit,
+      value: Math.floor(analysisData?.totalRevenue),
       icon: HandCoins,
     },
     {
       title: "Total Orders",
-      value: analysisData?.orderCount,
+      value: analysisData?.totalOrders,
       icon: ShoppingCart,
     },
     {
       title: "Customers",
-      value: analysisData?.userCount,
+      value: analysisData?.totalCustomers,
       icon: Users,
     },
     {
       title: "Products",
-      value: analysisData?.productCount,
+      value: analysisData?.totalProducts,
       icon: Boxes,
     },
   ];

@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
 import SameDataComposedChart from '../../components/admin/adminAnalysis/ProductChart'
 import { SalesChart } from '../../components/admin/adminAnalysis/SalesCharts'
 import { ProfitChart } from '../../components/admin/adminAnalysis/ProfitChart'
 import { CategoryChart } from '../../components/admin/adminAnalysis/CategoryProductsAnalisys'
-import { useGetAllCartDataOfUser } from '../../tanstack/hooks/queries/analysisQueries'
+import { useAnalysisTopData } from '../../tanstack/hooks/queries/analysisQueries'
 import Loader from '../../components/Loader'
 
 const AdminAnalysis = () => {
-  const {data : topData , isLoading : topLoading , isError : topError} = useGetAllCartDataOfUser()  
+  const {data : topData , isLoading : topLoading , isError : topError} = useAnalysisTopData()  
      if (topLoading ) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -15,6 +14,8 @@ const AdminAnalysis = () => {
       </div>
     );
   }
+console.log(topData);
+
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6"> 
       <div className="mb-8">
@@ -25,24 +26,49 @@ const AdminAnalysis = () => {
           Monitor sales, profit, category performance and traffic
         </p>
       </div>   
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm">Total Sales</p>
-          <h2 className="text-3xl font-bold mt-2">₹ {topData?.total}</h2>
-        </div>
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm">Total Orders</p>
-          <h2 className="text-3xl font-bold mt-2">{topData?.orderCount}</h2>
-        </div>
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm">Profit</p>
-          <h2 className="text-3xl font-bold mt-2">₹ {Math.round(topData?.profit)}</h2>
-        </div>
-        <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-sm">Customers</p>
-          <h2 className="text-3xl font-bold mt-2">{topData?.userCount}</h2>
-        </div>
-      </div>
+<div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 mb-8">
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Total Sales</p>
+    <h2 className="text-3xl font-bold mt-2">
+      ₹ {Math.round(topData?.totalSales)}
+    </h2>
+  </div>
+
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Total Profit</p>
+    <h2 className="text-3xl font-bold mt-2">
+      ₹ {Math.round(topData?.totalProfit)}
+    </h2>
+  </div>
+
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Total Orders</p>
+    <h2 className="text-3xl font-bold mt-2">
+      {topData?.totalOrders}
+    </h2>
+  </div>
+
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Customers</p>
+    <h2 className="text-3xl font-bold mt-2">
+      {topData?.totalCustomers}
+    </h2>
+  </div>
+
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Products</p>
+    <h2 className="text-3xl font-bold mt-2">
+      {topData?.totalProducts}
+    </h2>
+  </div>
+
+  <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100">
+    <p className="text-gray-500 text-sm">Categories</p>
+    <h2 className="text-3xl font-bold mt-2">
+      {topData?.totalCategories}
+    </h2>
+  </div>
+</div>
 
       
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

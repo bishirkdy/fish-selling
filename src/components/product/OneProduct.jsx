@@ -12,20 +12,20 @@ import { useAddReview } from "../../tanstack/hooks/mutations/reviewMutation";
 import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/reviewQueries";
 
 const OneProduct = () => {
+  
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
-
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const { data: response, isLoading, isError } = useGetProductById(id);
-  const data = response?.data;
+  const { data, isLoading, isError } = useGetProductById(id);
   const { data: reviews } = useGetReviewOfProduct(data?.id);
   const cartData = useSelector((s) => s.cart.cart);
   const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
   const { mutate, isPending } = useAddReview();
   const isCart = cartData.some((d) => d.productId === data?.id);
+  
   if (isLoading) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
@@ -33,10 +33,12 @@ const OneProduct = () => {
       </div>
     );
   }
+
   if (isError)
-    return <div className="text-red-500 p-10">Error loading product</div>;
+    return <div className="text-red-500 p-30">Error loading product</div>;
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
 
+  
 function cartHandle(product) {
   if (isCart) {
     toast.info("Product is already in your cart");
