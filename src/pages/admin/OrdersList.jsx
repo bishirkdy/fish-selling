@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
-  Package,
-  Clock,
   CheckCircle,
   Truck,
   XCircle,
   Search,
-  Eye,
   View,
   ShoppingCart,
   BadgeCheck,
@@ -16,15 +13,12 @@ import {
   ShoppingBagIcon,
   Boxes,
 } from "lucide-react";
-import {
-  useGetAllOrders,
-  useGetOrderedStatus,
-} from "../../tanstack/hooks/queries/orderQueries";
-import { useEditOrderStatus } from "../../tanstack/hooks/mutations/orderMutation";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import { useGetTotalOrderStatus } from "../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
+import { useGetAllOrders } from "../../tanstack/hooks/queries/order/adminOrderQueries";
 
 const statusStyle = {
   "Order Placed": "bg-blue-100 text-blue-700",
@@ -49,7 +43,7 @@ const OrdersList = () => {
     isLoading: statusLoading,
     isError: statusError,
   } = useGetTotalOrderStatus();
-  const { mutate, isPending } = useEditOrderStatus();
+  // const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
   if (isLoading || statusLoading) {

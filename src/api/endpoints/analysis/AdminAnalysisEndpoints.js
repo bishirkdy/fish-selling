@@ -7,4 +7,5 @@ export const ADMIN_ANALYSIS_ENDPOINTS = {
   MONTHLY_PRODUCTS: "/admin/analysis/monthly-products",
   CATEGORY_COUNT: "/admin/analysis/category-count",
   ORDER_STATUS: "/admin/analysis/order-status-summary",
+  OVERALL_RATING : "/admin/analysis/rating-summary"
 };

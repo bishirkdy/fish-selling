@@ -1,5 +1,5 @@
 import { api } from "../../api/apiClient";
-import { REVIEW_ENDPOINTS } from "../../api/endpoints/reviewEndpoints";
+import { REVIEW_ENDPOINTS } from "../../api/endpoints/review/reviewEndpoints";
 
 export const addReview = async (data) => {
   const res = await api.post(REVIEW_ENDPOINTS.BASE, data);

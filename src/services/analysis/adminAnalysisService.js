@@ -30,3 +30,7 @@ export const getTotalOrderStatus = async () => {
   const res = await api.get(ADMIN_ANALYSIS_ENDPOINTS.ORDER_STATUS);
   return res.data.data;
 };
+
+export const getOverallRating = async () => {
+  const res = await api.get(ADMIN_ANALYSIS_ENDPOINTS.OVERALL_RATING);
+  return res.data.data;}

@@ -1,11 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import {  addOrders, orderStatusChange, removeOrder } from "../../api/orderApi";
+// import { useMutation } from "@tanstack/react-query";
+// import {   orderStatusChange } from "../../api/orderApi";
 
 
 
-export const useEditOrderStatus = () => {
-    return useMutation({
-        mutationFn : orderStatusChange
-    })
-}
+// export const useEditOrderStatus = () => {
+//     return useMutation({
+//         mutationFn : orderStatusChange
+//     })
+// }
 

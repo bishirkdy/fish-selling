@@ -1,5 +1,5 @@
 import {  useQuery } from "@tanstack/react-query";
-import { getAnalysisTop, getCategoryDistribution, getDashboardTop, getLastSevenMonthAnalysis, getLastSevenMonthProduct, getTotalOrderStatus } from "../../../../services/analysis/adminAnalysisService";
+import { getAnalysisTop, getCategoryDistribution, getDashboardTop, getLastSevenMonthAnalysis, getLastSevenMonthProduct, getTotalOrderStatus , getOverallRating} from "../../../../services/analysis/adminAnalysisService";
 
 export const useDashboardTopData = () => {
   return useQuery({
@@ -43,9 +43,9 @@ export const useCategoryDistribution = () => {
    })
 }
 
-// export const useGetRatingCount = () => {
-//   return useQuery({
-//     queryKey : ["rating-count"],
-//     queryFn : getRatingCount,
-//   })
-// }
+export const useGetRatingCount = () => {
+  return useQuery({
+    queryKey : ["rating-count"],
+    queryFn : getOverallRating,
+  })
+}

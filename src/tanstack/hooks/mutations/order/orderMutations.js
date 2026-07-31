@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import { addOrders, cancelOrder } from "../../../../services/order/orderService";
+import {  addOrder, cancelOrder } from "../../../../services/order/orderService";
 
 export const useAddOrders = () => {
   return useMutation({
-    mutationFn: addOrders,
+    mutationFn: addOrder,
   });
 };
 

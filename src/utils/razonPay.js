@@ -1,7 +1,5 @@
-import {
-  createOrderWithPaymentApi,
-  verifyPaymentApi,
-} from "../tanstack/api/paymentApi";
+import { createOrderWithPayment, verifyPayment } from "../services/payment/paymentService";
+
 
 export const handleOnlinePayment = async ({
   Razorpay,
@@ -11,7 +9,7 @@ export const handleOnlinePayment = async ({
 }) => {
   try {
     // Create Razorpay Order
-    const payment = await createOrderWithPaymentApi(orderData);
+    const payment = await createOrderWithPayment(orderData);
 
     const options = {
       key: payment.key,
@@ -36,7 +34,7 @@ export const handleOnlinePayment = async ({
               2,
             ),
           );
-          const order = await verifyPaymentApi({
+          const order = await verifyPayment({
             razorpayOrderId: response.razorpay_order_id,
             razorpayPaymentId: response.razorpay_payment_id,
             razorpaySignature: response.razorpay_signature,

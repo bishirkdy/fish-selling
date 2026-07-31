@@ -1,5 +1,3 @@
-
-
 export const statesOfOrders = async () => {
   const res = await api.get("/orders");
   const orders = res.data;

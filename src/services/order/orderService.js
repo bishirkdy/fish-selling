@@ -2,7 +2,7 @@ import { api } from "../../api/apiClient";
 import { ORDER_ENDPOINTS } from "../../api/endpoints/order/orderEndpoints";
 
 
-export const addOrders = async (data) => {
+export const addOrder = async (data) => {
   const res = await api.post(ORDER_ENDPOINTS.BASE, data);
   return res.data;
 };
