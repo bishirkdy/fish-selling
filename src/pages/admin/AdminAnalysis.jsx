@@ -2,8 +2,8 @@ import SameDataComposedChart from '../../components/admin/adminAnalysis/ProductC
 import { SalesChart } from '../../components/admin/adminAnalysis/SalesCharts'
 import { ProfitChart } from '../../components/admin/adminAnalysis/ProfitChart'
 import { CategoryChart } from '../../components/admin/adminAnalysis/CategoryProductsAnalisys'
-import { useAnalysisTopData } from '../../tanstack/hooks/queries/analysisQueries'
 import Loader from '../../components/Loader'
+import { useAnalysisTopData } from '../../tanstack/hooks/queries/analysis/adminAnalysisQueries'
 
 const AdminAnalysis = () => {
   const {data : topData , isLoading : topLoading , isError : topError} = useAnalysisTopData()  
@@ -14,7 +14,6 @@ const AdminAnalysis = () => {
       </div>
     );
   }
-console.log(topData);
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6"> 

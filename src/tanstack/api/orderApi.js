@@ -1,30 +1,3 @@
-import { api } from "../../config/apiClient";
-const ORDER = "/Order"
-const ADMIN = "/admin/order"
-export const addOrders = async (data) => {
-  const res = await api.post(`${ORDER}` , data )
-  return res.data;
-};
-
-export const getOrderByUser = async () => {
-  const orderRes = await api.get(`${ORDER}/me`);
-      return orderRes.data.data;
- };
-export const getLatestOrderOfUser = async (id) => {
-  const res = await api.get(`/orders/${id}`);
-  return res.data;
-};
-
-export const removeOrder = async ({ orderId, productId}) => {
-  const orderRes = await api.get(`${orderId}/cancel/${productId}`);
-  return orderRes.data;
-};
-
-export const getAllOrders = async () => {
-  const orderRes = await api.get(`${ADMIN}`);
-  console.log(orderRes)
-  return orderRes.data.data;
- };
 
 
 export const statesOfOrders = async () => {

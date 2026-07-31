@@ -5,12 +5,10 @@ import {
   increaseQuantity,
   removeFromCart,
 } from "../redux/features/cartSlice";
-import {
-  useRemoveFromCart,
-  useUpdateQuantity,
-} from "../tanstack/hooks/mutations/cartMutation";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useRemoveFromCart, useUpdateQuantity } from "../tanstack/hooks/mutations/cart/cartMutations";
 const Cart = ({ closeCart, cart , grandTotal}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

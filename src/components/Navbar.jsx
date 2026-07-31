@@ -8,12 +8,12 @@ import {
 } from "lucide-react";
 import  {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useGetCurrentUser } from "../tanstack/hooks/queries/userQueries";
 import Cart from "../pages/Cart";
 import { useDispatch, useSelector } from "react-redux";
 import {  clearCart } from "../redux/features/cartSlice";
 import { clearFavorite } from "../redux/features/favoriteSlice";
 import { logout } from "../redux/features/authSlice";
+import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);

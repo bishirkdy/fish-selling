@@ -5,8 +5,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useCategoryDistribution } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
-import { useCategoryDistribution } from "../../../tanstack/hooks/queries/analysisQueries";
 
 const style = {
   top: "50%",

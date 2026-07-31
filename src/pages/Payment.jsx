@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useAddOrders } from "../tanstack/hooks/mutations/orderMutation";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRazorpay } from "react-razorpay";
 import { handleOnlinePayment } from "../utils/razonPay";
-import { useAddShippingAddress } from "../tanstack/hooks/mutations/shippingAddress";
+import { useAddShippingAddress } from "../tanstack/hooks/mutations/address/shippingAddressMutations";
+import { useAddOrders } from "../tanstack/hooks/mutations/order/orderMutations";
 
 const Payment = () => {
   const [formData, setFormData] = useState({

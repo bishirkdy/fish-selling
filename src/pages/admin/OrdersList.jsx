@@ -24,7 +24,7 @@ import { useEditOrderStatus } from "../../tanstack/hooks/mutations/orderMutation
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
-import { useGetTotalOrderStatus  } from "../../tanstack/hooks/queries/analysisQueries";
+import { useGetTotalOrderStatus } from "../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
 const statusStyle = {
   "Order Placed": "bg-blue-100 text-blue-700",

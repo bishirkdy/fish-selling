@@ -1,14 +1,12 @@
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { Heart, HeartPlus, ShoppingCart } from "lucide-react";
-import {
-  useAddToFav,
-  useRemoveFromFav,
-} from "../../tanstack/hooks/mutations/favMutation";
+
 import React from "react";
+import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations";
+import { useAddToFav, useRemoveFromFav } from "../../tanstack/hooks/mutations/favorite/favMutations";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();

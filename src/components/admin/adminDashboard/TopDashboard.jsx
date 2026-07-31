@@ -8,8 +8,8 @@ import {
   Boxes,
   HandCoins,
 } from "lucide-react";
-import { useDashboardTopData, } from "../../../tanstack/hooks/queries/analysisQueries";
 import Loader from "../../Loader";
+import { useDashboardTopData } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
 const TopDashboard = () => {
   const { data: analysisData, isLoading, isError } = useDashboardTopData();

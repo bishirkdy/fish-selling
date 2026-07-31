@@ -7,7 +7,7 @@ import {
   YAxis,
   ResponsiveContainer,
 } from "recharts";
-import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysisQueries";
+import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
 const SalesChart = () => {
   const {data , isLoading} = useLastMonthAnalysis()

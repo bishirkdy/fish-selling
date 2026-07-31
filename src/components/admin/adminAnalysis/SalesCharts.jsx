@@ -7,8 +7,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysisQueries";
 import Loader from "../../Loader";
+import { useLastMonthAnalysis } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
 // #region Sample data
 // const data = [

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useGetProductById } from "../../tanstack/hooks/queries/productQueries";
 import { Check, Star, Truck, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAddToCart } from "../../tanstack/hooks/mutations/cartMutation";
 import { toast } from "react-toastify";
 import {  useSelector } from "react-redux";
 import Loader from "../Loader";
 import { priceDiscounted } from "../../utils/priceDescounted";
-import { useAddReview } from "../../tanstack/hooks/mutations/reviewMutation";
-import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/reviewQueries";
+import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations";
+import { useAddReview } from "../../tanstack/hooks/mutations/review/reviewMutations";
+import { useGetProductById } from "../../tanstack/hooks/queries/product/productQueries";
+import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/review/reviewQueries";
 
 const OneProduct = () => {
   

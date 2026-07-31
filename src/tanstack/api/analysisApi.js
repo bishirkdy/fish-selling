@@ -1,5 +1,4 @@
 import { api } from "../../config/apiClient";
-import { lastSevenMonthProductCalculation } from "../../utils/lastSevenMonthProduct";
 const ANALYSISURL = "/admin/analysis"
 
 

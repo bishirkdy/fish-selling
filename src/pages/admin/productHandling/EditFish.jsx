@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Image, SquareX } from "lucide-react";
-import { useGetProductById } from "../../../tanstack/hooks/queries/productQueries";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditProductById } from "../../../tanstack/hooks/mutations/productMutation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
+import { useEditProductById } from "../../../tanstack/hooks/mutations/product/adminProductMutations";
+import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
+import { useGetProductById } from "../../../tanstack/hooks/queries/product/productQueries";
 const EditFish = () => {
   const [formData, setFormData] = useState({
     name: "",

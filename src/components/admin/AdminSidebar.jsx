@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetUserById } from "../../tanstack/hooks/queries/userQueries";
 import { logout } from "../../redux/features/authSlice";
 import { toast } from "react-toastify";
+import { useGetUserById } from "../../tanstack/hooks/queries/user/userQueries";
 
 const menus = [
   {

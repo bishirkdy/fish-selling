@@ -3,8 +3,8 @@ import fish from "../../assets/header.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-import { useLogin } from "../../tanstack/hooks/mutations/userMutation";
 import { login } from "../../redux/features/authSlice";
+import { useLogin } from "../../tanstack/hooks/mutations/auth/authMutations";
 const Login = () => {
   const [form, setForm] = useState({
     email: "",

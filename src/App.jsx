@@ -8,9 +8,9 @@ import { login, logout, setLoading } from "./redux/features/authSlice";
 import { addToCart } from "./redux/features/cartSlice";
 import { addToFavorite } from "./redux/features/favoriteSlice";
 
-import { useGetCurrentUser } from "./tanstack/hooks/queries/userQueries";
-import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cartQueries";
-import { useFavDataOfUser } from "./tanstack/hooks/queries/favoriteQueries";
+import { useGetCurrentUser } from "./tanstack/hooks/queries/auth/authQueries";
+import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cart/cartQueries";
+import { useFavDataOfUser } from "./tanstack/hooks/queries/favorite/favoriteQueries";
 
 const App = () => {
   const dispatch = useDispatch();

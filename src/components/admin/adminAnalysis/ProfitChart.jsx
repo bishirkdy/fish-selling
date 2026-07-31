@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { useLastMonthAnalysis } from '../../../tanstack/hooks/queries/analysisQueries';
+import { useLastMonthAnalysis } from '../../../tanstack/hooks/queries/analysis/adminAnalysisQueries';
 
 // #region Sample data
 // const data = [

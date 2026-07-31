@@ -4,18 +4,16 @@ import {
   Eye,
   Pencil,
   Trash2,
-  Fish,
-  Package,
-  ShoppingBagIcon,
+  Fish
 } from "lucide-react";
-import { useGetProducts } from "../../../tanstack/hooks/queries/productQueries";
 import { priceDiscounted } from "../../../utils/priceDescounted";
-import { useDeleteProduct } from "../../../tanstack/hooks/mutations/productMutation";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../../components/Loader";
-import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
+import { useDeleteProduct } from "../../../tanstack/hooks/mutations/product/adminProductMutations";
+import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
+import { useGetProducts } from "../../../tanstack/hooks/queries/product/productQueries";
 
 const ViewFish = () => {
   const [search, setSearch] = useState("");
@@ -72,7 +70,6 @@ const ViewFish = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedFish = filteredFish?.slice(startIndex, endIndex);
-
   function deleteProductHandler(id) {
     deleteMutate(id, {
       onSuccess: () => {
@@ -81,8 +78,8 @@ const ViewFish = () => {
         setSelectedFish(null);
         toast.success("Item removed successfully");
       },
-      onError: () => {
-        toast.error("Something went wrong while deleting");
+      onError: (err) => {
+        toast.error(err.message || "Something went wrong while deleting");
       },
     });
   }

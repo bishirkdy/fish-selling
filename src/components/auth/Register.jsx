@@ -1,11 +1,11 @@
 import  { useState } from "react";
 import fish from "../../assets/header.jpg";
-import { useCreateUser } from "../../tanstack/hooks/mutations/userMutation";
 import { useNavigate } from "react-router-dom";
 import { checkUser } from "../../utils/authCheck";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/authSlice";
 import { useDispatch } from "react-redux";
+import { useRegisterUser } from "../../tanstack/hooks/mutations/auth/authMutations";
 const Register = () => {
   const [form, setForm] = useState({
     name: "",
@@ -16,7 +16,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { mutate, isPending } = useCreateUser();
+  const { mutate, isPending } = useRegisterUser();
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

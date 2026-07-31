@@ -9,10 +9,10 @@ import {
   Tag,
   SquareX,
 } from "lucide-react";
-import { useAddProduct } from "../../../tanstack/hooks/mutations/productMutation";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetCategories } from "../../../tanstack/hooks/queries/categoryQueries";
+import { useAddProduct } from "../../../tanstack/hooks/mutations/product/adminProductMutations";
+import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
 const AddFish = () => {
   const [formData, setFormData] = useState({
     name: "",

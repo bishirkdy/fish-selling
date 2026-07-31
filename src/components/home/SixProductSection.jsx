@@ -1,6 +1,6 @@
 import ProductCard from "../product/ProductCard";
-import { useGetSixProduct } from "../../tanstack/hooks/queries/productQueries";
 import Loader from "../Loader";
+import { useGetSixProduct } from "../../tanstack/hooks/queries/product/productQueries";
 
 const SixProductSection = () => {
   const { data, isLoading, isError } = useGetSixProduct();

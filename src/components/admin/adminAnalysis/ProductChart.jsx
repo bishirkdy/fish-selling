@@ -1,5 +1,5 @@
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { useLastMonthsProductCount } from '../../../tanstack/hooks/queries/analysisQueries';
+import { useLastMonthsProductCount } from '../../../tanstack/hooks/queries/analysis/adminAnalysisQueries';
 
 
 // endregion

@@ -15,9 +15,9 @@ import Loader from "../components/Loader";
 import ViewOrderDetail from "../components/orders/ViewOrderDetail";
 import TrackOrderDetail from "../components/orders/TrackOrderDetail";
 
-import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/orderQueries";
-import { useRemoveUserById } from "../tanstack/hooks/mutations/orderMutation";
 import { priceDiscounted } from "../utils/priceDescounted";
+import { useRemoveUserById } from "../tanstack/hooks/mutations/order/orderMutations";
+import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/order/orderQueries";
 
 const STATUS = {
   OrderPlaced: {

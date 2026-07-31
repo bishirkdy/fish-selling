@@ -12,16 +12,14 @@ import {
   CircleX,
   Unlock,
 } from "lucide-react";
-import { useGetUsers } from "../../../tanstack/hooks/queries/userQueries";
-import { useGetAllOrdersOfUser } from "../../../tanstack/hooks/queries/orderQueries";
 import { toast } from "react-toastify";
 import { useEditOrderStatus } from "../../../tanstack/hooks/mutations/orderMutation";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  useBlockUser,
-  useUnblockUser,
-} from "../../../tanstack/hooks/mutations/userMutation";
+
 import Loader from "../../../components/Loader";
+import { useBlockUser, useUnblockUser } from "../../../tanstack/hooks/mutations/user/adminUserMutations";
+import { useGetAllOrdersOfUser } from "../../../tanstack/hooks/queries/order/orderQueries";
+import { useGetUsers } from "../../../tanstack/hooks/queries/user/adminUserQueries";
 const ViewCustomer = () => {
   const [showOrderId, setShowOrderId] = useState(null);
   const [viewUserOrder, setViewUserOrder] = useState(false);

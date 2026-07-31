@@ -1,8 +1,8 @@
 import React from "react";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGetLatestOrder } from "../tanstack/hooks/queries/orderQueries";
 import Loader from "./Loader";
+import { useGetLatestOrder } from "../tanstack/hooks/queries/order/orderQueries";
 
 const Success = () => {
   const navigate = useNavigate();
