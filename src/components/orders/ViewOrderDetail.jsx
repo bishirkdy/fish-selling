@@ -1,8 +1,68 @@
-import { CircleX } from "lucide-react";
+import {
+  CircleX,
+  Clock,
+  CheckCircle,
+  ShoppingBag,
+  Truck,
+  MapPin,
+  XCircle,
+} from "lucide-react";
 import React from "react";
 import { priceDiscounted } from "../../utils/priceDescounted";
 
+const STATUS = {
+  OrderPlaced: {
+    label: "Order Placed",
+    icon: <Clock size={18} />,
+    color: "text-yellow-400",
+    bg: "bg-yellow-500/10",
+  },
+  Confirmed: {
+    label: "Confirmed",
+    icon: <CheckCircle size={18} />,
+    color: "text-blue-400",
+    bg: "bg-blue-500/10",
+  },
+  Packed: {
+    label: "Packed",
+    icon: <ShoppingBag size={18} />,
+    color: "text-purple-400",
+    bg: "bg-purple-500/10",
+  },
+  Shipping: {
+    label: "Shipping",
+    icon: <Truck size={18} />,
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+  },
+  Shipped: {
+    label: "Out For Delivery",
+    icon: <MapPin size={18} />,
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+  },
+  Delivered: {
+    label: "Delivered",
+    icon: <CheckCircle size={18} />,
+    color: "text-green-400",
+    bg: "bg-green-500/10",
+  },
+  Cancelled: {
+    label: "Cancelled",
+    icon: <XCircle size={18} />,
+    color: "text-red-400",
+    bg: "bg-red-500/10",
+  },
+};
+
 const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
+  const status = STATUS[viewableData?.orderStatus] ?? {
+    label: viewableData?.orderStatus,
+    icon: <Clock size={18} />,
+    color: "text-gray-400",
+    bg: "bg-gray-500/10",
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div
@@ -21,8 +81,6 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
         no-scrollbar
       "
       >
-        {/* Close Button */}
-
         <button
           onClick={() => setViewDetail(false)}
           className="
@@ -44,11 +102,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
           <CircleX size={22} />
         </button>
 
-        {/* Product Section */}
-
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Image */}
-
           <div
             className="
             aspect-square
@@ -73,8 +127,6 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
             "
             />
           </div>
-
-          {/* Product Details */}
 
           <div className="lg:col-span-2">
             <h1 className="text-3xl font-bold text-white">
@@ -103,7 +155,10 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
                 <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
                   ₹
-                  {priceDiscounted(viewableData?.price, viewableData?.discount)}
+                  {priceDiscounted(
+                    viewableData?.price,
+                    viewableData?.discount
+                  )}
                 </h2>
               </div>
 
@@ -142,16 +197,20 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                   Order Status
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2 text-green-400">
-                  {viewableData?.orderStatus}
-                </h2>
+                <div
+                  className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 ${status.bg} ${status.color}`}
+                >
+                  {status.icon}
+                  <span className="font-semibold">
+                    {status.label}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="my-8 border-t border-(--color-tertiary)" />
-        {/* Order Information */}
 
         <section>
           <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
@@ -193,25 +252,16 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
         <div className="my-8 border-t border-(--color-tertiary)" />
 
-        {/* Shipping Address */}
-
         <section>
           <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
             Shipping Address
           </h2>
 
-          <div
-            className="
-            rounded-2xl
-            border
-            border-(--color-tertiary)
-            bg-(--color-background)
-            p-6
-          "
-          >
+          <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-6">
             <div className="space-y-4">
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                            <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">Full Name</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.fullName}
                 </span>
@@ -219,6 +269,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">Phone</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.phoneNumber}
                 </span>
@@ -226,6 +277,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">Street</span>
+
                 <span className="font-medium text-right">
                   {viewableData?.shippingAddress?.street}
                 </span>
@@ -233,6 +285,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">Post</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.post}
                 </span>
@@ -240,6 +293,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">District</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.district}
                 </span>
@@ -247,6 +301,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">State</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.state}
                 </span>
@@ -254,6 +309,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
                 <span className="text-gray-400">PIN Code</span>
+
                 <span className="font-medium">
                   {viewableData?.shippingAddress?.pincode}
                 </span>
@@ -261,6 +317,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
               <div className="flex justify-between items-start">
                 <span className="text-gray-400">Landmark</span>
+
                 <span className="font-medium text-right max-w-sm">
                   {viewableData?.shippingAddress?.landmark || "N/A"}
                 </span>

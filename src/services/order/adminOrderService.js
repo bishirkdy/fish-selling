@@ -7,10 +7,7 @@ export const getAllOrders = async () => {
   return res.data.data;
 };
 
-// export const orderStatusChange = async ({
-//   orderId,
-//   productId,
-//   final,
-// }) => {
-//   // your implementation
-// };
+export const orderStatusChange = async ({orderId, productId, status}) => {
+  const res = await api.patch(ADMIN_ORDER_ENDPOINTS.UPDATE_STATUS( orderId , productId) , {status});
+  return res.data;
+};

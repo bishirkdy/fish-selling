@@ -37,7 +37,6 @@ const OneProduct = () => {
   if (isError)
     return <div className="text-red-500 p-30">Error loading product</div>;
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
-console.log(reviews);
   
 function cartHandle(product) {
   if (isCart) {
@@ -162,7 +161,7 @@ function cartHandle(product) {
                           quantity: 1,
                         },
                       ],
-                      total: priceDiscounted(
+                      grandTotal: priceDiscounted(
                         data.price,
                         data.discountPercentage,
                       ),

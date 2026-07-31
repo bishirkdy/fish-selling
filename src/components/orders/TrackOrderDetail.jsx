@@ -9,70 +9,77 @@ import {
 } from "lucide-react";
 
 const TrackOrderDetail = ({ setViewTrack, data }) => {
-  const isCancelled = data.orderStatus === "Cancelled";
-  const trackingSteps = [
-    {
-      title: "Order Placed",
-      description: "Your order has been placed successfully.",
-      icon: <Clock size={18} />,
-      completed: data.orderedDate ? true : false,
-      time: data?.orderedDate
-        ? new Date(data?.orderedDate).toLocaleString()
+const isCancelled = data?.orderStatus === "Cancelled";
+
+const trackingSteps = [
+  {
+    title: "Order Placed",
+    description: "Your order has been placed successfully.",
+    icon: <Clock size={18} />,
+    completed: !!data?.orderedAt,
+    time: data?.orderedAt
+      ? new Date(data.orderedAt).toLocaleString()
+      : "",
+  },
+
+  {
+    title: "Confirmed",
+    description: "Seller confirmed your order.",
+    icon: <CheckCircle size={18} />,
+    completed: !!data?.confirmedAt,
+    time: data?.confirmedAt
+      ? new Date(data.confirmedAt).toLocaleString()
+      : "",
+  },
+
+  {
+    title: "Packed",
+    description: "Your package has been packed.",
+    icon: <Package size={18} />,
+    completed: !!data?.packedAt,
+    time: data?.packedAt
+      ? new Date(data.packedAt).toLocaleString()
+      : "",
+  },
+
+  {
+    title: "Shipping",
+    description: "Courier picked up your package.",
+    icon: <Truck size={18} />,
+    completed: !!data?.shippingAt,
+    time: data?.shippingAt
+      ? new Date(data.shippingAt).toLocaleString()
+      : "",
+  },
+
+  {
+    title: "Out For Delivery",
+    description: "Delivery partner is on the way.",
+    icon: <MapPin size={18} />,
+    completed: !!data?.outForDeliveryAt,
+    time: data?.outForDeliveryAt
+      ? new Date(data.outForDeliveryAt).toLocaleString()
+      : "",
+  },
+
+  {
+    title: isCancelled ? "Cancelled" : "Delivered",
+    description: isCancelled
+      ? "Your order has been cancelled."
+      : "Package delivered successfully.",
+    icon: isCancelled ? <CircleX size={18} /> : <CheckCircle size={18} />,
+    completed: isCancelled
+      ? !!data?.cancelledAt
+      : !!data?.deliveredAt,
+    time: isCancelled
+      ? data?.cancelledAt
+        ? new Date(data.cancelledAt).toLocaleString()
+        : ""
+      : data?.deliveredAt
+        ? new Date(data.deliveredAt).toLocaleString()
         : "",
-    },
-
-    {
-      title: "Confirmed",
-      description: "Seller confirmed your order.",
-      icon: <CheckCircle size={18} />,
-      completed: data.confirmTime ? true : false,
-      time: data?.confirmTime
-        ? new Date(data?.confirmTime).toLocaleString()
-        : "",
-    },
-
-    {
-      title: "Packed",
-      description: "Your package has been packed.",
-      icon: <Package size={18} />,
-      completed: data.packedTime ? true : false,
-      time: data?.packedTime ? new Date(data?.packedTime).toLocaleString() : "",
-    },
-
-    {
-      title: "Shipping",
-      description: "Courier picked up your package.",
-      icon: <Truck size={18} />,
-      completed: data.shippingTime ? true : false,
-      time: data?.shippingTime
-        ? new Date(data?.shippingTime).toLocaleString()
-        : "",
-    },
-
-    {
-      title: "Out For Delivery",
-      description: "Delivery partner is on the way.",
-      icon: <MapPin size={18} />,
-      completed: data.deliveryStartTime ? true : false,
-      time: data?.deliveryStartTime
-        ? new Date(data?.deliveryStartTime).toLocaleString()
-        : "",
-    },
-
-    {
-      title: isCancelled ? "Cancelled" : "Delivered",
-      description: isCancelled
-        ? "Your order has been cancelled."
-        : "Package delivered successfully.",
-      icon: isCancelled ? <CircleX size={18} /> : <CheckCircle size={18} />,
-      completed: isCancelled ? true : !!data.deliveredTime,
-      time: isCancelled
-        ? new Date(data.canceledTime).toLocaleString()
-        : data?.deliveredTime
-          ? new Date(data?.deliveredTime).toLocaleString()
-          : "",
-    },
-  ];
+  },
+];
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-3 py-5">

@@ -48,7 +48,7 @@ const STATUS = {
     text: "text-cyan-400",
   },
 
-  OutForDelivery: {
+  Shipped: {
     label: "Out For Delivery",
     icon: <MapPin size={14} />,
     bg: "bg-orange-500/10",
@@ -111,8 +111,6 @@ const Orders = () => {
       </div>
     );
   }
-
-  console.log(data);
 
   if (data.length === 0) {
     return (

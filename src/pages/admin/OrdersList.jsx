@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import {
   CheckCircle,
   Truck,
@@ -19,9 +19,10 @@ import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import { useGetTotalOrderStatus } from "../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 import { useGetAllOrders } from "../../tanstack/hooks/queries/order/adminOrderQueries";
+import { useEditOrderStatus } from "../../tanstack/hooks/mutations/order/adminOrderMutations";
 
 const statusStyle = {
-  "Order Placed": "bg-blue-100 text-blue-700",
+  OrderPlaced: "bg-blue-100 text-blue-700",
   Confirmed: "bg-cyan-100 text-cyan-700",
   Packed: "bg-yellow-100 text-yellow-700",
   Shipping: "bg-purple-100 text-purple-700",
@@ -32,6 +33,7 @@ const statusStyle = {
 
 const OrdersList = () => {
   const { data, isLoading, isError } = useGetAllOrders();
+  const [updatingProductId, setUpdatingProductId] = useState(null);
   const [view, setView] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -43,7 +45,7 @@ const OrdersList = () => {
     isLoading: statusLoading,
     isError: statusError,
   } = useGetTotalOrderStatus();
-  // const { mutate, isPending } = useEditOrderStatus();
+  const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
   if (isLoading || statusLoading) {
@@ -53,12 +55,14 @@ const OrdersList = () => {
       </div>
     );
   }
-  
+
   const filteredOrders = data?.filter((order) => {
     const matchesSearch =
       order.id.toLowerCase().includes(search.toLowerCase()) ||
       order.paymentMethod.toLowerCase().includes(search.toLowerCase()) ||
-      order.shippingAddress.fullName.toLowerCase().includes(search.toLowerCase()) ||
+      order.shippingAddress.fullName
+        .toLowerCase()
+        .includes(search.toLowerCase()) ||
       order.shippingAddress?.phoneNumberNumber
         ?.toLowerCase()
         .includes(search.toLowerCase());
@@ -86,37 +90,10 @@ const OrdersList = () => {
     setOrderId(order.id);
     setView(true);
   }
-  function orderStatusHandler(productId, value) {
-    const updatedTime = {};
 
-    switch (value) {
-      case "Confirmed":
-        updatedTime.confirmTime = Date.now();
-        break;
-      case "Packed":
-        updatedTime.packedTime = Date.now();
-        break;
-      case "Shipping":
-        updatedTime.shippingTime = Date.now();
-        break;
-      case "Out For Delivery":
-        updatedTime.shippedTime  = Date.now();
-        break;
-      case "Delivered":
-        updatedTime.deliveredTime = Date.now();
-        break;
-      case "Cancelled":
-        updatedTime.canceledTime = Date.now();
-        break;
-      default:
-        break;
-    }
-    const final = {
-      status: value,
-      ...updatedTime,
-    };
+  function orderStatusHandler(productId, status) {
     mutate(
-      { orderId, productId, final },
+      { orderId, productId, status },
       {
         onSuccess: () => {
           client.invalidateQueries({
@@ -130,10 +107,13 @@ const OrdersList = () => {
         onError: (err) => {
           toast.error(err.message);
         },
+        onSettled: () => {
+          setUpdatingProductId(null);
+        },
       },
     );
   }
-  
+
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="mb-6">
@@ -157,7 +137,9 @@ const OrdersList = () => {
         <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-gray-500 text-sm">Order Placed</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.orderPlaced}</h2>
+            <h2 className="text-2xl font-bold mt-1">
+              {orderStatus?.orderPlaced}
+            </h2>
           </div>
 
           <div className="bg-blue-100 p-3 rounded-xl">
@@ -201,7 +183,7 @@ const OrdersList = () => {
         </div>
 
         <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-      <div>
+          <div>
             <p className="text-gray-500 text-sm">Shipped</p>
             <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipped}</h2>
           </div>
@@ -263,11 +245,11 @@ const OrdersList = () => {
               className="border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
             >
               <option value="All">All Status</option>
-              <option value="Order Placed">Order Placed</option>
+              <option value="OrderPlaced">Order Placed</option>
               <option value="Confirmed">Confirmed</option>
               <option value="Packed">Packed</option>
               <option value="Shipping">Shipping</option>
-              <option value="Shipped">Shipped</option>
+              <option value="Shipped">Out For Delivery</option>
               <option value="Delivered">Delivered</option>
               <option value="Cancelled">Cancelled</option>
             </select>
@@ -430,22 +412,14 @@ const OrdersList = () => {
                       {currentOrder?.shippingAddress?.district},{" "}
                       {currentOrder?.shippingAddress?.state}
                     </p>
-                    <p>
-                      Pincode :{" "}
-                      {currentOrder?.shippingAddress?.pincode}
-                    </p>
-                    <p>
-                      Landmark :{" "}
-                      {currentOrder?.shippingAddress?.landmark}
-                    </p>
+                    <p>Pincode : {currentOrder?.shippingAddress?.pincode}</p>
+                    <p>Landmark : {currentOrder?.shippingAddress?.landmark}</p>
                   </div>
                 </div>
               </div>
 
               <div className="p-3 md:p-6 space-y-6">
                 {currentOrder?.items?.map((item, index) => {
-                  
-
                   return (
                     <div key={index} className="rounded-3xl overflow-hidden">
                       <div className="p-3 md:p-6">
@@ -462,40 +436,41 @@ const OrdersList = () => {
                                 <h1 className="font-bold text-base md:text-lg text-gray-800">
                                   {item?.productName || "Product Removed"}
                                 </h1>
-
-                                <p className="text-xs md:text-sm text-gray-500 mt-1">
-                                  
-                                </p>
                               </div>
 
-                              <select
-                                disabled={isPending}
-                                value={item?.orderStatus}
-                                onChange={(e) =>
-                                  orderStatusHandler(
-                                    item?.productId,
-                                    e.target.value,
-                                  )
-                                }
-                                className="px-3 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:ring-2 focus:ring-cyan-500"
-                              >
-                                <option value="Order Placed">
-                                  Order Placed
-                                </option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Packed">Packed</option>
-                                <option value="Shipping">Shipping</option>
-                                <option value="Out For Delivery">
-                                  Out For Delivery
-                                </option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
-                              </select>
+                              <div className="flex flex-col gap-2">
+                                <span
+                                  className={`px-3 py-1 rounded-full text-xs font-semibold w-fit ${statusStyle[item.orderStatus]}`}
+                                >
+                                  {item.orderStatus}
+                                </span>
+
+                                <select
+                                  value={item.orderStatus}
+                                  onChange={(e) =>
+                                    orderStatusHandler(
+                                      item.productId,
+                                      e.target.value,
+                                    )
+                                  }
+                                  className="px-3 py-2 rounded-xl border border-gray-300"
+                                >
+                                  <option value="OrderPlaced">
+                                    Order Placed
+                                  </option>
+                                  <option value="Confirmed">Confirmed</option>
+                                  <option value="Packed">Packed</option>
+                                  <option value="Shipping">Shipping</option>
+                                  <option value="Shipped">
+                                    Out For Delivery
+                                  </option>
+                                  <option value="Delivered">Delivered</option>
+                                  <option value="Cancelled">Cancelled</option>
+                                </select>
+                              </div>
                             </div>
 
-                            <p className="text-xs md:text-sm text-gray-500 mt-3">
-                              
-                            </p>
+                            <p className="text-xs md:text-sm text-gray-500 mt-3"></p>
 
                             <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
                               <span className="font-bold text-green-600 text-base md:text-lg">

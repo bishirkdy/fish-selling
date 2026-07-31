@@ -18,8 +18,6 @@ export const getLatestOrderOfUser = async (id) => {
 };
 
 export const cancelOrder = async ({ orderId, productId }) => {
-  const res = await api.get(
-    ORDER_ENDPOINTS.CANCEL(orderId, productId)
-  );
+  const res = await api.patch(ORDER_ENDPOINTS.CANCEL(orderId, productId));
   return res.data;
 };

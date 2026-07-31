@@ -13,13 +13,13 @@ import {
   Unlock,
 } from "lucide-react";
 import { toast } from "react-toastify";
-// import { useEditOrderStatus } from "../../../tanstack/hooks/mutations/orderMutation";
 import { useQueryClient } from "@tanstack/react-query";
 
 import Loader from "../../../components/Loader";
 import { useBlockUser, useUnblockUser } from "../../../tanstack/hooks/mutations/user/adminUserMutations";
 import { useGetAllOrdersOfUser } from "../../../tanstack/hooks/queries/order/orderQueries";
 import { useGetUsers } from "../../../tanstack/hooks/queries/user/adminUserQueries";
+import { useEditOrderStatus } from "../../../tanstack/hooks/mutations/order/adminOrderMutations";
 const ViewCustomer = () => {
   const [showOrderId, setShowOrderId] = useState(null);
   const [viewUserOrder, setViewUserOrder] = useState(false);
@@ -36,7 +36,7 @@ const ViewCustomer = () => {
   const { mutate: userBlockMutate, isPending: blockPending } = useBlockUser();
   const { mutate: userUnblockMutate, isPending: unblockPending } =
     useUnblockUser();
-  // const { mutate, isPending } = useEditOrderStatus();
+  const { mutate, isPending } = useEditOrderStatus();
   const filteredCustomers = data?.filter((customer) => {
     const searchMatch =
       customer.name.toLowerCase().includes(search.toLowerCase()) ||
