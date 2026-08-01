@@ -1,5 +1,7 @@
 export const AUTH_ENDPOINTS = {
-  REGISTER: "/User/register",
-  LOGIN: "/User/login",
-  PROFILE: "/user/profile",
+  REGISTER: "/Auth/register",
+  LOGIN: "/Auth/login",
+  PROFILE: "/Auth/profile",
+  FORGOT_PASSWORD : "/Auth/forgot-password",
+  RESET_PASSWORD : "/Auth/reset-password"
 };

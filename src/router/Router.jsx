@@ -24,12 +24,16 @@ import ViewFish from "../pages/admin/productHandling/ViewFish";
 import ViewCustomer from "../pages/admin/customerHandling/ViewCustomer";
 import AdminAnalysis from "../pages/admin/AdminAnalysis";
 import EditFish from "../pages/admin/productHandling/EditFish";
+import { ForgotPassword } from "../components/auth/ForgotPassword";
+import ResetPassword from "../components/auth/ResetPassword";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword/>}/>
+      <Route path="/reset-password" element={<ResetPassword/>}/>
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="shop" element={<Shop />} />

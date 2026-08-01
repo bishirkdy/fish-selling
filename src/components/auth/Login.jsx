@@ -20,7 +20,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     loginMutation.mutate(form, {
-      onSuccess: (user) => { 
+      onSuccess: (user) => {
         if (user.role === "Admin") {
           navigate("/admin/dashboard");
         } else {
@@ -76,7 +76,10 @@ const Login = () => {
             />
 
             <div className="text-right text-sm">
-              <span className="text-(--color-secondary) hover:text-(--color-accent) cursor-pointer hover:underline">
+              <span
+                onClick={() => navigate("/forgot-password")}
+                className="text-(--color-secondary) hover:text-(--color-accent) cursor-pointer hover:underline"
+              >
                 Forgot Password?
               </span>
             </div>
