@@ -6,28 +6,30 @@ import {
   Heart,
   X,
 } from "lucide-react";
-import  {  useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Cart from "../pages/Cart";
 import { useDispatch, useSelector } from "react-redux";
-import {  clearCart } from "../redux/features/cartSlice";
+import { clearCart } from "../redux/features/cartSlice";
 import { clearFavorite } from "../redux/features/favoriteSlice";
 import { logout } from "../redux/features/authSlice";
 import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
+import { useLogout } from "../tanstack/hooks/mutations/auth/authMutations";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const { mutate: logoutMutation } = useLogout();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
-  const {cart : cartFromSlice  ,  grandTotal } = useSelector((s) => s.cart);
+  const { cart: cartFromSlice, grandTotal } = useSelector((s) => s.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
-  const { data: loggedUser  } = useGetCurrentUser();
-
-
+  const { data: loggedUser } = useGetCurrentUser();
+  const client = useQueryClient();
   function handleSearch(e) {
     navigate(`/shop?q=${search}`);
     setOpen(false);
@@ -39,12 +41,17 @@ const Navbar = () => {
     navigate(`/favorite/${user?.id}`);
   }
   function handleLogout() {
-    dispatch(logout());
-    setProfileOpen(false);
-    dispatch(clearCart());
-    dispatch(clearFavorite());
-    setOpen(false);
-    navigate("/");
+    logoutMutation(undefined, {
+      onSuccess: () => {
+        dispatch(logout());
+        client.clear();
+        navigate("/");
+        setProfileOpen(false);
+        dispatch(clearCart());
+        dispatch(clearFavorite());
+        setOpen(false);
+      },
+    });
   }
 
   return (

@@ -8,7 +8,7 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  const forgotPasswordMutation = useForgotPassword();
+  const { mutate : forgotPasswordMutation , isPending } = useForgotPassword();
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -75,10 +75,10 @@ export const ForgotPassword = () => {
 
             <button
               type="submit"
-              disabled={forgotPasswordMutation.isPending}
+              disabled={isPending}
               className="w-full bg-(--color-primary) text-black py-3 rounded-lg font-semibold hover:border hover:border-(--color-accent) hover:bg-transparent hover:text-(--color-accent) transition duration-300 cursor-pointer disabled:opacity-60"
             >
-              {forgotPasswordMutation.isPending
+              {isPending
                 ? "Sending..."
                 : "Send Reset Link"}
             </button>

@@ -10,16 +10,18 @@ const Login = () => {
     email: "",
     password: "",
   });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const loginMutation = useLogin();
+  const { mutate : loginMutation , isPending} = useLogin();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    loginMutation.mutate(form, {
+    loginMutation(form, {
       onSuccess: (user) => {
         if (user.role === "Admin") {
           navigate("/admin/dashboard");
@@ -85,10 +87,11 @@ const Login = () => {
             </div>
 
             <button
+              disabled={isPending}
               type="submit"
               className="w-full bg-(--color-primary) text-black py-3 rounded-lg font-semibold hover:border hover:border-(--color-accent) hover:bg-transparent hover:text-(--color-accent) cursor-pointer transition duration-300"
             >
-              Login
+              {isPending ? "Logging in..." : "Login"}
             </button>
           </form>
 

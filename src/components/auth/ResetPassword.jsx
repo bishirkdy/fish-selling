@@ -16,7 +16,7 @@ const ResetPassword = () => {
 
   const navigate = useNavigate();
 
-  const resetPasswordMutation = useResetPassword();
+  const {mutate : resetPasswordMutation , isPending} = useResetPassword();
 
   const handleChange = (e) => {
     setForm({
@@ -111,10 +111,10 @@ const ResetPassword = () => {
 
             <button
               type="submit"
-              disabled={resetPasswordMutation.isPending}
+              disabled={isPending}
               className="w-full bg-(--color-primary) text-black py-3 rounded-lg font-semibold hover:border hover:border-(--color-accent) hover:bg-transparent hover:text-(--color-accent) transition duration-300 cursor-pointer disabled:opacity-60"
             >
-              {resetPasswordMutation.isPending
+              {isPending
                 ? "Resetting..."
                 : "Reset Password"}
             </button>

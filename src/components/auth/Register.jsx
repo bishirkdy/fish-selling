@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { login } from "../../redux/features/authSlice";
 import { useDispatch } from "react-redux";
 import { useRegisterUser } from "../../tanstack/hooks/mutations/auth/authMutations";
+
 const Register = () => {
   const [form, setForm] = useState({
     name: "",
@@ -17,6 +18,7 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { mutate, isPending } = useRegisterUser();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -32,7 +34,7 @@ const Register = () => {
         dispatch(login({
           id: user.id,
         }));
-        navigate("/");
+        navigate("/login");
       },
       onError: (err) => {
         toast.error(`${err?.message || "Something went wrong"} `);
@@ -114,7 +116,7 @@ const Register = () => {
               type="submit"
               className="w-full bg-(--color-secondary) cursor-pointer text-black hover:border hover:bg-transparent hover:text-(--color-accent) hover:border-(--color-accent) py-3 rounded-lg font-semibold transition duration-300"
             >
-              Register
+              { isPending ? "Registering..." : "Register" }
             </button>
           </form>
           <p

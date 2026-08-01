@@ -17,6 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/features/authSlice";
 import { toast } from "react-toastify";
 import { useGetUserById } from "../../tanstack/hooks/queries/user/userQueries";
+import { useLogout } from "../../tanstack/hooks/mutations/auth/authMutations";
+import { useQueryClient } from "@tanstack/react-query";
 
 const menus = [
   {
@@ -63,7 +65,8 @@ const AdminSidebar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((S) => S.auth);
   const { data } = useGetUserById(user?.id);
-
+  const { mutate: logoutMutation } = useLogout();
+  const client = useQueryClient();
   const [open, setOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState("");
 
@@ -75,11 +78,20 @@ const AdminSidebar = () => {
     }
   };
 
-  function logoutHandler() {
-    dispatch(logout());
-    navigate("/");
-    toast.success("Logout successfully");
-  }
+function logoutHandler() {
+  logoutMutation(undefined, {
+    onSuccess: () => {
+      dispatch(logout());
+      client.clear();
+      toast.success("Logout successfully");
+      navigate("/login");
+    },
+
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+}
 
   return (
     <>
