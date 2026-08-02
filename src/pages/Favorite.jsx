@@ -7,7 +7,6 @@ const Favorite = () => {
   const favData = useSelector((state) => state.favorite.favorite);
   const navigate = useNavigate()
 
-
   if (!favData || favData.length === 0) {
     return (
       <div className="min-h-screen bg-(--color-background) text-white flex flex-col items-center justify-center">

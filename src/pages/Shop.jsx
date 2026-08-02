@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import { FishSymbol } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGetProducts } from "../tanstack/hooks/queries/product/productQueries";
+import { useGetCategories } from "../tanstack/hooks/queries/category/categoryQueries";
 
 const Shop = () => {
   const [params, setParams] = useSearchParams();
@@ -18,35 +19,38 @@ const Shop = () => {
   const sort = params.get("sort") || "";
   const price = params.get("price") || "";
 
-const { data, isLoading, isError } = useGetProducts(
-  buildParam(query, category, price, page, sort)
-);
-// Reset when filters change
-useEffect(() => {
-  setProducts([]);
-  setPage(1);
-  setHasMore(true);
-}, [query, category, price, sort]);
+  const { data, isLoading, isError } = useGetProducts(
+    buildParam(query, category, price, page, sort),
+  );
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    isError: categoryIsError,
+  } = useGetCategories();
 
-// Add newly fetched products
-useEffect(() => {
-  if (!data) return;
+  // Reset when filters change
+  useEffect(() => {
+    setProducts([]);
+    setPage(1);
+    setHasMore(true);
+  }, [query, category, price, sort]);
 
-  if (data.length < 6) {
-    setHasMore(false);
-  }
+  // Add newly fetched products
+  useEffect(() => {
+    if (!data) return;
 
-  setProducts((prev) => {
-    const ids = new Set(prev.map((item) => item.id));
+    if (data.length < 6) {
+      setHasMore(false);
+    }
 
-    const filtered = data.filter((item) => !ids.has(item.id));
+    setProducts((prev) => {
+      const ids = new Set(prev.map((item) => item.id));
+      const filtered = data.filter((item) => !ids.has(item.id));
+      return [...prev, ...filtered];
+    });
 
-    return [...prev, ...filtered];
-  });
-
-  setFetching(false);
-}, [data]);
-
+    setFetching(false);
+  }, [data]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,14 +62,13 @@ useEffect(() => {
         setPage((prev) => prev + 1);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isLoading, fetching, hasMore]);
-  if (isLoading && products.length === 0) {
+
+  if ((isLoading && products.length === 0) || categoryLoading) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
         <Loader />
@@ -73,7 +76,7 @@ useEffect(() => {
     );
   }
 
-  if (isError) {
+  if (isError || categoryIsError) {
     return (
       <div className="w-screen h-screen flex items-center justify-center text-white">
         Something went wrong
@@ -130,24 +133,28 @@ useEffect(() => {
           <h2 className="font-semibold text-lg mb-3">Category</h2>
 
           <div className="flex flex-wrap lg:flex-col gap-2">
-            {[
-              "",
-              "Freshwater Fish",
-              "Saltwater Fish",
-              "Exotic Fish",
-              "Beginner Friendly",
-              "Popular Fish",
-            ].map((cat) => (
+            <button
+              onClick={() => handleCategory("")}
+              className={`text-left px-3 py-2 rounded-md transition text-sm sm:text-base ${
+                category === ""
+                  ? "bg-(--color-accent) text-black"
+                  : "hover:bg-white/10"
+              }`}
+            >
+              All
+            </button>
+
+            {categoryData?.map((cat) => (
               <button
-                key={cat || "all"}
-                onClick={() => handleCategory(cat)}
+                key={cat.id}
+                onClick={() => handleCategory(cat.name)}
                 className={`text-left px-3 py-2 rounded-md transition text-sm sm:text-base ${
-                  category === cat
+                  category === cat.name
                     ? "bg-(--color-accent) text-black"
                     : "hover:bg-white/10"
                 }`}
               >
-                {cat || "All"}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -186,7 +193,7 @@ useEffect(() => {
                 label: "Clear",
                 value: "",
               },
-            ].map((p) => ( 
+            ].map((p) => (
               <button
                 key={p.value}
                 onClick={() => handlePrice(p.value)}

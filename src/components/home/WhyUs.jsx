@@ -1,4 +1,3 @@
-import React from "react";
 import { ShieldCheck, Truck, HeartHandshake } from "lucide-react";
 
 const WhyUs = () => {

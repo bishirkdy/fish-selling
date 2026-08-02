@@ -50,7 +50,7 @@ export const handleOnlinePayment = async ({
           });
         } catch (err) {
           toast.error(
-            err.response?.data?.message || "Payment verification failed",
+            err.message || "Payment verification failed",
           );
         }
       },
@@ -68,7 +68,7 @@ export const handleOnlinePayment = async ({
 
     razorpay.open();
   } catch (err) {
-    toast.error(err.response?.data?.message || "Unable to initiate payment");
-    console.log(err);
+    toast.error(err.message || "Unable to initiate payment");
+    console.log(err.message);
   }
 };

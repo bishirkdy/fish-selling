@@ -4,6 +4,7 @@ import { useGetSixProduct } from "../../tanstack/hooks/queries/product/productQu
 
 const SixProductSection = () => {
   const { data, isLoading, isError } = useGetSixProduct();
+
     if(isLoading) {
       return (
         <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
@@ -11,6 +12,8 @@ const SixProductSection = () => {
         </div>
       )
     }
+
+    
   return (
     <div className="bg-(--color-surface) py-16 px-6 md:px-12">
       <div className="text-center mb-12">

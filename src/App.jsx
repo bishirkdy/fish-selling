@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-
+import Loader from "./components/Loader";
 import Navbar from "./components/Navbar";
 
 import { login, logout, setLoading } from "./redux/features/authSlice";
@@ -55,13 +55,20 @@ const App = () => {
       dispatch(addToCart(cartData));
     }
   }, [cartData, dispatch]);
-
   // Store favourites in Redux
   useEffect(() => {
     if (favData) {
       dispatch(addToFavorite(favData));
     }
   }, [favData, dispatch]);
+
+//   if (userLoading) {
+//   return (
+//     <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
+//       <Loader />
+//     </div>
+//   );
+// }
 
   return (
     <>

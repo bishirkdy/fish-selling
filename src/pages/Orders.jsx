@@ -15,7 +15,6 @@ import Loader from "../components/Loader";
 import ViewOrderDetail from "../components/orders/ViewOrderDetail";
 import TrackOrderDetail from "../components/orders/TrackOrderDetail";
 
-import { priceDiscounted } from "../utils/priceDescounted";
 import { useRemoveUserById } from "../tanstack/hooks/mutations/order/orderMutations";
 import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/order/orderQueries";
 
@@ -103,7 +102,6 @@ const Orders = () => {
 
   const { data = [], isLoading } = useGetAllOrdersOfUser();
   const { mutate: cancelOrder, isPending } = useRemoveUserById();
-
   if (isLoading) {
     return (
       <div className="w-screen h-screen flex items-center justify-center bg-(--color-background)">
@@ -111,7 +109,7 @@ const Orders = () => {
       </div>
     );
   }
-
+console.log(data)
   if (data.length === 0) {
     return (
       <div className="min-h-screen bg-(--color-background) text-white flex flex-col items-center justify-center">
@@ -181,12 +179,6 @@ const Orders = () => {
                           {order.id}
                         </p>
 
-                        <p className="text-sm text-gray-400">
-                          <span className="font-medium text-white">
-                            Ordered :
-                          </span>{" "}
-                          {new Date(order.orderedAt).toLocaleDateString()}
-                        </p>
                       </div>
                     </div>
 
@@ -198,11 +190,7 @@ const Orders = () => {
                         <span className="font-medium">{status.label}</span>
                       </div>
 
-                      <div
-                        className={`px-4 py-2 rounded-full bg-gray-800 ${payment.color}`}
-                      >
-                        {payment.text}
-                      </div>
+              
                     </div>
                   </div>
 
@@ -224,15 +212,24 @@ const Orders = () => {
 
                         <div>
                           <p className="text-gray-400">Unit Price</p>
-                          <p className="font-medium">
-                            ₹{priceDiscounted(item.price, item.discount)}
-                          </p>
+
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium">
+                              ₹{Math.floor(item.discountedPrice)}
+                            </p>
+
+                            {item.discountPercentage > 0 && (
+                              <span className="text-xs text-gray-500 line-through">
+                                ₹{Math.floor(item.originalPrice)}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <div>
                           <p className="text-gray-400">Total Amount</p>
                           <p className="font-semibold text-green-400">
-                            ₹{item.totalPrice}
+                            ₹{Math.floor(item.totalPrice)}
                           </p>
                         </div>
 
@@ -315,11 +312,13 @@ const Orders = () => {
                            disabled:hover:text-red-500
                             "
                         >
-                          {item.orderStatus === "Cancelled"
-                            ? "Cancelled"
-                            : item.orderStatus === "Delivered"
-                              ? "Delivered"
-                              : "Cancel Order"}
+                          {isPending
+                            ? "Cancelling..."
+                            : item.orderStatus === "Cancelled"
+                              ? "Cancelled"
+                              : item.orderStatus === "Delivered"
+                                ? "Delivered"
+                                : "Cancel Order"}
                         </button>
                       </div>
                     </div>

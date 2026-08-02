@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRazorpay } from "react-razorpay";
@@ -18,19 +18,27 @@ const Payment = () => {
     pincode: "",
     landmark: "",
   });
-
+  const [paymentType, setPaymentType] = useState(null);
   const { state } = useLocation();
   const navigate = useNavigate();
   const { Razorpay } = useRazorpay();
-  const orderMutation = useAddOrders();
-  const { mutate: addressMutate, isPending: addressPending } = useAddShippingAddress();
+  const { mutate: orderMutation, isPending: orderIsPending } = useAddOrders();
+  const { mutate: addressMutate, isPending: addressIsPending } =
+    useAddShippingAddress();
+
+  useEffect(() => {
+    if (!state) {
+      navigate("/");
+      toast.error("No order found.");
+    }
+  }, [state, navigate]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;  
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const validateForm = () => {
@@ -46,6 +54,18 @@ const Payment = () => {
       toast.error("Please fill all required fields");
       return false;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Invalid email");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(formData.phone)) {
+      toast.error("Phone number must contain 10 digits");
+      return false;
+    }
+
     return true;
   };
 
@@ -54,12 +74,13 @@ const Payment = () => {
 
     const addressData = {
       ...formData,
-      fullName : formData.name,
-      PhoneNumber : formData.phone
+      fullName: formData.name,
+      PhoneNumber: formData.phone,
     };
 
     addressMutate(addressData, {
       onSuccess: (address) => {
+        setPaymentType(null);
         const orderData = {
           addressId: address.id,
           paymentMethod: type === "COD" ? "Cash" : "RazorPay",
@@ -70,8 +91,9 @@ const Payment = () => {
         };
 
         if (type === "COD") {
-          orderMutation.mutate(orderData, {
+          orderMutation(orderData, {
             onSuccess: (order) => {
+              setPaymentType(null);
               toast.success("Order placed successfully");
 
               navigate("/success", {
@@ -86,12 +108,16 @@ const Payment = () => {
             },
           });
         } else {
-          handleOnlinePayment({
-            Razorpay,
-            orderData,
-            navigate,
-            toast,
-          });
+          try {
+            handleOnlinePayment({
+              Razorpay,
+              orderData,
+              navigate,
+              toast,
+            });
+          } catch (error) {
+            toast.error(error.message);
+          }
         }
       },
 
@@ -129,6 +155,7 @@ const Payment = () => {
 
             <input
               type="tel"
+              maxLength={10}
               name="phone"
               placeholder="Phone Number"
               value={formData.phone}
@@ -177,6 +204,7 @@ const Payment = () => {
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
+                maxLength={6}
                 name="pincode"
                 placeholder="PIN Code"
                 value={formData.pincode}
@@ -205,23 +233,29 @@ const Payment = () => {
 
           <div className="space-y-5">
             <button
+              disabled={addressIsPending || orderIsPending}
               onClick={() => handlePayment("COD")}
               className="w-full bg-(--color-text) text-black py-3 rounded-lg font-semibold hover:bg-transparent hover:text-white hover:border hover:border-(--color-text) transition cursor-pointer"
             >
-              Cash On Delivery
+              {paymentType === "COD" && (addressIsPending || orderIsPending)
+                ? "Processing..."
+                : "Cash On Delivery"}
             </button>
             <button
+              disabled={addressIsPending || orderIsPending}
               onClick={() => handlePayment("ONLINE")}
               className="w-full bg-(--color-accent) py-3 rounded-lg font-semibold hover:bg-transparent hover:border hover:border-(--color-accent) transition cursor-pointer"
             >
-              Pay Online With Razorpay
+              {paymentType === "ONLINE" && (addressIsPending || orderIsPending)
+                ? "Processing..."
+                : "Pay Online With Razorpay"}
             </button>
           </div>
 
           <div className="mt-10 border-t border-gray-700 pt-5">
             <div className="flex justify-between mb-2">
               <span>Total</span>
-              <span>₹ {state.grandTotal}</span>
+              <span>₹ {Math.floor(state.grandTotal)}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-400">
               <span>Delivery</span>

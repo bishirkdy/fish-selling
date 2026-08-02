@@ -10,7 +10,7 @@ export const useGetAllOrdersOfUser = () => {
 
 export const useGetLatestOrder = (id) => {
     return useQuery({
-        queryKey : ["orders" , id],
+        queryKey : ["user-orders" , id],
         queryFn : () => getLatestOrderOfUser(id)
     })
 }

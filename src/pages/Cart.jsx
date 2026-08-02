@@ -1,23 +1,18 @@
 import { X } from "lucide-react";
 import { useDispatch } from "react-redux";
-import {
-  decreaseQuantity,
-  increaseQuantity,
-  removeFromCart,
-} from "../redux/features/cartSlice";
-
+import {decreaseQuantity, increaseQuantity, removeFromCart} from "../redux/features/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRemoveFromCart, useUpdateQuantity } from "../tanstack/hooks/mutations/cart/cartMutations";
-const Cart = ({ closeCart, cart , grandTotal}) => {
+import { useRemoveFromCart, useUpdateQuantity} from "../tanstack/hooks/mutations/cart/cartMutations";
+
+const Cart = ({ closeCart, cart, grandTotal }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const removeMutation = useRemoveFromCart();
-  const quantityMutation = useUpdateQuantity();
+  const { mutate: removeMutation, isPending: removeIsPending } = useRemoveFromCart();
+  const { mutate: quantityMutation, isPending: quantityUpdatePending } = useUpdateQuantity();
 
-  
   function removeHandler(id) {
-    removeMutation.mutate(id, {
+    removeMutation(id, {
       onSuccess: () => {
         toast.success("Data removed from cart");
         dispatch(removeFromCart(id));
@@ -33,19 +28,32 @@ const Cart = ({ closeCart, cart , grandTotal}) => {
 
     if (type === "increment") {
       updatedQuantity = quantity + 1;
-      dispatch(increaseQuantity(cartItemId));
-    }
-    if (type === "decrement") {
+    } else {
       if (quantity <= 1) return;
+
       updatedQuantity = quantity - 1;
-      dispatch(decreaseQuantity(cartItemId));
     }
 
-    quantityMutation.mutate({
-      id: cartItemId,
-      quantity: updatedQuantity,
-    });
+    quantityMutation(
+      {
+        id: cartItemId,
+        quantity: updatedQuantity,
+      },
+      {
+        onSuccess: () => {
+          if (type === "increment") {
+            dispatch(increaseQuantity(cartItemId));
+          } else {
+            dispatch(decreaseQuantity(cartItemId));
+          }
+        },
+        onError: (err) => {
+          toast.error(err.message);
+        },
+      },
+    );
   }
+
   return (
     <div className="md:w-90 w-screen md:pl-0 pl-8 h-screen bg-(--color-surface)  text-(--color-text) shadow-xl flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -60,7 +68,7 @@ const Cart = ({ closeCart, cart , grandTotal}) => {
           <p className="text-gray-400 text-center mt-10">Your cart is empty</p>
         ) : (
           cart?.map((item) => (
-            <div key={item.id} className="flex gap-3 bg-white/5 p-3 rounded-lg">
+            <div key={item.cartItemId} className="flex gap-3 bg-white/5 p-3 rounded-lg">
               <img
                 src={item.imageUrl ?? null}
                 alt={item.title}
@@ -73,28 +81,21 @@ const Cart = ({ closeCart, cart , grandTotal}) => {
                 </h3>
 
                 <p className="text-xs text-gray-400">
-                  ₹
-                  {Math.round(
-                    item.price - (item.price * item.discountPercentage) / 100,
-                  )}{" "}
-                  × {item.quantity || 1}
+                  ₹{item.price} × {item.quantity || 1}
                 </p>
 
-                <p className="text-sm font-bold mt-1">
-                  ₹
-                  {Math.round(
-                    item.price - (item.price * item.discountPercentage) / 100,
-                  ) * item.quantity || 1}
-                </p>
+                <p className="text-sm font-bold mt-1">₹{item.totalPrice}</p>
               </div>
               <div className="flex flex-col items-end gap-2 justify-between">
                 <X
+                  disabled={removeIsPending}
                   onClick={() => removeHandler(item.cartItemId)}
                   className="text-red-400 cursor-pointer text-xs"
                 ></X>
 
                 <div className="flex items-center gap-2 bg-white/10 rounded-md px-2 py-1">
                   <button
+                    disabled={quantityUpdatePending}
                     onClick={() =>
                       quantityHandler(
                         "decrement",
@@ -112,6 +113,7 @@ const Cart = ({ closeCart, cart , grandTotal}) => {
                   </span>
 
                   <button
+                    disabled={quantityUpdatePending}
                     onClick={() =>
                       quantityHandler(
                         "increment",

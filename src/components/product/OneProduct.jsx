@@ -3,30 +3,30 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Check, Star, Truck, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "../Loader";
-import { priceDiscounted } from "../../utils/priceDescounted";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations";
 import { useAddReview } from "../../tanstack/hooks/mutations/review/reviewMutations";
 import { useGetProductById } from "../../tanstack/hooks/queries/product/productQueries";
 import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/review/reviewQueries";
 
 const OneProduct = () => {
-  
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
   const { data, isLoading, isError } = useGetProductById(id);
-  const { data: reviews } = useGetReviewOfProduct(data?.id);
+  const { data: reviews, isLoading: reviewLoading } = useGetReviewOfProduct(
+    data?.id,
+  );
   const cartData = useSelector((s) => s.cart.cart);
   const queryClient = useQueryClient();
   const addToCartMutation = useAddToCart();
   const { mutate, isPending } = useAddReview();
   const isCart = cartData.some((d) => d.productId === data?.id);
-  
-  if (isLoading) {
+
+  if (isLoading || reviewLoading) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
         <Loader />
@@ -37,31 +37,31 @@ const OneProduct = () => {
   if (isError)
     return <div className="text-red-500 p-30">Error loading product</div>;
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
-  
-function cartHandle(product) {
-  if (isCart) {
-    toast.info("Product is already in your cart");
-    return;
+
+  function cartHandle(product) {
+    if (isCart) {
+      toast.info("Product is already in your cart");
+      return;
+    }
+
+    const cart = {
+      productId: product.id,
+      quantity: 1,
+    };
+
+    addToCartMutation.mutate(cart, {
+      onSuccess: () => {
+        toast.success(`${product.name} added to cart`);
+        queryClient.invalidateQueries({
+          queryKey: ["cart"],
+        });
+      },
+
+      onError: (err) => {
+        toast.error(err.message || "Failed to add product");
+      },
+    });
   }
-
-  const cart = {
-    productId: product.id,
-    quantity: 1,
-  };
-
-  addToCartMutation.mutate(cart, {
-    onSuccess: () => {
-      toast.success(`${product.title} added to cart`);
-      queryClient.invalidateQueries({
-        queryKey: ["cart"],
-      });
-    },
-
-    onError: (err) => {
-      toast.error(err.message || "Failed to add product");
-    },
-  });
-}
 
   function reviewHandle() {
     if (!user) {
@@ -100,26 +100,32 @@ function cartHandle(product) {
         <div className="rounded-xl overflow-hidden">
           <img
             src={data.imageUrls[0]}
-            alt={data.title}
+            alt={data.name}
             className="w-full h-100 object-cover"
           />
         </div>
 
         <div className="flex flex-col gap-5">
-          <h1 className="text-3xl font-bold leading-snug">{data.title}</h1>
+          <h1 className="text-3xl font-bold leading-snug">{data.name}</h1>
 
           <p className="text-gray-400 text-sm">⭐ {data.rating} / 5</p>
 
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-(--color-accent)">
-              ₹{priceDiscounted(data.price, data.discountPercentage)}
+              ₹{data.discountedPrice}
             </span>
 
-            <span className="text-gray-500 line-through">₹{data.price}</span>
+            {data.discountPercentage > 0 && (
+              <>
+                <span className="text-gray-500 line-through">
+                  ₹{data.originalPrice}
+                </span>
 
-            <span className="text-green-500 text-sm font-semibold">
-              {data.discountPercentage}% OFF
-            </span>
+                <span className="text-green-500 text-sm font-semibold">
+                  {data.discountPercentage}% OFF
+                </span>
+              </>
+            )}
           </div>
 
           <p className="text-gray-300 leading-relaxed text-sm">
@@ -161,10 +167,7 @@ function cartHandle(product) {
                           quantity: 1,
                         },
                       ],
-                      grandTotal: priceDiscounted(
-                        data.price,
-                        data.discountPercentage,
-                      ),
+                      grandTotal: data.discountedPrice,
                     },
                   });
                 } else {

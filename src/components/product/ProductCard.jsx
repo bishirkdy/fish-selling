@@ -6,7 +6,10 @@ import { Heart, HeartPlus, ShoppingCart } from "lucide-react";
 
 import React from "react";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations";
-import { useAddToFav, useRemoveFromFav } from "../../tanstack/hooks/mutations/favorite/favMutations";
+import {
+  useAddToFav,
+  useRemoveFromFav,
+} from "../../tanstack/hooks/mutations/favorite/favMutations";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -17,18 +20,9 @@ const ProductCard = ({ product }) => {
   const removeFavMutation = useRemoveFromFav();
   const favProduct = useSelector((s) => s.favorite.favorite);
   const cartProduct = useSelector((s) => s.cart.cart);
-  const isFavorite = React.useMemo(
-    () => favProduct.some((item) => item.id === product.id),
-    [favProduct, product.id],
-  );
-  
-  const isCart = React.useMemo(
-    () => cartProduct.some((item) => item.productId === product.id),
-    [cartProduct, product.id],
-  );
-  const discountedPrice = Math.round(
-    product.price - (product.price * product.discountPercentage) / 100,
-  );
+  const isFavorite = favProduct.some((item) => item.id === product.id);
+
+  const isCart = cartProduct.some((item) => item.productId === product.id);
 
   function handleClick(id) {
     navigate(`/fish/${id}`);
@@ -55,14 +49,14 @@ const ProductCard = ({ product }) => {
 
     addToCartMutation.mutate(cart, {
       onSuccess: () => {
-        toast.success(`${product.title} added to cart`);
+        toast.success(`${product.name} added to cart`);
         queryClient.invalidateQueries({
           queryKey: ["cart"],
         });
       },
 
       onError: (err) => {
-        toast.error(err.message || `Failed to add ${product.title} to cart`);
+        toast.error(err.message || `Failed to add ${product.name} to cart`);
       },
     });
   }
@@ -88,7 +82,6 @@ const ProductCard = ({ product }) => {
       },
     });
   }
-
   function removeFromFav(e, productId) {
     e.stopPropagation();
 
@@ -114,7 +107,7 @@ const ProductCard = ({ product }) => {
       <div className="relative overflow-hidden">
         <img
           src={(product?.imageUrls?.[0] || product.imageUrl) ?? null}
-          alt={product.title}
+          alt={product.name}
           className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500"
         />
 
@@ -160,32 +153,51 @@ const ProductCard = ({ product }) => {
 
         <div className="mt-4 flex items-center gap-2 flex-wrap">
           <p className="text-2xl font-bold text-(--color-text)">
-            ₹{discountedPrice}
+            ₹{product.discountedPrice}
           </p>
 
           {product.discountPercentage > 0 && (
             <p className="text-sm text-gray-500 line-through">
-              ₹{product.price}
+              ₹{product.originalPrice}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-1 my-3">
-          <span className="text-yellow-400 text-sm">⭐</span>
-          <span className="text-sm text-gray-300">{product.rating}</span>
+        <div className="flex items-center justify-between my-3">
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-400 text-sm">⭐</span>
+            <span className="text-sm text-gray-300">{product.rating}</span>
+          </div>
+
+          <span
+            className={`text-xs font-semibold px-3 py-1 rounded-full ${
+              product.stock > 0
+                ? "bg-green-500/20 text-green-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
+            {product.stock > 0 ? `${product.stock} Left` : "Out of Stock"}
+          </span>
         </div>
         <button
           type="button"
           onClick={(e) => cartHandle(e, product)}
-          disabled={addToCartMutation.isPending}
-          className="mt-auto w-full flex items-center cursor-pointer justify-center gap-2 bg-(--color-accent) hover:bg-transparent border border-(--color-accent) text-(--color-text) py-3 rounded-xl font-semibold transition-all duration-300"
+          disabled={addToCartMutation.isPending || product.stock <= 0}
+          className={`mt-auto w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all duration-300 ${
+            product.stock <= 0
+              ? "bg-gray-500 cursor-not-allowed text-white"
+              : "bg-(--color-accent) hover:bg-transparent border border-(--color-accent) text-(--color-text) cursor-pointer"
+          }`}
         >
-          <ShoppingCart className={`w-5 h-5`} />
-          {isCart
-            ? "Added in cart"
-            : addToCartMutation.isPending
-              ? "Adding..."
-              : "Add to Cart"}
+          <ShoppingCart className="w-5 h-5" />
+
+          {product.stock <= 0
+            ? "Out of Stock"
+            : isCart
+              ? "Added in Cart"
+              : addToCartMutation.isPending
+                ? "Adding..."
+                : "Add to Cart"}
         </button>
       </div>
     </div>

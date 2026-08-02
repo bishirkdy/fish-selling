@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CheckCircle,
   Truck,
@@ -32,19 +32,14 @@ const statusStyle = {
 };
 
 const OrdersList = () => {
-  const { data, isLoading, isError } = useGetAllOrders();
-  const [updatingProductId, setUpdatingProductId] = useState(null);
+  const { data, isLoading } = useGetAllOrders();
   const [view, setView] = useState(false);
-  const [orderId, setOrderId] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  const {
-    data: orderStatus,
-    isLoading: statusLoading,
-    isError: statusError,
-  } = useGetTotalOrderStatus();
+  const { data: orderStatus, isLoading: statusLoading } =
+    useGetTotalOrderStatus();
   const { mutate, isPending } = useEditOrderStatus();
   const client = useQueryClient();
 
@@ -57,15 +52,14 @@ const OrdersList = () => {
   }
 
   const filteredOrders = data?.filter((order) => {
+    const searchValue = search.toLowerCase();
+
     const matchesSearch =
-      order.id.toLowerCase().includes(search.toLowerCase()) ||
-      order.paymentMethod.toLowerCase().includes(search.toLowerCase()) ||
-      order.shippingAddress.fullName
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      order.shippingAddress?.phoneNumberNumber
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
+      order.id.toLowerCase().includes(searchValue) ||
+      order.paymentMethod.toLowerCase().includes(searchValue) ||
+      order.paymentStatus.toLowerCase().includes(searchValue) ||
+      order.shippingAddress.fullName.toLowerCase().includes(searchValue) ||
+      String(order.shippingAddress.phoneNumber ?? "").includes(searchValue);
 
     const matchesFilter =
       filterStatus === "All" ||
@@ -84,35 +78,40 @@ const OrdersList = () => {
       </div>
     );
   }
-  const currentOrder = selectedOrder;
+  const currentOrder = data?.find((order) => order.id === selectedOrderId);
   function viewOrderProducts(order) {
-    setSelectedOrder(order);
-    setOrderId(order.id);
+    setSelectedOrderId(order.id);
     setView(true);
   }
 
   function orderStatusHandler(productId, status) {
     mutate(
-      { orderId, productId, status },
+      { orderId: selectedOrderId, productId, status },
       {
         onSuccess: () => {
+          client.invalidateQueries({
+            queryKey: ["user-orders"],
+          });
           client.invalidateQueries({
             queryKey: ["orders"],
           });
           client.invalidateQueries({
-            queryKey: ["orders-status"],
+            queryKey: ["order-status"],
           });
           toast.success("Status Updated");
         },
         onError: (err) => {
           toast.error(err.message);
         },
-        onSettled: () => {
-          setUpdatingProductId(null);
-        },
       },
     );
   }
+  const paymentStyle = {
+    Pending: "bg-yellow-100 text-yellow-700",
+    Paid: "bg-green-100 text-green-700",
+    Failed: "bg-red-100 text-red-700",
+    Refunded: "bg-blue-100 text-blue-700",
+  };
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
@@ -301,7 +300,7 @@ const OrdersList = () => {
                       </h3>
 
                       <p className="text-sm text-gray-500">
-                        {order.shippingAddress?.phoneNumberNumber}
+                        {order.shippingAddress?.phoneNumber}
                       </p>
                     </div>
                   </td>
@@ -331,12 +330,10 @@ const OrdersList = () => {
                   <td className="px-6 py-2">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.paymentStatus === "PAID"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
+                        paymentStyle[order.paymentStatus]
                       }`}
                     >
-                      {order.paymentStatus ? order.paymentStatus : "PENDING"}
+                      {order.paymentStatus}
                     </span>
                   </td>
                   <td className="px-6 py-2">
@@ -376,7 +373,7 @@ const OrdersList = () => {
                 <button
                   onClick={() => {
                     setView(false);
-                    setSelectedOrder(null);
+                    setSelectedOrderId(null);
                   }}
                   className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition cursor-pointer"
                 >
@@ -401,7 +398,7 @@ const OrdersList = () => {
                     </p>
                     <p>
                       <span className="font-semibold">Email :</span>{" "}
-                      {currentOrder?.shippingAddress?.phoneNumberNumber}
+                      {currentOrder?.shippingAddress?.email}
                     </p>
                   </div>
 
@@ -446,6 +443,7 @@ const OrdersList = () => {
                                 </span>
 
                                 <select
+                                  disabled={isPending}
                                   value={item.orderStatus}
                                   onChange={(e) =>
                                     orderStatusHandler(
@@ -473,9 +471,17 @@ const OrdersList = () => {
                             <p className="text-xs md:text-sm text-gray-500 mt-3"></p>
 
                             <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
-                              <span className="font-bold text-green-600 text-base md:text-lg">
-                                ₹ {item?.price || 0}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-green-600 text-lg">
+                                  ₹{Math.floor(item.discountedPrice)}
+                                </span>
+
+                                {item.discountPercentage > 0 && (
+                                  <span className="text-sm text-gray-400 line-through">
+                                    ₹{Math.floor(item.originalPrice)}
+                                  </span>
+                                )}
+                              </div>
 
                               <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
                                 Qty : {item?.quantity}

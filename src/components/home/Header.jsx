@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import fish from "../../assets/header.jpg";
-import Navbar from "../Navbar";
 
 const Header = () => {
   const navigate = useNavigate();
