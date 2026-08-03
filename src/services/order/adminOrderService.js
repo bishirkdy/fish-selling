@@ -11,3 +11,7 @@ export const orderStatusChange = async ({orderId, productId, status}) => {
   const res = await api.patch(ADMIN_ORDER_ENDPOINTS.UPDATE_STATUS( orderId , productId) , {status});
   return res.data;
 };
+
+export const deleteOneOrder = async(orderId) => {
+  await api.delete(ADMIN_ORDER_ENDPOINTS.BY_ID(orderId));
+}

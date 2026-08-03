@@ -40,6 +40,7 @@ const Navbar = () => {
   function favPopupHandler() {
     navigate(`/favorite/${user?.id}`);
   }
+  
   function handleLogout() {
     logoutMutation(undefined, {
       onSuccess: () => {
@@ -278,7 +279,7 @@ const Navbar = () => {
 
             {loggedUser && (
               <div className="flex items-start mt-4 text-white w-full gap-2">
-                {loggedUser && loggedUser?.role === "admin" && (
+                {loggedUser && loggedUser?.role === "Admin" && (
                   <button
                     onClick={() => navigate("/admin/dashboard")}
                     className="mt-auto bg-(--color-accent) hover:bg-red-600 transition py-3 px-4 rounded-xl font-semibold"

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
-import { blockUser, unblockUser } from "../../../../services/user/adminUserService"
+import { blockUser, deleteUser, unblockUser } from "../../../../services/user/adminUserService"
 
 export const useBlockUser = () => {
   return useMutation({
@@ -10,5 +10,11 @@ export const useBlockUser = () => {
 export const useUnblockUser = () => {
   return useMutation({
     mutationFn : unblockUser
+  })
+}
+
+export const useDeleteUser = () => {
+  return useMutation({
+    mutationFn : deleteUser
   })
 }

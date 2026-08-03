@@ -15,3 +15,6 @@ export const unblockUser = (id) =>
   api.patch(ADMIN_USER_ENDPOINTS.BLOCK(id), {
     isBlocked: false,
   });
+
+export const deleteUser = (id) =>
+  api.delete(ADMIN_USER_ENDPOINTS.DELETE(id));

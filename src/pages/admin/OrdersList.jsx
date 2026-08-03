@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   CheckCircle,
   Truck,
@@ -12,6 +12,7 @@ import {
   CircleX,
   ShoppingBagIcon,
   Boxes,
+  Trash2,
 } from "lucide-react";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -19,7 +20,10 @@ import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
 import { useGetTotalOrderStatus } from "../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 import { useGetAllOrders } from "../../tanstack/hooks/queries/order/adminOrderQueries";
-import { useEditOrderStatus } from "../../tanstack/hooks/mutations/order/adminOrderMutations";
+import {
+  useDeleteOrder,
+  useEditOrderStatus,
+} from "../../tanstack/hooks/mutations/order/adminOrderMutations";
 
 const statusStyle = {
   OrderPlaced: "bg-blue-100 text-blue-700",
@@ -41,6 +45,7 @@ const OrdersList = () => {
   const { data: orderStatus, isLoading: statusLoading } =
     useGetTotalOrderStatus();
   const { mutate, isPending } = useEditOrderStatus();
+  const { mutate: deleteMutate, isPending: deletePending } = useDeleteOrder();
   const client = useQueryClient();
 
   if (isLoading || statusLoading) {
@@ -67,6 +72,28 @@ const OrdersList = () => {
 
     return matchesSearch && matchesFilter;
   });
+
+  function deleteOrderHandler(orderId) {
+    if (!window.confirm("Are you sure you want to delete this order?")) return;
+
+    deleteMutate(orderId, {
+      onSuccess: () => {
+        client.invalidateQueries({
+          queryKey: ["orders"],
+        });
+
+        if (selectedOrderId === orderId) {
+          setView(false);
+          setSelectedOrderId(null);
+        }
+
+        toast.success("Order deleted successfully");
+      },
+      onError: (err) => {
+        toast.error(err.message || "Failed to delete order");
+      },
+    });
+  }
 
   if (!data || data.length === 0) {
     return (
@@ -279,6 +306,9 @@ const OrdersList = () => {
                 <th className="text-center px-6 py-4 text-sm font-semibold text-gray-600">
                   View
                 </th>
+                <th className="text-center px-6 py-4 text-sm font-semibold text-gray-600">
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -343,6 +373,17 @@ const OrdersList = () => {
                         className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition cursor-pointer"
                       >
                         <View size={18} />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-6 py-2">
+                    <div className="flex items-center justify-center">
+                      <button
+                        disabled={deletePending}
+                        onClick={() => deleteOrderHandler(order.id)}
+                        className="w-10 h-10 rounded-xl bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition cursor-pointer disabled:opacity-50"
+                      >
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   </td>

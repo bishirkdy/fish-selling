@@ -25,12 +25,13 @@ const EditFish = () => {
   const { data: category } = useGetCategories();
   const client = useQueryClient();
   const navigate = useNavigate();
+  
   useEffect(() => {
     if (data) {
       setFormData({
         name: data.name || "",
         category: data.categoryId || "",
-        price: data.price || "",
+        price: data.originalPrice || "",
         costPrice: data.costPrice || "",
         stock: data.stock || "",
         discountPercentage: data.discountPercentage || "",
@@ -48,6 +49,15 @@ const EditFish = () => {
       </div>
     );
   }
+
+  if (isError) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        Product not found
+      </div>
+    );
+  }
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -65,11 +75,12 @@ const EditFish = () => {
     if (!formData.name) errors.name = "Fish name is required";
     if (!formData.category) errors.category = "Category is required";
     if (!formData.price) errors.price = "Price is required";
-    if (!formData.stock) errors.stock = "Stock is required";
+    if (formData.stock === "") errors.stock = "Stock is required";
     if (!formData.costPrice) errors.costPrice = "Cost Price is required";
-    if (!formData.discountPercentage)
+    if (formData.discountPercentage === "")
       errors.discountPercentage = "Discount is required";
     if (!formData.description) errors.description = "Description is required";
+
 
     if (Object.keys(errors).length > 0) {
       setError(errors);
@@ -87,7 +98,7 @@ const EditFish = () => {
       form.append("categoryId", formData.category);
       form.append("isPrimary", true);
 
-      if (image) {
+      if (image instanceof File) {
         form.append("image", image);
       }
 
@@ -101,18 +112,6 @@ const EditFish = () => {
           },
           onError: (err) => {
             toast.error(err.message);
-          },
-          onSettled: () => {
-            setImage(null);
-            setFormData({
-              name: "",
-              category: "",
-              price: "",
-              costPrice: "",
-              stock: "",
-              discountPercentage: "",
-              description: "",
-            });
           },
         },
       );
@@ -321,18 +320,29 @@ const EditFish = () => {
             </div>
 
             <div className="relative h-56 rounded-3xl overflow-hidden group border border-gray-200">
-              {preview && (
+              {preview ? (
                 <img
                   src={preview}
-                  alt=""
+                  alt="Preview"
                   className="w-full h-full object-cover"
                 />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  No Image
+                </div>
               )}
               <button
                 type="button"
                 disabled={isPending}
-                onClick={() => setImage(null)}
-                className="absolute top-3 right-3 w-9 h-9 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
+                onClick={() => {
+                  setImage(null);
+                  setPreview("");
+                }}
+                className={`h-14 w-full rounded-2xl text-white font-semibold transition ${
+                  isPending
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-(--color-surface) hover:bg-(--color-surface)/90"
+                }`}
               >
                 <SquareX size={18} />
               </button>

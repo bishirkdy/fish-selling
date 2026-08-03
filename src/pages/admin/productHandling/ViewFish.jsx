@@ -1,12 +1,5 @@
-import React, { useState } from "react";
-import {
-  Search,
-  Eye,
-  Pencil,
-  Trash2,
-  Fish
-} from "lucide-react";
-import { priceDiscounted } from "../../../utils/priceDescounted";
+import { useEffect, useState } from "react";
+import { Search, Eye, Pencil, Trash2, Fish } from "lucide-react";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +10,7 @@ import { useGetProducts } from "../../../tanstack/hooks/queries/product/productQ
 
 const ViewFish = () => {
   const [search, setSearch] = useState("");
-  const { data, isLoading, isError } = useGetProducts();
+  const { data, isLoading } = useGetProducts();
   const [view, setView] = useState(false);
   const [selectedFish, setSelectedFish] = useState(null);
   const [category, setCategory] = useState("all");
@@ -30,6 +23,10 @@ const ViewFish = () => {
   const client = useQueryClient();
   const navigate = useNavigate();
   const { mutate: deleteMutate, isPending } = useDeleteProduct();
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category, sort, stockFilter]);
 
   if (isLoading) {
     return (
@@ -44,8 +41,7 @@ const ViewFish = () => {
         fish.name.toLowerCase().includes(search.toLowerCase()) ||
         fish.categoryName.toLowerCase().includes(search.toLowerCase());
 
-      const matchCategory =
-        category === "all" || fish.categoryId === category;
+      const matchCategory = category === "all" || fish.categoryId === category;
 
       const matchStock =
         stockFilter === ""
@@ -58,13 +54,14 @@ const ViewFish = () => {
     })
     ?.sort((a, b) => {
       if (sort === "low-high") {
-        return Number(a.price) - Number(b.price);
+        return Number(a.discountedPrice) - Number(b.discountedPrice);
       }
       if (sort === "high-low") {
-        return Number(b.price) - Number(a.price);
+        return Number(b.discountedPrice) - Number(a.discountedPrice);
       }
       return 0;
     });
+console.log(data);
 
   const totalPages = Math.ceil(filteredFish?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -88,6 +85,7 @@ const ViewFish = () => {
     setSelectedFish(fish);
     setView(true);
   }
+
   return (
     <div className="w-full min-h-screen bg-gray-100 p-6">
       <div className="flex flex-row w-full items-center justify-between">
@@ -115,7 +113,7 @@ const ViewFish = () => {
             onChange={(e) => setCategory(e.target.value)}
             className="border p-3 rounded-xl"
           >
-            <option value="">All Categories</option>
+            <option value="all">All Categories</option>
 
             {categoryData?.map((item) => (
               <option key={item.id} value={item.id}>
@@ -178,22 +176,29 @@ const ViewFish = () => {
                   <h2 className="text-xl font-bold text-gray-800">
                     {fish.name}
                   </h2>
-                  <p className="text-sm pt-1">
-                    Stock :{" "}
-                    {fish.stock === 0 ? (
-                      <span className="line-through text-red-500">
-                        Out of Stock
-                      </span>
-                    ) : (
-                      fish.stock
-                    )}
+                  <p
+                    className={`text-sm mt-2 font-medium ${
+                      fish.stock > 0 ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {fish.stock > 0
+                      ? `${fish.stock} Available`
+                      : "Out of Stock"}
                   </p>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                  <p className="bg-green-50 text-black-500 text-sm font-medium px-4 py-2 rounded-xl  border border-green-200">
-                    ₹{priceDiscounted(fish.price, fish.discountPercentage)}
-                  </p>
+                  <div className="flex flex-col items-end gap-1">
+                    <p className="text-lg font-bold text-green-600">
+                      ₹{fish.discountedPrice}
+                    </p>
+
+                    {fish.discountPercentage > 0 && (
+                      <p className="text-sm text-gray-400 line-through">
+                        ₹{fish.originalPrice}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -292,21 +297,23 @@ const ViewFish = () => {
                   {selectedFish?.name}
                 </h1>
 
-                <p className="text-green-600 font-medium mt-3">
-                  In Stock : {selectedFish?.stock}
+                <p
+                  className={`font-semibold mt-4 ${
+                    selectedFish?.stock > 0 ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {selectedFish?.stock > 0
+                    ? `${selectedFish.stock} Items Available`
+                    : "Out of Stock"}
                 </p>
 
                 <div className="flex items-center gap-4 mt-6">
                   <p className="text-gray-400 line-through text-md">
-                    ₹{selectedFish?.price}
+                    ₹{selectedFish?.originalPrice}
                   </p>
 
-                  <p className="text-xl font-bold text-black">
-                    ₹
-                    {priceDiscounted(
-                      selectedFish?.price,
-                      selectedFish?.discountPercentage,
-                    )}
+                  <p className="text-2xl font-bold text-green-600">
+                    ₹{selectedFish?.discountedPrice}
                   </p>
 
                   <span className="bg-green-100 text-black px-3 py-1 rounded-xl text-sm font-semibold">
@@ -322,6 +329,17 @@ const ViewFish = () => {
                   <p className="text-gray-600 leading-8">
                     {selectedFish?.description}
                   </p>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      selectedFish?.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {selectedFish?.isActive ? "Active" : "Inactive"}
+                  </span>
                 </div>
               </div>
             </div>

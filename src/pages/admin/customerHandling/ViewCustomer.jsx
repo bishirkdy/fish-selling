@@ -1,30 +1,38 @@
-import  { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Search,
   Users,
   Mail,
   Ban,
-  CircleX,
   Unlock,
+  Loader2,
+  Trash2,
 } from "lucide-react";
 import { toast } from "react-toastify";
 import Loader from "../../../components/Loader";
-import { useBlockUser, useUnblockUser } from "../../../tanstack/hooks/mutations/user/adminUserMutations";
+import {
+  useBlockUser,
+  useDeleteUser,
+  useUnblockUser,
+} from "../../../tanstack/hooks/mutations/user/adminUserMutations";
 import { useGetUsers } from "../../../tanstack/hooks/queries/user/adminUserQueries";
+import { useQueryClient } from "@tanstack/react-query";
 const ViewCustomer = () => {
-
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
-  const { data, isLoading, isError } = useGetUsers();
+  const { data, isLoading } = useGetUsers();
+  const [deletingId, setDeletingId] = useState(null);
   const { mutate: userBlockMutate, isPending: blockPending } = useBlockUser();
-  const { mutate: userUnblockMutate, isPending: unblockPending } = useUnblockUser();
-console.log(data);
+  const { mutate: deleteMutate, isPending: deletePending } = useDeleteUser();
+  const { mutate: userUnblockMutate, isPending: unblockPending } =
+    useUnblockUser();
+  const client = useQueryClient();
 
-  
   const filteredCustomers = data?.filter((customer) => {
     const searchMatch =
       customer.name.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase());
+      customer.email.toLowerCase().includes(search.toLowerCase()) ||
+      customer.id.toLowerCase().includes(search.toLowerCase());
 
     const statusMatch =
       filter === "all"
@@ -45,6 +53,8 @@ console.log(data);
   }
 
   function blockUserHandler(id) {
+    if (!window.confirm("Block this user?")) return;
+
     userBlockMutate(id, {
       onSuccess: () => {
         client.invalidateQueries({ queryKey: ["users"] });
@@ -55,7 +65,10 @@ console.log(data);
       },
     });
   }
+
   function unblockUserHandler(id) {
+    if (!window.confirm("Unblock this user?")) return;
+
     userUnblockMutate(id, {
       onSuccess: () => {
         client.invalidateQueries({ queryKey: ["users"] });
@@ -66,6 +79,29 @@ console.log(data);
       },
     });
   }
+
+  function deleteUserHandler(id) {
+    if (
+      !window.confirm("Are you sure you want to permanently delete this user?")
+    )
+      return;
+
+    setDeletingId(id);
+
+    deleteMutate(id, {
+      onSuccess: () => {
+        client.invalidateQueries({ queryKey: ["users"] });
+        toast.success("User deleted successfully");
+      },
+      onError: (err) => {
+        toast.error(err.message || "Failed to delete user");
+      },
+      onSettled: () => {
+        setDeletingId(null);
+      },
+    });
+  }
+
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -147,6 +183,9 @@ console.log(data);
           <table className="w-full min-w-250">
             <thead className="bg-gray-50 border-b">
               <tr>
+                <th className="px-6 py-4 text-sm font-semibold text-gray-600">
+                  No
+                </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
                   Customer
                 </th>
@@ -162,6 +201,9 @@ console.log(data);
                 <th className="text-center py-2 text-sm font-semibold text-gray-600">
                   Block User
                 </th>
+                <th className="text-center py-2 text-sm font-semibold text-gray-600">
+                  Delete
+                </th>
               </tr>
             </thead>
 
@@ -171,6 +213,7 @@ console.log(data);
                   key={customer.id}
                   className="border-b hover:bg-gray-50 transition"
                 >
+                  <td className="px-6 py-5">{index + 1}</td>
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
                       <div>
@@ -209,23 +252,38 @@ console.log(data);
                   </td>
                   <td className="py-5 pl-6">
                     <button
+                      disabled={blockPending || unblockPending}
                       onClick={() =>
                         customer.isBlocked
                           ? unblockUserHandler(customer.id)
                           : blockUserHandler(customer.id)
                       }
-                      className={`w-10 h-10 flex items-center justify-center rounded-xl transition cursor-pointer 
-                        ${
-                          customer.isBlocked
-                            ? "bg-green-100 hover:bg-green-200 text-green-600"
-                            : "bg-red-100 hover:bg-red-200 text-red-600"
-                        }
-    `}
+                      className={`w-10 h-10 flex items-center justify-center rounded-xl transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+                      ${
+                        customer.isBlocked
+                          ? "bg-green-100 hover:bg-green-200 text-green-600"
+                          : "bg-red-100 hover:bg-red-200 text-red-600"
+                      }`}
                     >
-                      {customer.isBlocked ? (
+                      {blockPending || unblockPending ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : customer.isBlocked ? (
                         <Unlock size={18} />
                       ) : (
                         <Ban size={18} />
+                      )}
+                    </button>
+                  </td>
+                  <td className="py-5 pl-6">
+                    <button
+                      disabled={deletingId === customer.id}
+                      onClick={() => deleteUserHandler(customer.id)}
+                      className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-100 hover:bg-red-200 text-red-600 transition disabled:opacity-50"
+                    >
+                      {deletingId === customer.id ? (
+                        <Loader2 size={18} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={18} />
                       )}
                     </button>
                   </td>
