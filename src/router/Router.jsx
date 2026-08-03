@@ -1,4 +1,3 @@
-import React from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,6 +25,7 @@ import AdminAnalysis from "../pages/admin/AdminAnalysis";
 import EditFish from "../pages/admin/productHandling/EditFish";
 import { ForgotPassword } from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
+import CategoryManagement from "../pages/admin/category/CategoryManagement";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,6 +50,7 @@ export const router = createBrowserRouter(
         <Route path="admin" element={<AdminProtectedRoute />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="orders" element={<OrdersList />} />
+          <Route path="categories" element={<CategoryManagement/>}/>
           <Route path="addfish" element={<AddFish />} />
           <Route path="viewfish" element={<ViewFish />} />
           <Route path="customers" element={<ViewCustomer />} />

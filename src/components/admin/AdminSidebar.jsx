@@ -5,12 +5,12 @@ import {
   Fish,
   Users,
   BarChart3,
-  Settings,
   LogOut,
   ChevronDown,
   ChevronRight,
   LineStyle,
   CircleX,
+  GroupIcon
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +25,11 @@ const menus = [
     title: "Dashboard",
     icon: LayoutDashboard,
     path: "/admin/dashboard",
+  },
+    {
+    title: "Category",
+    icon: GroupIcon,
+    path: "/admin/categories",
   },
   {
     title: "Orders",
