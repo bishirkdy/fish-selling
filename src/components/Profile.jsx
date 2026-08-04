@@ -1,28 +1,22 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   User,
   Settings,
   Gift,
   Mail,
-  Phone,
-  MapPin,
   Shield,
   Bell,
   Lock,
   Star,
+  User2,
+  Stamp,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("personal");
+  const { user } = useSelector((s) => s.auth);
 
-  const user = {
-    name: "Bishir",
-    email: "bishir@gmail.com",
-    phone: "+91 9876543210",
-    location: "Calicut, Kerala",
-    points: 1250,
-    level: "Gold Member",
-  };
 
   const menuItems = [
     {
@@ -52,10 +46,18 @@ const Profile = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="bg-(--color-background) p-5 rounded-xl border border-zinc-800">
                 <div className="flex items-center gap-3 mb-2">
-                  <User className="text-(--color-secondary)" />
-                  <p className="text-zinc-400 text-sm">Full Name</p>
+                  <User2 className="text-(--color-secondary)" />
+                  <p className="text-zinc-400 text-sm">Id</p>
                 </div>
-                <h3 className="text-lg font-semibold">{user.name}</h3>
+                <h3 className="text-lg font-semibold">{user?.id}</h3>
+              </div>
+
+              <div className="bg-(--color-background) p-5 rounded-xl border border-zinc-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <User className="text-(--color-secondary)" />
+                  <p className="text-zinc-400 text-sm">Name</p>
+                </div>
+                <h3 className="text-lg font-semibold">{user?.name}</h3>
               </div>
 
               <div className="bg-(--color-background) p-5 rounded-xl border border-zinc-800">
@@ -63,22 +65,14 @@ const Profile = () => {
                   <Mail className="text-(--color-secondary)" />
                   <p className="text-zinc-400 text-sm">Email</p>
                 </div>
-                <h3 className="text-lg font-semibold">{user.email}</h3>
-              </div>
-
-              <div className="bg-(--color-background) p-5 rounded-xl border border-zinc-800">
-                <div className="flex items-center gap-3 mb-2">
-                  <Phone className="text-(--color-secondary)" />
-                  <p className="text-zinc-400 text-sm">Phone</p>
-                </div>
-                <h3 className="text-lg font-semibold">{user.phone}</h3>
+                <h3 className="text-lg font-semibold">{user?.email}</h3>
               </div>
               <div className="bg-(--color-background) p-5 rounded-xl border border-zinc-800">
                 <div className="flex items-center gap-3 mb-2">
-                  <MapPin className="text-(--color-secondary)" />
-                  <p className="text-zinc-400 text-sm">Location</p>
+                  <Stamp className="text-(--color-secondary)" />
+                  <p className="text-zinc-400 text-sm">Current Status</p>
                 </div>
-                <h3 className="text-lg font-semibold">{user.location}</h3>
+                <h3 className="text-lg font-semibold">{user?.isBlocked ? "Blocked by admin" : "Active"}</h3>
               </div>
             </div>
           </div>

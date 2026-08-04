@@ -13,7 +13,7 @@ const Login = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { mutate : loginMutation , isPending} = useLogin();
+  const { mutate: loginMutation, isPending } = useLogin();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,12 +23,19 @@ const Login = () => {
     e.preventDefault();
     loginMutation(form, {
       onSuccess: (user) => {
+        if (user.isBlocked) {
+          toast.error("Your account has been blocked.");
+          return;
+        }
+
+        dispatch(login(user));
+
         if (user.role === "Admin") {
           navigate("/admin/dashboard");
         } else {
           navigate("/");
         }
-        dispatch(login(user));
+
         toast.success("Login successful");
       },
       onError: (err) => {

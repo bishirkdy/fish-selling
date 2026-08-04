@@ -164,10 +164,10 @@ const ProductCard = ({ product }) => {
         </div>
 
         <div className="flex items-center justify-between my-3">
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <span className="text-yellow-400 text-sm">⭐</span>
             <span className="text-sm text-gray-300">{product.rating}</span>
-          </div>
+          </div> */}
 
           <span
             className={`text-xs font-semibold px-3 py-1 rounded-full ${

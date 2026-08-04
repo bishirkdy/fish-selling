@@ -14,7 +14,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import Loader from "../components/Loader";
 import ViewOrderDetail from "../components/orders/ViewOrderDetail";
 import TrackOrderDetail from "../components/orders/TrackOrderDetail";
-
 import { useRemoveUserById } from "../tanstack/hooks/mutations/order/orderMutations";
 import { useGetAllOrdersOfUser } from "../tanstack/hooks/queries/order/orderQueries";
 
@@ -99,8 +98,8 @@ const Orders = () => {
   const [viewTrack, setViewTrack] = useState(false);
   const [viewableData, setViewableData] = useState(null);
   const [trackableData, setTrackableData] = useState(null);
-
   const { data = [], isLoading } = useGetAllOrdersOfUser();
+
   const { mutate: cancelOrder, isPending } = useRemoveUserById();
   if (isLoading) {
     return (
@@ -109,7 +108,7 @@ const Orders = () => {
       </div>
     );
   }
-console.log(data)
+
   if (data.length === 0) {
     return (
       <div className="min-h-screen bg-(--color-background) text-white flex flex-col items-center justify-center">
@@ -160,6 +159,10 @@ console.log(data)
                 color: "text-gray-400",
               };
 
+              const canCancel =
+                item.orderStatus === "OrderPlaced" ||
+                item.orderStatus === "Confirmed";
+
               return (
                 <div
                   key={`${order.id}-${item.productId}`}
@@ -178,7 +181,6 @@ console.log(data)
                           </span>{" "}
                           {order.id}
                         </p>
-
                       </div>
                     </div>
 
@@ -189,8 +191,6 @@ console.log(data)
                         {status.icon}
                         <span className="font-medium">{status.label}</span>
                       </div>
-
-              
                     </div>
                   </div>
 
@@ -290,35 +290,17 @@ console.log(data)
                         </button>
 
                         <button
-                          disabled={
-                            isPending ||
-                            item.orderStatus === "Cancelled" ||
-                            item.orderStatus === "Delivered"
-                          }
+                          disabled={isPending || !canCancel}
                           onClick={() => handleCancel(order.id, item.productId)}
-                          className="
-                           px-5
-                           py-2
-                           rounded-lg
-                           border
-                           border-red-500
-                           text-red-500
-                           hover:bg-red-500
-                           hover:text-white
-                            transition
-                            disabled:opacity-50
-                            disabled:cursor-not-allowed
-                            disabled:hover:bg-transparent
-                           disabled:hover:text-red-500
-                            "
+                          className="px-5 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-red-500"
                         >
                           {isPending
                             ? "Cancelling..."
                             : item.orderStatus === "Cancelled"
                               ? "Cancelled"
-                              : item.orderStatus === "Delivered"
-                                ? "Delivered"
-                                : "Cancel Order"}
+                              : canCancel
+                                ? "Cancel Order"
+                                : "Order shipped. Cannot Cancel"}
                         </button>
                       </div>
                     </div>

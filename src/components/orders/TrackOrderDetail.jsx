@@ -1,4 +1,3 @@
-import React from "react";
 import {
   CheckCircle,
   Clock,
@@ -10,7 +9,6 @@ import {
 
 const TrackOrderDetail = ({ setViewTrack, data }) => {
 const isCancelled = data?.orderStatus === "Cancelled";
-
 const trackingSteps = [
   {
     title: "Order Placed",

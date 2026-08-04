@@ -81,7 +81,7 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
                 </h3>
 
                 <p className="text-xs text-gray-400">
-                  ₹{item.price} × {item.quantity || 1}
+                  ₹{item.discountedPrice} × {item.quantity || 1}
                 </p>
 
                 <p className="text-sm font-bold mt-1">₹{item.totalPrice}</p>

@@ -37,6 +37,8 @@ const Register = () => {
         navigate("/login");
       },
       onError: (err) => {
+        console.log(err);
+        
         toast.error(`${err?.message || "Something went wrong"} `);
       },
     });

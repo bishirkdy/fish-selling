@@ -108,7 +108,7 @@ const OneProduct = () => {
         <div className="flex flex-col gap-5">
           <h1 className="text-3xl font-bold leading-snug">{data.name}</h1>
 
-          <p className="text-gray-400 text-sm">⭐ {data.rating} / 5</p>
+          {/* <p className="text-gray-400 text-sm">⭐ {data.rating} / 5</p> */}
 
           <div className="flex items-center gap-3">
             <span className="text-2xl font-bold text-(--color-accent)">

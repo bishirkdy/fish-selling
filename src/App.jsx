@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Navbar from "./components/Navbar";
 
@@ -13,6 +13,7 @@ import { useFavDataOfUser } from "./tanstack/hooks/queries/favorite/favoriteQuer
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isAdmin = location.pathname.startsWith("/admin");
 
@@ -23,7 +24,6 @@ const App = () => {
     isSuccess,
     isError,
   } = useGetCurrentUser();
-
   // Load cart only after user is restored
   const { data: cartData } = useGetAllCartDataOfUser({
     enabled: !!currentUser,
@@ -36,8 +36,13 @@ const App = () => {
 
   // Restore user
   useEffect(() => {
-
     if (isSuccess && currentUser) {
+      if (currentUser.isBlocked) {
+        dispatch(logout());
+        navigate("/login", { replace: true });
+        return;
+      }
+
       dispatch(login(currentUser));
     }
 
@@ -46,7 +51,7 @@ const App = () => {
     }
 
     dispatch(setLoading(userLoading));
-  }, [currentUser, userLoading, isSuccess, isError, dispatch]);
+  }, [currentUser, userLoading, isSuccess, isError, dispatch, navigate]);
 
   // Store cart in Redux
   useEffect(() => {
@@ -60,7 +65,6 @@ const App = () => {
       dispatch(addToFavorite(favData));
     }
   }, [favData, dispatch]);
-
 
   return (
     <>

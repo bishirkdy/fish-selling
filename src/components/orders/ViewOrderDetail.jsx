@@ -7,8 +7,6 @@ import {
   MapPin,
   XCircle,
 } from "lucide-react";
-import React from "react";
-import { priceDiscounted } from "../../utils/priceDescounted";
 
 const STATUS = {
   OrderPlaced: {
@@ -62,7 +60,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
     color: "text-gray-400",
     bg: "bg-gray-500/10",
   };
-
+  
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div
@@ -132,10 +130,10 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
             <h1 className="text-3xl font-bold text-white">
               {viewableData?.productName}
             </h1>
-
+{/* 
             <p className="mt-3 text-gray-400 leading-relaxed">
               Premium quality product ordered from our store.
-            </p>
+            </p> */}
 
             <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 mt-8">
               <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
@@ -155,10 +153,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
                 <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
                   ₹
-                  {priceDiscounted(
-                    viewableData?.price,
-                    viewableData?.discount
-                  )}
+                  {viewableData?.discountedPrice}
                 </h2>
               </div>
 
@@ -210,9 +205,9 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
           </div>
         </div>
 
-        <div className="my-8 border-t border-(--color-tertiary)" />
+        <div className="my-8" />
 
-        <section>
+        {/* <section>
           <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
             Order Information
           </h2>
@@ -248,9 +243,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
               </h3>
             </div>
           </div>
-        </section>
-
-        <div className="my-8 border-t border-(--color-tertiary)" />
+        </section> */}
 
         <section>
           <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
@@ -259,7 +252,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
 
           <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-6">
             <div className="space-y-4">
-                            <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+                            <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">Full Name</span>
 
                 <span className="font-medium">
@@ -267,7 +260,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">Phone</span>
 
                 <span className="font-medium">
@@ -275,7 +268,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">Street</span>
 
                 <span className="font-medium text-right">
@@ -283,7 +276,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">Post</span>
 
                 <span className="font-medium">
@@ -291,7 +284,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">District</span>
 
                 <span className="font-medium">
@@ -299,7 +292,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">State</span>
 
                 <span className="font-medium">
@@ -307,7 +300,7 @@ const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
                 </span>
               </div>
 
-              <div className="flex justify-between items-center border-b border-(--color-tertiary) pb-3">
+              <div className="flex justify-between items-center pb-3">
                 <span className="text-gray-400">PIN Code</span>
 
                 <span className="font-medium">
