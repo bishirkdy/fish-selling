@@ -74,7 +74,7 @@ const StyledWrapper = styled.div`
       background-color: #fff3;
       left: 50%;
       top: 19%;
-      transform: translateX(-50%) scale(0.9);
+      transform: translateX(-50%) scale(0.3);
     }
 
     .circle {

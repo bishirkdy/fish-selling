@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllUsers } from "../../../../services/user/adminUserService";
+import { getUsers } from "../../../../services/user/adminUserService";
 
-export const useGetUsers = () => {
+export const useGetUsers = ({ page, pageSize, search, status }) => {
   return useQuery({
-    queryKey: ["users"],
-    queryFn: getAllUsers
+    queryKey: ["users", page, pageSize, search, status],
+    queryFn: () => getUsers({ page, pageSize, search, status }),
+    placeholderData: (previousData) => previousData,
   });
 };

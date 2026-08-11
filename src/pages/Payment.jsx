@@ -5,6 +5,7 @@ import { useRazorpay } from "react-razorpay";
 import { handleOnlinePayment } from "../utils/razonPay";
 import { useAddShippingAddress } from "../tanstack/hooks/mutations/address/shippingAddressMutations";
 import { useAddOrders } from "../tanstack/hooks/mutations/order/orderMutations";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Payment = () => {
   const [formData, setFormData] = useState({
@@ -23,8 +24,8 @@ const Payment = () => {
   const navigate = useNavigate();
   const { Razorpay } = useRazorpay();
   const { mutate: orderMutation, isPending: orderIsPending } = useAddOrders();
-  const { mutate: addressMutate, isPending: addressIsPending } =
-    useAddShippingAddress();
+  const { mutate: addressMutate, isPending: addressIsPending } = useAddShippingAddress();
+  const client = useQueryClient();
 
   useEffect(() => {
     if (!state) {
@@ -93,6 +94,9 @@ const Payment = () => {
         if (type === "COD") {
           orderMutation(orderData, {
             onSuccess: (order) => {
+              client.invalidateQueries({
+                queryKey: ["cart"],
+              });
               setPaymentType(null);
               toast.success("Order placed successfully");
 
@@ -114,6 +118,7 @@ const Payment = () => {
               orderData,
               navigate,
               toast,
+              client
             });
           } catch (error) {
             toast.error(error.message);

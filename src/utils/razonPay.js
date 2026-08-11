@@ -1,11 +1,14 @@
-import { createOrderWithPayment, verifyPayment } from "../services/payment/paymentService";
-
+import {
+  createOrderWithPayment,
+  verifyPayment,
+} from "../services/payment/paymentService";
 
 export const handleOnlinePayment = async ({
   Razorpay,
   orderData,
   navigate,
   toast,
+  client,
 }) => {
   try {
     // Create Razorpay Order
@@ -22,18 +25,18 @@ export const handleOnlinePayment = async ({
 
       handler: async function (response) {
         try {
-          console.log(
-            JSON.stringify(
-              {
-                razorpayOrderId: response.razorpay_order_id,
-                razorpayPaymentId: response.razorpay_payment_id,
-                razorpaySignature: response.razorpay_signature,
-                order: orderData,
-              },
-              null,
-              2,
-            ),
-          );
+          // console.log(
+          //   JSON.stringify(
+          //     {
+          //       razorpayOrderId: response.razorpay_order_id,
+          //       razorpayPaymentId: response.razorpay_payment_id,
+          //       razorpaySignature: response.razorpay_signature,
+          //       order: orderData,
+          //     },
+          //     null,
+          //     2,
+          //   ),
+          // );
           const order = await verifyPayment({
             razorpayOrderId: response.razorpay_order_id,
             razorpayPaymentId: response.razorpay_payment_id,
@@ -41,17 +44,17 @@ export const handleOnlinePayment = async ({
             order: orderData,
           });
 
+          await client.invalidateQueries({
+            queryKey: ["cart"],
+          });
           toast.success("Payment Successful");
-
           navigate("/success", {
             state: {
               id: order.id,
             },
           });
         } catch (err) {
-          toast.error(
-            err.message || "Payment verification failed",
-          );
+          toast.error(err.message || "Payment verification failed");
         }
       },
 

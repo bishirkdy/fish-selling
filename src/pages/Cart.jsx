@@ -1,15 +1,24 @@
 import { X } from "lucide-react";
 import { useDispatch } from "react-redux";
-import {decreaseQuantity, increaseQuantity, removeFromCart} from "../redux/features/cartSlice";
+import {
+  decreaseQuantity,
+  increaseQuantity,
+  removeFromCart,
+} from "../redux/features/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRemoveFromCart, useUpdateQuantity} from "../tanstack/hooks/mutations/cart/cartMutations";
+import {
+  useRemoveFromCart,
+  useUpdateQuantity,
+} from "../tanstack/hooks/mutations/cart/cartMutations";
 
 const Cart = ({ closeCart, cart, grandTotal }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { mutate: removeMutation, isPending: removeIsPending } = useRemoveFromCart();
-  const { mutate: quantityMutation, isPending: quantityUpdatePending } = useUpdateQuantity();
+  const { mutate: removeMutation, isPending: removeIsPending } =
+    useRemoveFromCart();
+  const { mutate: quantityMutation, isPending: quantityUpdatePending } =
+    useUpdateQuantity();
 
   function removeHandler(id) {
     removeMutation(id, {
@@ -22,7 +31,6 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
       },
     });
   }
-
   function quantityHandler(type, cartItemId, quantity) {
     let updatedQuantity;
 
@@ -54,6 +62,8 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
     );
   }
 
+  const hasNoStock = cart?.some((item) => item.quantity > item.availableStock);
+
   return (
     <div className="md:w-90 w-screen md:pl-0 pl-8 h-screen bg-(--color-surface)  text-(--color-text) shadow-xl flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-white/10">
@@ -68,7 +78,10 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
           <p className="text-gray-400 text-center mt-10">Your cart is empty</p>
         ) : (
           cart?.map((item) => (
-            <div key={item.cartItemId} className="flex gap-3 bg-white/5 p-3 rounded-lg">
+            <div
+              key={item.cartItemId}
+              className="flex gap-3 bg-white/5 p-3 rounded-lg"
+            >
               <img
                 src={item.imageUrl ?? null}
                 alt={item.title}
@@ -85,6 +98,11 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
                 </p>
 
                 <p className="text-sm font-bold mt-1">₹{item.totalPrice}</p>
+                {item.quantity > item.availableStock && (
+                  <p className="text-xs text-red-400 mt-1">
+                    Only {item.availableStock} available.
+                  </p>
+                )}
               </div>
               <div className="flex flex-col items-end gap-2 justify-between">
                 <X
@@ -138,7 +156,7 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
           <span>₹{grandTotal}</span>
         </div>
         <button
-          disabled={cart?.length === 0}
+          disabled={cart?.length === 0 || hasNoStock}
           onClick={() => {
             closeCart();
             navigate("/payment/cart", {
@@ -148,9 +166,9 @@ const Cart = ({ closeCart, cart, grandTotal }) => {
               },
             });
           }}
-          className="bg-(--color-accent) cursor-pointer py-2 rounded-lg font-semibold"
+          className="bg-(--color-accent) cursor-pointer py-2 rounded-lg font-semibold disabled:cursor-not-allowed "
         >
-          Buy now
+        {hasNoStock ? "Update Cart Quantity" : "Buy now"}
         </button>
       </div>
     </div>

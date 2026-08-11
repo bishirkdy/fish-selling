@@ -12,7 +12,7 @@ export const ForgotPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    forgotPasswordMutation.mutate(
+    forgotPasswordMutation(
       { email },
       {
         onSuccess: (res) => {

@@ -10,15 +10,15 @@ import {
   ChevronRight,
   LineStyle,
   CircleX,
-  GroupIcon
+  GroupIcon,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../redux/features/authSlice";
 import { toast } from "react-toastify";
 import { useGetUserById } from "../../tanstack/hooks/queries/user/userQueries";
 import { useLogout } from "../../tanstack/hooks/mutations/auth/authMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
 
 const menus = [
   {
@@ -26,7 +26,7 @@ const menus = [
     icon: LayoutDashboard,
     path: "/admin/dashboard",
   },
-    {
+  {
     title: "Category",
     icon: GroupIcon,
     path: "/admin/categories",
@@ -61,15 +61,14 @@ const menus = [
     title: "Analytics",
     icon: BarChart3,
     path: "/admin/analytics",
-  }
+  },
 ];
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { user } = useSelector((S) => S.auth);
-  const { data } = useGetUserById(user?.id);
+  const { data  } = useGetCurrentUser();
   const { mutate: logoutMutation } = useLogout();
   const client = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -82,21 +81,22 @@ const AdminSidebar = () => {
       navigate(menu.path);
     }
   };
+  
+  function logoutHandler() {
+    logoutMutation(undefined, {
+      onSuccess: () => {
+        client.invalidateQueries({
+          queryKey: ["currentUser"],
+        });
+        toast.success("Logout successfully");
+        navigate("/login");
+      },
 
-function logoutHandler() {
-  logoutMutation(undefined, {
-    onSuccess: () => {
-      dispatch(logout());
-      client.clear();
-      toast.success("Logout successfully");
-      navigate("/login");
-    },
-
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
-}
+      onError: (err) => {
+        toast.error(err.message);
+      },
+    });
+  }
 
   return (
     <>
@@ -203,8 +203,9 @@ function logoutHandler() {
         <div className="p-4 border-t border-white/10">
           <div className="bg-white/5 rounded-3xl p-4 space-y-4 backdrop-blur-md">
             <button
-            onClick={() => navigate("/")}
-            className="w-full animate-pulse py-3 rounded-2xl bg-(--color-background) hover:bg-(--color-surface) text-white text-sm font-semibold cursor-pointer">
+              onClick={() => navigate("/")}
+              className="w-full animate-pulse py-3 rounded-2xl bg-(--color-background) hover:bg-(--color-surface) text-white text-sm font-semibold cursor-pointer"
+            >
               Go To Official Page
             </button>
             <div className="flex items-center justify-between">

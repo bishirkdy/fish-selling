@@ -38,7 +38,6 @@ const Navbar = () => {
   function favPopupHandler() {
     navigate(`/favorite/${loggedUser?.id}`);
   }
-  
   function handleLogout() {
     logoutMutation(undefined, {
       onSuccess: () => {

@@ -10,11 +10,12 @@ import {
   useAddToFav,
   useRemoveFromFav,
 } from "../../tanstack/hooks/mutations/favorite/favMutations";
+import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useSelector((s) => s.auth);
+  const { data: user } = useGetCurrentUser();
   const addToCartMutation = useAddToCart();
   const addToFavMutation = useAddToFav();
   const removeFavMutation = useRemoveFromFav();
@@ -33,8 +34,7 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
 
     if (!user) {
-      navigate("/login");
-      toast.error("Please login");
+      toast.info("Please login");
       return;
     }
     if (isCart) {
@@ -65,8 +65,7 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
 
     if (!user) {
-      navigate("/login");
-      toast.error("Please login");
+      toast.info("Please login");
       return;
     }
 

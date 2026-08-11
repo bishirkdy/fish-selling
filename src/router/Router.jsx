@@ -37,8 +37,9 @@ export const router = createBrowserRouter(
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="shop" element={<Shop />} />
+        <Route path="fish/:id" element={<OneProduct />} />
+        
         <Route element={<ProtectedRoute />}>
-          <Route path="fish/:id" element={<OneProduct />} />
           <Route path="payment/:id" element={<Payment />} />
           <Route path="/payment/cart" element={<Payment />} />
           <Route path="/orders/:id" element={<Orders />} />

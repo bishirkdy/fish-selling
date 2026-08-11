@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { checkUser } from "../../utils/authCheck";
 import { toast } from "react-toastify";
 import { login } from "../../redux/features/authSlice";
-import { useDispatch } from "react-redux";
 import { useRegisterUser } from "../../tanstack/hooks/mutations/auth/authMutations";
 
 const Register = () => {
@@ -16,7 +15,6 @@ const Register = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { mutate, isPending } = useRegisterUser();
 
   const handleChange = (e) => {
@@ -31,9 +29,6 @@ const Register = () => {
     mutate(form, {
       onSuccess: (user) => {
         toast.success("User added successfully");
-        dispatch(login({
-          id: user.id,
-        }));
         navigate("/login");
       },
       onError: (err) => {

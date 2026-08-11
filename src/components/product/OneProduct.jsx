@@ -9,13 +9,14 @@ import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations"
 import { useAddReview } from "../../tanstack/hooks/mutations/review/reviewMutations";
 import { useGetProductById } from "../../tanstack/hooks/queries/product/productQueries";
 import { useGetReviewOfProduct } from "../../tanstack/hooks/queries/review/reviewQueries";
+import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
 
 const OneProduct = () => {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useSelector((s) => s.auth);
+  const { data: user } = useGetCurrentUser();
   const { data, isLoading, isError } = useGetProductById(id);
   const { data: reviews, isLoading: reviewLoading } = useGetReviewOfProduct(
     data?.id,
@@ -39,6 +40,11 @@ const OneProduct = () => {
   if (!data) return <div className="text-gray-400 p-10">No product found</div>;
 
   function cartHandle(product) {
+    if (!user) {
+      toast.info("Please login for add to cart")
+      return;
+    }
+
     if (isCart) {
       toast.info("Product is already in your cart");
       return;
@@ -94,107 +100,115 @@ const OneProduct = () => {
     });
   }
 
-  return (
-    <div className="min-h-screen flex flex-col pt-24 items-center bg-(--color-background) text-(--color-text) p-6">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
-        <div className="rounded-xl overflow-hidden">
-          <img
-            src={data.imageUrls[0]}
-            alt={data.name}
-            className="w-full h-100 object-cover"
-          />
+  function handlePayment() {
+    if(!user){
+      toast.info("Please login to buy product");
+      return      
+    }
+    if (data.stock > 0) {
+      navigate("/payment/cart", {
+        state: {
+          items: [
+            {
+              productId: data.id,
+              quantity: 1,
+            },
+          ],
+          grandTotal: data.discountedPrice,
+        },
+      });
+    } else {
+      toast.info("Out of Stock");
+    }
+  }
+
+
+
+return (
+  <div className="min-h-screen flex flex-col pt-24 items-center bg-(--color-background) text-(--color-text) p-6">
+    <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+      <div className="rounded-xl overflow-hidden">
+        <img
+          src={data.imageUrls[0]}
+          alt={data.name}
+          className="w-full h-100 object-cover"
+        />
+      </div>
+
+      <div className="flex flex-col gap-5">
+        <h1 className="text-3xl font-bold leading-snug">{data.name}</h1>
+
+        {/* <p className="text-gray-400 text-sm">⭐ {data.rating} / 5</p> */}
+
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-bold text-(--color-accent)">
+            ₹{data.discountedPrice}
+          </span>
+
+          {data.discountPercentage > 0 && (
+            <>
+              <span className="text-gray-500 line-through">
+                ₹{data.originalPrice}
+              </span>
+
+              <span className="text-green-500 text-sm font-semibold">
+                {data.discountPercentage}% OFF
+              </span>
+            </>
+          )}
         </div>
 
-        <div className="flex flex-col gap-5">
-          <h1 className="text-3xl font-bold leading-snug">{data.name}</h1>
+        <p className="text-gray-300 leading-relaxed text-sm">
+          {data.description}
+        </p>
 
-          {/* <p className="text-gray-400 text-sm">⭐ {data.rating} / 5</p> */}
-
-          <div className="flex items-center gap-3">
-            <span className="text-2xl font-bold text-(--color-accent)">
-              ₹{data.discountedPrice}
-            </span>
-
-            {data.discountPercentage > 0 && (
+        <div className="text-sm flex flex-col gap-2 text-gray-400">
+          <p className="flex items-center gap-2">
+            {data.stock > 0 ? (
               <>
-                <span className="text-gray-500 line-through">
-                  ₹{data.originalPrice}
-                </span>
-
-                <span className="text-green-500 text-sm font-semibold">
-                  {data.discountPercentage}% OFF
+                <Check size={16} className="text-green-500" />
+                <span>In Stock</span>
+              </>
+            ) : (
+              <>
+                <X size={16} className="text-red-500" />
+                <span className="line-through text-red-500">
+                  Out of Stock
                 </span>
               </>
             )}
-          </div>
-
-          <p className="text-gray-300 leading-relaxed text-sm">
-            {data.description}
           </p>
 
-          <div className="text-sm flex flex-col gap-2 text-gray-400">
-            <p className="flex items-center gap-2">
-              {data.stock > 0 ? (
-                <>
-                  <Check size={16} className="text-green-500" />
-                  <span>In Stock</span>
-                </>
-              ) : (
-                <>
-                  <X size={16} className="text-red-500" />
-                  <span className="line-through text-red-500">
-                    Out of Stock
-                  </span>
-                </>
-              )}
-            </p>
+          <p className="flex items-center gap-2">
+            <Truck size={16} className="text-blue-400" />
+            <span>Free Delivery</span>
+          </p>
+        </div>
 
-            <p className="flex items-center gap-2">
-              <Truck size={16} className="text-blue-400" />
-              <span>Free Delivery</span>
-            </p>
-          </div>
+        <div className="flex gap-4 mt-4">
+          <button
+            onClick={() => handlePayment()}
+            className="flex-1 bg-(--color-accent) text-(--color-text) py-3 rounded-lg font-semibold hover:opacity-90 cursor-pointer transition"
+          >
+            {data.stock > 0 ? "Buy Now" : "Out of Stock"}
+          </button>
 
-          <div className="flex gap-4 mt-4">
-            <button
-              onClick={() => {
-                if (data.stock > 0) {
-                  navigate("/payment/cart", {
-                    state: {
-                      items: [
-                        {
-                          productId: data.id,
-                          quantity: 1,
-                        },
-                      ],
-                      grandTotal: data.discountedPrice,
-                    },
-                  });
-                } else {
-                  toast.info("Out of Stock");
-                }
-              }}
-              className="flex-1 bg-(--color-accent) text-(--color-text) py-3 rounded-lg font-semibold hover:opacity-90 cursor-pointer transition"
-            >
-              {data.stock > 0 ? "Buy Now" : "Out of Stock"}
-            </button>
-
-            <button
-              onClick={() => cartHandle(data)}
-              className={`flex-1 py-3 rounded-lg font-semibold transition ${
-                isCart
-                  ? "bg-gray-500 cursor-not-allowed"
-                  : "border border-(--color-accent) hover:bg-(--color-accent) cursor-pointer"
+          <button
+            onClick={() => cartHandle(data)}
+            className={`flex-1 py-3 rounded-lg font-semibold transition ${isCart
+                ? "bg-gray-500 cursor-not-allowed"
+                : "border border-(--color-accent) hover:bg-(--color-accent) cursor-pointer"
               }`}
-            >
-              {!isCart ? "Add to cart" : " Added to cart"}
-            </button>
-          </div>
+          >
+            {!isCart ? "Add to cart" : " Added to cart"}
+          </button>
         </div>
       </div>
-      <div className="w-[90vw] mx-auto mt-14 border-t border-white/10 pt-10">
-        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+    </div>
+    <div className="w-[90vw] mx-auto mt-14 border-t border-white/10 pt-10">
+      <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
 
+      {user ? (
         <div className="bg-white/5 rounded-2xl p-5 mb-10">
           <h3 className="text-lg font-semibold mb-4">Write a Review</h3>
 
@@ -203,9 +217,8 @@ const OneProduct = () => {
               <button
                 key={star}
                 onClick={() => setRating(star)}
-                className={`text-2xl transition ${
-                  star <= rating ? "text-yellow-400" : "text-gray-500"
-                }`}
+                className={`text-2xl transition ${star <= rating ? "text-yellow-400" : "text-gray-500"
+                  }`}
               >
                 <Star fill={star <= rating ? "currentColor" : "none"} />
               </button>
@@ -226,44 +239,62 @@ const OneProduct = () => {
             {isPending ? "Submitting..." : "Submit Review"}
           </button>
         </div>
+      ) : (
+        <div className="bg-white/5 rounded-2xl p-5 mb-10 text-center">
+          <h3 className="text-lg font-semibold mb-2">
+            Share experience with your thought
+          </h3>
 
-        <div className="flex flex-col gap-5">
-          {reviews?.length > 0 ? (
-            reviews.map((review) => (
-              <div
-                key={review.id}
-                className="bg-white/5 border border-white/10 rounded-2xl p-5"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold">
-                    {review.userName || "Unknown User"}
-                  </h4>
+          <p className="text-gray-400 mb-4">
+            Please log in to share your review.
+          </p>
 
-                  <div className="flex text-yellow-400">
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} size={18} fill="currentColor" />
-                    ))}
-                  </div>
-                </div>
-
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {review.comment}
-                </p>
-
-                <p className="text-xs text-gray-500 mt-3">
-                  {new Date(review.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-500 py-10">
-              No reviews yet
-            </div>
-          )}
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-(--color-accent) px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition"
+          >
+            Login
+          </button>
         </div>
+      )}
+
+      <div className="flex flex-col gap-5">
+        {reviews?.length > 0 ? (
+          reviews.map((review) => (
+            <div
+              key={review.id}
+              className="bg-white/5 border border-white/10 rounded-2xl p-5"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold">
+                  {review.userName || "Unknown User"}
+                </h4>
+
+                <div className="flex text-yellow-400">
+                  {[...Array(review.rating)].map((_, i) => (
+                    <Star key={i} size={18} fill="currentColor" />
+                  ))}
+                </div>
+              </div>
+
+              <p className="text-gray-400 text-sm leading-relaxed">
+                {review.comment}
+              </p>
+
+              <p className="text-xs text-gray-500 mt-3">
+                {new Date(review.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500 py-10">
+            No reviews yet
+          </div>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default OneProduct;

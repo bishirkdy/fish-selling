@@ -2,12 +2,14 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import AdminSidebar from "./admin/AdminSidebar";
 import { useSelector } from "react-redux";
+import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
 
 const AdminProtectedRoute = () => {
-  const {user , loading} = useSelector(s => s.auth)
-    if (loading) {
+  const {data : user , isLoading} = useGetCurrentUser();
+    if (isLoading) {
     return <h1>Loading...</h1>;
   }
+  
   return user && user?.role === "Admin" ? (
     <div className="flex">
       <AdminSidebar />

@@ -209,7 +209,7 @@ const Shop = () => {
             <option value="">Default</option>
             <option value="price-asc">Price Low → High</option>
             <option value="price-desc">Price High → Low</option>
-            <option value="rating">Top Rated</option>
+            {/* <option value="rating">Top Rated</option> */}
           </select>
         </div>
 
