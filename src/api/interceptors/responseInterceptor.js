@@ -1,15 +1,34 @@
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error) => {
+  failedQueue.forEach(({ resolve, reject }) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve();
+    }
+  });
+
+  failedQueue = [];
+};
+
 export const setupResponseInterceptor = (api) => {
   const excludedUrls = [
-    "/auth/login",
-    "/auth/register",
-    "/auth/forgot-password",
-    "/auth/refresh-token",
+    "/Auth/login",
+    "/Auth/register",
+    "/Auth/forgot-password",
+    "/Auth/refresh-token",
+    "/Auth/profile"
   ];
 
   api.interceptors.response.use(
     (response) => response,
 
     async (error) => {
+      const originalRequest = error.config;
+      
+      // Network error
       if (!error.response) {
         return Promise.reject({
           message: "Network error",
@@ -18,39 +37,60 @@ export const setupResponseInterceptor = (api) => {
         });
       }
 
-      const originalRequest = error.config;
-
+      // No request configuration
       if (!originalRequest) {
         return Promise.reject(error);
       }
 
+      // Don't refresh for authentication endpoints
       const shouldSkip = excludedUrls.some((url) =>
-        originalRequest.url.includes(url)
+        originalRequest.url?.includes(url)
       );
 
+      // Not a 401 or already retried
       if (
-        error.response.status === 401 &&
-        !originalRequest._retry &&
-        !shouldSkip
+        error.response.status !== 401 ||
+        originalRequest._retry ||
+        shouldSkip
       ) {
-        originalRequest._retry = true;
-
-        try {
-          await api.post("/auth/refresh-token");
-          return api(originalRequest);
-        } catch {
-          // Clear auth state if needed
-          window.location.href = "/login";
-        }
+        return Promise.reject({
+          message: error.response.data?.message || error.message,
+          status: error.response.status,
+          errors: error.response.data?.errors ?? [],
+        });
       }
 
-      const backend = error.response.data;
+      originalRequest._retry = true;
 
-      return Promise.reject({
-        message: backend?.message || error.message,
-        status: error.response.status,
-        errors: backend?.errors ?? [],
-      });
+      // Another request is already refreshing
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => {
+          return api(originalRequest);
+        });
+      }
+
+      isRefreshing = true;
+
+      try {
+        // Refresh token is expected in HttpOnly cookie
+        await api.post("/auth/refresh-token");
+
+        processQueue(null);
+
+        // Retry original request
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError);
+
+        // Refresh token is expired/invalid
+        window.location.href = "/login";
+
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
   );
 };

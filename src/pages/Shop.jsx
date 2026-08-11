@@ -6,6 +6,7 @@ import { FishSymbol } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useGetProducts } from "../tanstack/hooks/queries/product/productQueries";
 import { useGetCategories } from "../tanstack/hooks/queries/category/categoryQueries";
+import ProductSkeleton from "../components/product/ProductSkeleton";
 
 const Shop = () => {
   const [params, setParams] = useSearchParams();
@@ -67,14 +68,6 @@ const Shop = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isLoading, fetching, hasMore]);
-
-  if ((isLoading && products.length === 0) || categoryLoading) {
-    return (
-      <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
 
   if (isError || categoryIsError) {
     return (
@@ -220,6 +213,14 @@ const Shop = () => {
           </select>
         </div>
 
+        {isLoading && products.length === 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))}
+          </div>
+        )}
+
         {products.length === 0 && !isLoading && (
           <div className="text-white h-[60vh] flex flex-col items-center justify-center">
             <FishSymbol size={60} className="text-green-500 mb-4" />
@@ -238,6 +239,14 @@ const Shop = () => {
               ))}
             </div>
           </>
+        )}
+
+        {products.length > 0 && fetching && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 mt-6">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <ProductSkeleton key={index} />
+            ))}
+          </div>
         )}
       </div>
     </div>

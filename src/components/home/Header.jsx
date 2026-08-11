@@ -1,15 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import fish from "../../assets/header.jpg";
+import { useState } from "react";
 
 const Header = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
   return (
     <header className="relative h-screen w-full overflow-hidden">
+      {loading && (
+        <div className="absolute inset-0 animate-pulse bg-gray-200" />
+      )}
       <div className="absolute inset-0">
         <img
           src={fish}
           alt="Aquarium background"
           className="h-full w-full object-cover scale-105"
+          onLoad={() => setLoading(false)}
         />
         <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/60 to-black/80"></div>
       </div>

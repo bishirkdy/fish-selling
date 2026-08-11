@@ -1,70 +1,58 @@
-import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
 import Navbar from "./components/Navbar";
 
-import { login, logout, setLoading } from "./redux/features/authSlice";
 import { addToCart } from "./redux/features/cartSlice";
 import { addToFavorite } from "./redux/features/favoriteSlice";
+
 import { useGetCurrentUser } from "./tanstack/hooks/queries/auth/authQueries";
 import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cart/cartQueries";
 import { useFavDataOfUser } from "./tanstack/hooks/queries/favorite/favoriteQueries";
+import { useEffect } from "react";
 
 const App = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isAdmin = location.pathname.startsWith("/admin");
 
-  // Restore logged-in user
   const {
     data: currentUser,
-    isLoading: userLoading,
     isSuccess,
     isError,
   } = useGetCurrentUser();
-  // Load cart only after user is restored
+
+
+useEffect(() => {
+  if (currentUser?.isBlocked) {
+    navigate("/login", { replace: true });
+  }
+}, [currentUser, navigate]);
+
+  // Cart
   const { data: cartData } = useGetAllCartDataOfUser({
-    enabled: !!currentUser,
+    enabled: !!currentUser && !currentUser.isBlocked,
   });
 
-  // Load favourites only after user is restored
+  // Favorites
   const { data: favData } = useFavDataOfUser({
-    enabled: !!currentUser,
+    enabled: !!currentUser && !currentUser.isBlocked,
   });
 
-  // Restore user
-  useEffect(() => {
-    if (isSuccess && currentUser) {
-      if (currentUser.isBlocked) {
-        dispatch(logout());
-        navigate("/login", { replace: true });
-        return;
-      }
+ useEffect(() => {
+  if (cartData) {
+    dispatch(addToCart(cartData));
+  }
+}, [cartData, dispatch]);
 
-      dispatch(login(currentUser));
-    }
+useEffect(() => {
+  if (favData) {
+    dispatch(addToFavorite(favData));
+  }
+}, [favData, dispatch]);
 
-    if (isError) {
-      dispatch(logout());
-    }
-
-    dispatch(setLoading(userLoading));
-  }, [currentUser, userLoading, isSuccess, isError, dispatch, navigate]);
-
-  // Store cart in Redux
-  useEffect(() => {
-    if (cartData) {
-      dispatch(addToCart(cartData));
-    }
-  }, [cartData, dispatch]);
-  // Store favourites in Redux
-  useEffect(() => {
-    if (favData) {
-      dispatch(addToFavorite(favData));
-    }
-  }, [favData, dispatch]);
 
   return (
     <>

@@ -12,7 +12,6 @@ import Cart from "../pages/Cart";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCart } from "../redux/features/cartSlice";
 import { clearFavorite } from "../redux/features/favoriteSlice";
-import { logout } from "../redux/features/authSlice";
 import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
 import { useLogout } from "../tanstack/hooks/mutations/auth/authMutations";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,7 +23,6 @@ const Navbar = () => {
   const [search, setSearch] = useState("");
   const { mutate: logoutMutation } = useLogout();
   const navigate = useNavigate();
-  const { user } = useSelector((s) => s.auth);
   const dispatch = useDispatch();
   const { cart: cartFromSlice, grandTotal } = useSelector((s) => s.cart);
   const favFromSlice = useSelector((s) => s.favorite.favorite);
@@ -38,14 +36,16 @@ const Navbar = () => {
     setCartOpen((p) => !p);
   }
   function favPopupHandler() {
-    navigate(`/favorite/${user?.id}`);
+    navigate(`/favorite/${loggedUser?.id}`);
   }
   
   function handleLogout() {
     logoutMutation(undefined, {
       onSuccess: () => {
-        dispatch(logout());
-        client.clear();
+        client.removeQueries({
+          queryKey: ["currentUser"],
+        });
+
         navigate("/");
         setProfileOpen(false);
         dispatch(clearCart());
@@ -75,7 +75,7 @@ const Navbar = () => {
             {loggedUser && (
               <li>
                 <Link
-                  to={`/orders/${user?.id}`}
+                  to={`/orders/${loggedUser?.id}`}
                   className="cursor-pointer hover:text-gray-300"
                 >
                   Orders
@@ -199,7 +199,7 @@ const Navbar = () => {
               </Link>
               {loggedUser && (
                 <Link
-                  to={`/orders/${user?.id}`}
+                  to={`/orders/${loggedUser?.id}`}
                   onClick={() => setOpen(false)}
                   className="bg-(--color-surface) px-4 py-3 rounded-xl transition text-zinc-400"
                 >

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login } from "../../redux/features/authSlice";
 import { useLogin } from "../../tanstack/hooks/mutations/auth/authMutations";
+import { useQueryClient } from "@tanstack/react-query";
 const Login = () => {
   const [form, setForm] = useState({
     email: "",
@@ -14,6 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { mutate: loginMutation, isPending } = useLogin();
+  const client = useQueryClient();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,8 +29,7 @@ const Login = () => {
           toast.error("Your account has been blocked.");
           return;
         }
-
-        dispatch(login(user));
+        client.setQueryData(["currentUser"], user);
 
         if (user.role === "Admin") {
           navigate("/admin/dashboard");

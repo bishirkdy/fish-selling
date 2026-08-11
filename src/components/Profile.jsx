@@ -12,10 +12,11 @@ import {
   Stamp,
 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("personal");
-  const { user } = useSelector((s) => s.auth);
+    const { data: user } = useGetCurrentUser();
 
 
   const menuItems = [

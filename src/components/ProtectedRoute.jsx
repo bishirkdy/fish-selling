@@ -1,12 +1,26 @@
-import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
 
 const ProtectedRoute = () => {
-  const {user , loading} = useSelector(s => s.auth)
+  const {
+    data: user,
+    isLoading,
+    isError,
+  } = useGetCurrentUser();
 
-    if (loading) {
+  if (isLoading) {
     return <h1>Loading...</h1>;
   }
-  return user ? <Outlet /> : <Navigate to="/login" />;
+
+  if (isError || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.isBlocked) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
 };
+
 export default ProtectedRoute;
