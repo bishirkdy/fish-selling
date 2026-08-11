@@ -1,5 +1,6 @@
-import  { useState } from "react";
+import { useState } from "react";
 import fish from "../../assets/header.jpg";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { checkUser } from "../../utils/authCheck";
 import { toast } from "react-toastify";
@@ -7,6 +8,8 @@ import { login } from "../../redux/features/authSlice";
 import { useRegisterUser } from "../../tanstack/hooks/mutations/auth/authMutations";
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -33,7 +36,7 @@ const Register = () => {
       },
       onError: (err) => {
         console.log(err);
-        
+
         toast.error(`${err?.message || "Something went wrong"} `);
       },
     });
@@ -81,39 +84,67 @@ const Register = () => {
               )}
             </div>
             <div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/30 focus:border-(--color-accent) outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  value={form.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 pr-12 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/30 focus:border-(--color-accent) outline-none"
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-(--color-accent)"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+
               {error.password && (
-                <p className="text-red-500 text-sm">{error.password}</p>
+                <p className="text-red-500 text-sm mt-1">{error.password}</p>
               )}
             </div>
             <div>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/30 focus:border-(--color-accent) outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 pr-12 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/30 focus:border-(--color-accent) outline-none"
+                  required
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-(--color-accent)"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
+                </button>
+              </div>
+
               {error.confirmPassword && (
-                <p className="text-red-500 text-sm">{error.confirmPassword}</p>
-              )}{" "}
+                <p className="text-red-500 text-sm mt-1">
+                  {error.confirmPassword}
+                </p>
+              )}
             </div>
             <button
               disabled={isPending}
               type="submit"
               className="w-full bg-(--color-secondary) cursor-pointer text-black hover:border hover:bg-transparent hover:text-(--color-accent) hover:border-(--color-accent) py-3 rounded-lg font-semibold transition duration-300"
             >
-              { isPending ? "Registering..." : "Register" }
+              {isPending ? "Registering..." : "Register"}
             </button>
           </form>
           <p

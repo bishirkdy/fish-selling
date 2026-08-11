@@ -6,7 +6,9 @@ import { useDispatch } from "react-redux";
 import { login } from "../../redux/features/authSlice";
 import { useLogin } from "../../tanstack/hooks/mutations/auth/authMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff } from "lucide-react";
 const Login = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -75,15 +77,25 @@ const Login = () => {
               required
             />
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/10 focus:border-(--color-accent) outline-none"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 pr-12 rounded-lg bg-(--color-surface) text-(--color-text) border border-white/10 focus:border-(--color-accent) outline-none"
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-(--color-accent)"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
 
             <div className="text-right text-sm">
               <span
