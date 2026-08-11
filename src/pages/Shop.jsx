@@ -15,7 +15,7 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const query = params.get("search") || "";
+  const query = params.get("q") || "";
   const category = params.get("category") || "";
   const sort = params.get("sort") || "";
   const price = params.get("price") || "";
@@ -23,6 +23,7 @@ const Shop = () => {
   const { data, isLoading, isError } = useGetProducts(
     buildParam(query, category, price, page, sort),
   );
+
   const {
     data: categoryData,
     isLoading: categoryLoading,

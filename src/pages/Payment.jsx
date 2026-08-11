@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { data, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRazorpay } from "react-razorpay";
 import { handleOnlinePayment } from "../utils/razonPay";
 import { useAddShippingAddress } from "../tanstack/hooks/mutations/address/shippingAddressMutations";
 import { useAddOrders } from "../tanstack/hooks/mutations/order/orderMutations";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetLastUsedAddress } from "../tanstack/hooks/queries/address/addressQueries";
 
 const Payment = () => {
   const [formData, setFormData] = useState({
@@ -23,9 +24,26 @@ const Payment = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { Razorpay } = useRazorpay();
+  const {data : lastUsedAddress , isLoading} = useGetLastUsedAddress();
   const { mutate: orderMutation, isPending: orderIsPending } = useAddOrders();
   const { mutate: addressMutate, isPending: addressIsPending } = useAddShippingAddress();
   const client = useQueryClient();
+
+  useEffect(() => {
+  if (!lastUsedAddress) return;
+
+  setFormData({
+    name: lastUsedAddress.fullName || "",
+    email: lastUsedAddress.email || "",
+    phone: lastUsedAddress.phoneNumber || "",
+    street: lastUsedAddress.street || "",
+    post: lastUsedAddress.post || "",
+    district: lastUsedAddress.district || "",
+    state: lastUsedAddress.state || "",
+    pincode: lastUsedAddress.pincode || "",
+    landmark: lastUsedAddress.landmark || "",
+  });
+}, [lastUsedAddress]);
 
   useEffect(() => {
     if (!state) {
