@@ -27,7 +27,7 @@ export const getCategoryDistribution = async () => {
 };
 
 export const getTotalOrderStatus = async () => {
-  const res = await api.get(ADMIN_ANALYSIS_ENDPOINTS.ORDER_STATUS);
+  const res = await api.get(ADMIN_ANALYSIS_ENDPOINTS.ORDER_STATUS);    
   return res.data.data;
 };
 

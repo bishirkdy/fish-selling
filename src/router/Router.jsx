@@ -20,7 +20,7 @@ import AddFish from "../pages/admin/productHandling/AddFish";
 import ViewFish from "../pages/admin/productHandling/ViewFish";
 import ViewCustomer from "../pages/admin/customerHandling/ViewCustomer";
 import EditFish from "../pages/admin/productHandling/EditFish";
-import { ForgotPassword } from "../components/auth/ForgotPassword";
+import ForgotPassword  from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
 import CategoryManagement from "../pages/admin/categoryHandling/CategoryManagement";
 import OrdersList from "../pages/admin/orderHandling/OrdersList";

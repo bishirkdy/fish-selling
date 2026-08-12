@@ -19,38 +19,28 @@ const ViewCustomer = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [deletingId, setDeletingId] = useState(null);
+  const [blockingId, setBlockingId] = useState(null);
+  const [unblockingId, setUnblockingId] = useState(null);
 
   const pageSize = 6;
   const client = useQueryClient();
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-  } = useGetUsers({
+  const { data, isLoading, isFetching } = useGetUsers({
     page,
     pageSize,
     search,
     status: filter,
   });
 
-  const {
-    mutate: userBlockMutate,
-    isPending: blockPending,
-  } = useBlockUser();
-
-  const {
-    mutate: deleteMutate,
-    isPending: deletePending,
-  } = useDeleteUser();
-
-  const {
-    mutate: userUnblockMutate,
-    isPending: unblockPending,
-  } = useUnblockUser();
+  const { mutate: userBlockMutate, isPending: blockPending } = useBlockUser();
+  const { mutate: deleteMutate, isPending: deletePending } = useDeleteUser();
+  const { mutate: userUnblockMutate, isPending: unblockPending } =
+    useUnblockUser();
 
   const blockUserHandler = (id) => {
     if (!window.confirm("Block this user?")) return;
+
+    setBlockingId(id);
 
     userBlockMutate(id, {
       onSuccess: () => {
@@ -62,13 +52,18 @@ const ViewCustomer = () => {
       },
 
       onError: (err) => {
-        toast.error(err.message);
+        toast.error(err.message || "Failed to block user");
+      },
+
+      onSettled: () => {
+        setBlockingId(null);
       },
     });
   };
-
   const unblockUserHandler = (id) => {
     if (!window.confirm("Unblock this user?")) return;
+
+    setUnblockingId(id);
 
     userUnblockMutate(id, {
       onSuccess: () => {
@@ -80,42 +75,42 @@ const ViewCustomer = () => {
       },
 
       onError: (err) => {
-        toast.error(err.message);
-      },
-    });
-  };
-
-  const deleteUserHandler = (id) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to permanently delete this user?"
-      )
-    ) {
-      return;
-    }
-
-    setDeletingId(id);
-
-    deleteMutate(id, {
-      onSuccess: () => {
-        client.invalidateQueries({
-          queryKey: ["users"],
-        });
-
-        toast.success("User deleted successfully");
-      },
-
-      onError: (err) => {
-        toast.error(
-          err.message || "Failed to delete user"
-        );
+        toast.error(err.message || "Failed to unblock user");
       },
 
       onSettled: () => {
-        setDeletingId(null);
+        setUnblockingId(null);
       },
     });
   };
+
+  // const deleteUserHandler = (id) => {
+  //   if (
+  //     !window.confirm("Are you sure you want to permanently delete this user?")
+  //   ) {
+  //     return;
+  //   }
+
+  //   setDeletingId(id);
+
+  //   deleteMutate(id, {
+  //     onSuccess: () => {
+  //       client.invalidateQueries({
+  //         queryKey: ["users"],
+  //       });
+
+  //       toast.success("User deleted successfully");
+  //     },
+
+  //     onError: (err) => {
+  //       toast.error(err.message || "Failed to delete user");
+  //     },
+
+  //     onSettled: () => {
+  //       setDeletingId(null);
+  //     },
+  //   });
+  // };
 
   if (isLoading) {
     return (
@@ -129,13 +124,10 @@ const ViewCustomer = () => {
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
-
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-(--background)">
-            Customers
-          </h1>
+          <h1 className="text-3xl font-bold text-(--background)">Customers</h1>
 
           <p className="text-(--color-background)">
             Manage all registered customers
@@ -162,12 +154,11 @@ const ViewCustomer = () => {
           customers={customers}
           page={page}
           pageSize={pageSize}
-          blockPending={blockPending}
-          unblockPending={unblockPending}
+          blockingId={blockingId}
+          unblockingId={unblockingId}
           deletingId={deletingId}
           blockUserHandler={blockUserHandler}
           unblockUserHandler={unblockUserHandler}
-          deleteUserHandler={deleteUserHandler}
         />
       )}
 
@@ -184,10 +175,7 @@ const ViewCustomer = () => {
       {/* Empty */}
       {customers.length === 0 && (
         <div className="p-12 mt-8 text-center">
-          <Users
-            size={60}
-            className="mx-auto text-gray-300 mb-4"
-          />
+          <Users size={60} className="mx-auto text-gray-300 mb-4" />
 
           <h2 className="text-2xl font-bold text-gray-700">
             No Customer Found
@@ -198,7 +186,6 @@ const ViewCustomer = () => {
           </p>
         </div>
       )}
-
     </div>
   );
 };

@@ -119,7 +119,7 @@ const DesktopNavbar = ({
         ) : (
           <button
             onClick={() => navigate("/login")}
-            className="text-sm px-4 py-2 rounded-lg cursor-pointer bg-(--color-accent)"
+            className="text-sm px-4 py-2 rounded-lg cursor-pointer bg-(--color-accent) hover:bg-transparent hover:border hover:border-(--color-accent)"
           >
             Login
           </button>

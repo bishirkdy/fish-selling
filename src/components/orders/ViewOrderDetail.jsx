@@ -1,324 +1,338 @@
 import {
-  CircleX,
   Clock,
-  CheckCircle,
-  ShoppingBag,
-  Truck,
-  MapPin,
-  XCircle,
+  CircleX,
 } from "lucide-react";
 
-const STATUS = {
-  OrderPlaced: {
-    label: "Order Placed",
-    icon: <Clock size={18} />,
-    color: "text-yellow-400",
-    bg: "bg-yellow-500/10",
-  },
-  Confirmed: {
-    label: "Confirmed",
-    icon: <CheckCircle size={18} />,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
-  },
-  Packed: {
-    label: "Packed",
-    icon: <ShoppingBag size={18} />,
-    color: "text-purple-400",
-    bg: "bg-purple-500/10",
-  },
-  Shipping: {
-    label: "Shipping",
-    icon: <Truck size={18} />,
-    color: "text-cyan-400",
-    bg: "bg-cyan-500/10",
-  },
-  Shipped: {
-    label: "Out For Delivery",
-    icon: <MapPin size={18} />,
-    color: "text-orange-400",
-    bg: "bg-orange-500/10",
-  },
-  Delivered: {
-    label: "Delivered",
-    icon: <CheckCircle size={18} />,
-    color: "text-green-400",
-    bg: "bg-green-500/10",
-  },
-  Cancelled: {
-    label: "Cancelled",
-    icon: <XCircle size={18} />,
-    color: "text-red-400",
-    bg: "bg-red-500/10",
-  },
-};
+import { ORDER_STATUS as STATUS } from "../../constants/orderStatusWithIcon";
 
 const ViewOrderDetail = ({ viewableData, setViewDetail }) => {
   const status = STATUS[viewableData?.orderStatus] ?? {
     label: viewableData?.orderStatus,
-    icon: <Clock size={18} />,
+    icon: <Clock size={16} />,
     color: "text-gray-400",
     bg: "bg-gray-500/10",
   };
-  
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+
       <div
         className="
-        relative
-        w-full
-        max-w-5xl
-        max-h-[92vh]
-        overflow-y-auto
-        rounded-3xl
-        border
-        border-(--color-tertiary)
-        bg-(--color-surface)
-        shadow-2xl
-        p-8
-        no-scrollbar
-      "
+          relative
+          w-full
+          max-w-5xl
+          max-h-[92vh]
+          overflow-y-auto
+          rounded-3xl
+          bg-(--color-surface)
+          shadow-2xl
+          p-6 md:p-8
+          no-scrollbar
+        "
       >
+
+        {/* Close */}
         <button
           onClick={() => setViewDetail(false)}
           className="
-          absolute
-          right-6
-          top-6
-          w-10
-          h-10
-          rounded-full
-          bg-(--color-background)
-          flex
-          items-center
-          justify-center
-          hover:bg-red-500
-          hover:text-white
-          transition
-        "
+            absolute
+            right-5
+            top-5
+            w-10
+            h-10
+            rounded-full
+            bg-(--color-background)
+            text-gray-400
+            flex
+            items-center
+            justify-center
+            hover:bg-red-500
+            hover:text-white
+            transition
+            cursor-pointer
+          "
         >
-          <CircleX size={22} />
+          <CircleX size={21} />
         </button>
 
+
+        {/* Product */}
         <div className="grid lg:grid-cols-3 gap-8">
+
+          {/* Image */}
           <div
             className="
-            aspect-square
-            rounded-2xl
-            overflow-hidden
-            border
-            border-(--color-tertiary)
-            bg-(--color-background)
-            shadow-lg
-          "
+              aspect-square
+              rounded-2xl
+              overflow-hidden
+              bg-(--color-background)
+            "
           >
             <img
-              src={viewableData?.productImage || "/no-image.png"}
+              src={
+                viewableData?.productImage ||
+                "/no-image.png"
+              }
               alt={viewableData?.productName}
               className="
-              w-full
-              h-full
-              object-cover
-              hover:scale-105
-              transition
-              duration-300
-            "
+                w-full
+                h-full
+                object-cover
+                hover:scale-105
+                transition
+                duration-300
+              "
             />
           </div>
 
+
+          {/* Details */}
           <div className="lg:col-span-2">
-            <h1 className="text-3xl font-bold text-white">
+
+            <h1 className="text-2xl md:text-3xl text-white tracking-tight">
               {viewableData?.productName}
             </h1>
-{/* 
-            <p className="mt-3 text-gray-400 leading-relaxed">
-              Premium quality product ordered from our store.
-            </p> */}
 
-            <div className="grid grid-cols-2 xl:grid-cols-3 gap-5 mt-8">
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+            {/* Information */}
+            <div className="grid grid-cols-2 xl:grid-cols-3 gap-4 mt-7">
+
+              {/* Quantity */}
+              <div className="info-card">
+                <p className="info-label">
                   Quantity
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
+                <p className="info-value text-(--color-primary)">
                   {viewableData?.quantity}
-                </h2>
+                </p>
               </div>
 
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+              {/* Unit Price */}
+              <div className="info-card">
+                <p className="info-label">
                   Unit Price
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2 text-(--color-primary)">
-                  ₹
-                  {viewableData?.discountedPrice}
-                </h2>
+                <p className="info-value text-(--color-primary)">
+                  ₹{viewableData?.discountedPrice}
+                </p>
               </div>
 
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+              {/* Total */}
+              <div className="info-card">
+                <p className="info-label">
                   Total Price
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2 text-green-400">
+                <p className="info-value text-green-400">
                   ₹{viewableData?.totalPrice}
-                </h2>
+                </p>
               </div>
 
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+              {/* Payment Method */}
+              <div className="info-card">
+                <p className="info-label">
                   Payment Method
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2">
+                <p className="mt-2 text-base text-white">
                   {viewableData?.paymentMethod}
-                </h2>
+                </p>
               </div>
 
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+              {/* Payment Status */}
+              <div className="info-card">
+                <p className="info-label">
                   Payment Status
                 </p>
 
-                <h2 className="text-2xl font-bold mt-2 text-yellow-400">
+                <p className="mt-2 text-base text-yellow-400">
                   {viewableData?.paymentStatus}
-                </h2>
+                </p>
               </div>
 
-              <div className="rounded-xl border border-(--color-tertiary) bg-(--color-background) p-5">
-                <p className="text-xs uppercase tracking-wider text-gray-500">
+
+              {/* Order Status */}
+              <div className="info-card">
+                <p className="info-label">
                   Order Status
                 </p>
 
                 <div
-                  className={`mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 ${status.bg} ${status.color}`}
+                  className={`
+                    mt-3
+                    inline-flex
+                    items-center
+                    gap-2
+                    rounded-full
+                    px-3
+                    py-1.5
+                    text-sm
+                    ${status.bg}
+                    ${status.color}
+                  `}
                 >
                   {status.icon}
-                  <span className="font-semibold">
+
+                  <span>
                     {status.label}
                   </span>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
 
-        <div className="my-8" />
 
-        {/* <section>
-          <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
-            Order Information
-          </h2>
+        {/* Divider */}
+        <div className="my-8 border-t border-white/10" />
 
-          <div className="grid lg:grid-cols-3 gap-5">
-            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
-              <p className="text-xs uppercase tracking-wider text-gray-500">
-                Order ID
-              </p>
 
-              <h3 className="mt-3 break-all text-sm font-medium">
-                {viewableData?.orderId}
-              </h3>
-            </div>
-
-            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
-              <p className="text-xs uppercase tracking-wider text-gray-500">
-                Ordered On
-              </p>
-
-              <h3 className="mt-3 text-lg font-semibold">
-                {new Date(viewableData?.orderedAt).toLocaleDateString()}
-              </h3>
-            </div>
-
-            <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-5">
-              <p className="text-xs uppercase tracking-wider text-gray-500">
-                Total Amount
-              </p>
-
-              <h3 className="mt-3 text-3xl font-bold text-(--color-primary)">
-                ₹{viewableData?.totalAmount}
-              </h3>
-            </div>
-          </div>
-        </section> */}
-
+        {/* Shipping Address */}
         <section>
-          <h2 className="text-2xl font-bold text-(--color-primary) mb-6">
+
+          <h2 className="text-xl text-(--color-primary) mb-5">
             Shipping Address
           </h2>
 
-          <div className="rounded-2xl border border-(--color-tertiary) bg-(--color-background) p-6">
-            <div className="space-y-4">
-                            <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">Full Name</span>
 
-                <span className="font-medium">
+          <div className="rounded-2xl bg-(--color-background) p-5 md:p-6">
+
+            <div className="divide-y divide-white/5">
+
+              {/* Full Name */}
+              <div className="flex justify-between items-center py-3 first:pt-0">
+                <span className="text-sm text-gray-400">
+                  Full Name
+                </span>
+
+                <span className="text-sm text-white text-right">
                   {viewableData?.shippingAddress?.fullName}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">Phone</span>
 
-                <span className="font-medium">
+              {/* Phone */}
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm text-gray-400">
+                  Phone
+                </span>
+
+                <span className="text-sm text-white">
                   {viewableData?.shippingAddress?.phoneNumber}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">Street</span>
 
-                <span className="font-medium text-right">
+              {/* Street */}
+              <div className="flex justify-between items-center py-3 gap-6">
+                <span className="text-sm text-gray-400">
+                  Street
+                </span>
+
+                <span className="text-sm text-white text-right">
                   {viewableData?.shippingAddress?.street}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">Post</span>
 
-                <span className="font-medium">
+              {/* Post */}
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm text-gray-400">
+                  Post
+                </span>
+
+                <span className="text-sm text-white">
                   {viewableData?.shippingAddress?.post}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">District</span>
 
-                <span className="font-medium">
+              {/* District */}
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm text-gray-400">
+                  District
+                </span>
+
+                <span className="text-sm text-white">
                   {viewableData?.shippingAddress?.district}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">State</span>
 
-                <span className="font-medium">
+              {/* State */}
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm text-gray-400">
+                  State
+                </span>
+
+                <span className="text-sm text-white">
                   {viewableData?.shippingAddress?.state}
                 </span>
               </div>
 
-              <div className="flex justify-between items-center pb-3">
-                <span className="text-gray-400">PIN Code</span>
 
-                <span className="font-medium">
+              {/* PIN */}
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm text-gray-400">
+                  PIN Code
+                </span>
+
+                <span className="text-sm text-white">
                   {viewableData?.shippingAddress?.pincode}
                 </span>
               </div>
 
-              <div className="flex justify-between items-start">
-                <span className="text-gray-400">Landmark</span>
 
-                <span className="font-medium text-right max-w-sm">
+              {/* Landmark */}
+              <div className="flex justify-between items-start py-3 last:pb-0 gap-6">
+                <span className="text-sm text-gray-400">
+                  Landmark
+                </span>
+
+                <span className="text-sm text-white text-right max-w-sm">
                   {viewableData?.shippingAddress?.landmark || "N/A"}
                 </span>
               </div>
+
             </div>
+
           </div>
+
         </section>
+
       </div>
+
+
+      {/* Reusable card styles */}
+      <style>
+        {`
+          .info-card {
+            border-radius: 1rem;
+            background: var(--color-background);
+            padding: 1rem;
+          }
+
+          .info-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6b7280;
+          }
+
+          .info-value {
+            margin-top: 0.5rem;
+            font-size: 1.25rem;
+          }
+        `}
+      </style>
+
     </div>
   );
 };

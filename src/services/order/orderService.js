@@ -13,8 +13,10 @@ export const getOrderByUser = async () => {
 };
 
 export const getLatestOrderOfUser = async (id) => {
-  const res = await api.get(ORDER_ENDPOINTS.BY_ID(id));
-  return res.data;
+  console.log(id);
+  
+  const res = await api.get(ORDER_ENDPOINTS.BY_ID(id));  
+    return res.data.data;
 };
 
 export const cancelOrder = async ({ orderId, productId }) => {

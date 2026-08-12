@@ -8,43 +8,36 @@ import OrderFilters from "../../../components/admin/adminOrder/OrderFilters";
 import OrdersTable from "../../../components/admin/adminOrder/OrdersTable";
 import OrderPagination from "../../../components/admin/adminOrder/OrderPagination";
 import OrderProductModal from "../../../components/admin/adminOrder/OrderProductModal";
-import { useDeleteOrder, useEditOrderStatus } from "../../../tanstack/hooks/mutations/order/adminOrderMutations";
+import {
+  useDeleteOrder,
+  useEditOrderStatus,
+} from "../../../tanstack/hooks/mutations/order/adminOrderMutations";
 import { useGetAllOrders } from "../../../tanstack/hooks/queries/order/adminOrderQueries";
 import { getTotalOrderStatus } from "../../../services/analysis/adminAnalysisService";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetTotalOrderStatus } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 const OrdersList = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-
+  const client = useQueryClient();
   const [currentOrder, setCurrentOrder] = useState(null);
 
   const pageSize = 5;
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    isError,
-  } = useGetAllOrders({
+  const { data, isLoading, isFetching, isError } = useGetAllOrders({
     page,
     pageSize,
     search,
     status: filterStatus,
   });
 
-  const {
-    data: orderStatus,
-    isLoading: statusLoading,
-  } = getTotalOrderStatus();
+  const { data: orderStatus, isLoading: statusLoading } =
+    useGetTotalOrderStatus();
 
-  const {
-    mutate: deleteOrder,
-  } = useDeleteOrder();
+  const { mutate: deleteOrder } = useDeleteOrder();
 
-  const {
-    mutate: updateOrderStatus,
-    isPending,
-  } = useEditOrderStatus();
+  const { mutate: updateOrderStatus, isPending } = useEditOrderStatus();
 
   const orderStatusHandler = (productId, status) => {
     if (!currentOrder) return;
@@ -57,12 +50,27 @@ const OrdersList = () => {
       },
       {
         onSuccess: () => {
+          setCurrentOrder((prev) => ({
+            ...prev,
+            items: prev.items.map((item) =>
+              item.productId === productId
+                ? {
+                    ...item,
+                    orderStatus: status,
+                  }
+                : item,
+            ),
+          }));
+
+          client.invalidateQueries({ queryKey: ["user-orders"] });
+          client.invalidateQueries({ queryKey: ["orders"] });
+          client.invalidateQueries({ queryKey: ["order-status"] });
           toast.success("Order status updated");
         },
         onError: (err) => {
           toast.error(err.message || "Failed to update status");
         },
-      }
+      },
     );
   };
 
@@ -78,7 +86,11 @@ const OrdersList = () => {
   };
 
   if (isLoading || statusLoading) {
-    return <Loader />;
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   if (isError) {
@@ -91,10 +103,7 @@ const OrdersList = () => {
 
   return (
     <div className="w-full min-h-screen bg-gray-100 p-4 md:p-6">
-
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Orders
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Orders</h1>
 
       {/* Statistics */}
       <OrderStats data={orderStatus} />
@@ -132,7 +141,6 @@ const OrdersList = () => {
           orderStatusHandler={orderStatusHandler}
         />
       )}
-
     </div>
   );
 };

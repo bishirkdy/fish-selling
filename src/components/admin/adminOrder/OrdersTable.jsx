@@ -1,4 +1,5 @@
 const OrdersTable = ({ orders, onView, onDelete }) => {
+  
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
       <table className="w-full text-sm">
@@ -8,7 +9,7 @@ const OrdersTable = ({ orders, onView, onDelete }) => {
             <th className="text-left p-4">Order ID</th>
             <th className="text-left p-4">Total</th>
             <th className="text-left p-4">Payment</th>
-            <th className="text-left p-4">Status</th>
+            <th className="text-left p-4">Payment Status</th>
             <th className="text-left p-4">Date</th>
             <th className="text-left p-4">Action</th>
           </tr>
@@ -25,7 +26,7 @@ const OrdersTable = ({ orders, onView, onDelete }) => {
               </td>
 
               <td className="p-4 text-gray-500">
-                {order.id.slice(0, 8)}...
+                {order.id}
               </td>
 
               <td className="p-4 font-semibold">
@@ -37,7 +38,7 @@ const OrdersTable = ({ orders, onView, onDelete }) => {
               </td>
 
               <td className="p-4">
-                {order.orderStatus}
+                {order.paymentStatus}
               </td>
 
               <td className="p-4">
@@ -53,12 +54,12 @@ const OrdersTable = ({ orders, onView, onDelete }) => {
                     View
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => onDelete(order.id)}
                     className="px-3 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               </td>
             </tr>

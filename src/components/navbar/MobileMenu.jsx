@@ -5,6 +5,7 @@ import {
   User,
   X,
 } from "lucide-react";
+
 import { Link } from "react-router-dom";
 
 const MobileMenu = ({
@@ -12,8 +13,8 @@ const MobileMenu = ({
   search,
   setSearch,
   handleSearch,
-  cart,
-  favorites,
+  totalItems,
+  totalFavorites,
   onCartClick,
   onFavoriteClick,
   onProfileClick,
@@ -22,187 +23,191 @@ const MobileMenu = ({
   handleLogout,
 }) => {
   return (
-    <div className="fixed inset-0 z-999 md:hidden">
+    <div className="fixed inset-0 z-50 md:hidden">
 
-      {/* Overlay */}
+      {/* Background */}
       <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
       />
 
       {/* Menu */}
-      <div className="absolute top-0 right-0 h-full w-[80%] max-w-[320px] bg-(--color-background) border-r border-zinc-800 p-6 flex flex-col">
+      <div className="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-(--color-background) text-white shadow-2xl">
 
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-white">
+        {/* Header */}
+        <div className="flex items-center justify-between p-5 border-b border-white/10">
+
+          <button
+            onClick={() => {
+              navigate("/");
+              onClose();
+            }}
+            className="text-2xl font-bold text-(--color-accent)"
+          >
             Aquora
-          </h1>
+          </button>
 
           <button
             onClick={onClose}
-            className="text-white text-2xl"
+            className="cursor-pointer"
           >
             <X />
           </button>
+
         </div>
 
-        {/* User */}
-        {loggedUser && (
-          <div className="flex items-center gap-3 bg-(--color-surface) p-4 rounded-2xl mb-4">
-            <div className="w-12 h-12 rounded-full bg-(--color-accent) flex items-center justify-center text-xl font-bold">
-              {loggedUser.name?.charAt(0)?.toUpperCase()}
-            </div>
 
-            <div>
-              <h2 className="text-white font-semibold">
-                {loggedUser.name}
-              </h2>
+        <div className="p-5 space-y-6 overflow-y-auto h-[calc(100%-80px)]">
 
-              <p className="text-zinc-400 text-sm">
-                {loggedUser.email}
-              </p>
-            </div>
+          {/* Search */}
+          <div className="relative">
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              type="text"
+              placeholder="Search..."
+              className="w-full px-4 py-3 pr-10 rounded-xl bg-white/10 border border-white/20 outline-none text-sm"
+            />
+
+            <Search
+              className="absolute right-3 top-3.5 w-5 h-5 text-gray-300"
+            />
+
           </div>
-        )}
 
-        {/* Search */}
-        <div className="relative mb-4">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" && handleSearch()
-            }
-            type="text"
-            placeholder="Search fish..."
-            className="w-full px-4 py-3 rounded-xl bg-(--color-surface) border border-zinc-800 outline-none text-white"
-          />
 
-          <Search className="absolute right-4 top-3.5 w-5 h-5 text-zinc-400" />
-        </div>
+          {/* Navigation */}
+          <div className="flex flex-col gap-4">
 
-        {/* Navigation */}
-        <div className="flex flex-col gap-2">
-
-          <Link
-            to="/"
-            onClick={onClose}
-            className="bg-(--color-surface) px-4 py-3 rounded-xl text-zinc-400"
-          >
-            Home
-          </Link>
-
-          <Link
-            to="/shop"
-            onClick={onClose}
-            className="bg-(--color-surface) px-4 py-3 rounded-xl text-zinc-400"
-          >
-            Explore
-          </Link>
-
-          {loggedUser && (
             <Link
-              to={`/orders/${loggedUser.id}`}
+              to="/"
               onClick={onClose}
-              className="bg-(--color-surface) px-4 py-3 rounded-xl text-zinc-400"
+              className="py-3 border-b border-white/10 hover:text-gray-300"
             >
-              Orders
+              Home
             </Link>
+
+            <Link
+              to="/shop"
+              onClick={onClose}
+              className="py-3 border-b border-white/10 hover:text-gray-300"
+            >
+              Explore
+            </Link>
+
+            {loggedUser && (
+              <Link
+                to={`/orders/${loggedUser.id}`}
+                onClick={onClose}
+                className="py-3 border-b border-white/10 hover:text-gray-300"
+              >
+                Orders
+              </Link>
+            )}
+
+          </div>
+
+
+          {/* User Actions */}
+          {loggedUser && (
+            <div className="space-y-3">
+
+              {/* Cart */}
+              <button
+                onClick={() => {
+                  onCartClick();
+                  onClose();
+                }}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer"
+              >
+
+                <div className="flex items-center gap-3">
+                  <ShoppingCart size={20} />
+                  <span>Cart</span>
+                </div>
+
+                {totalItems > 0 && (
+                  <span className="bg-green-500 text-xs px-2 py-1 rounded-full">
+                    {totalItems}
+                  </span>
+                )}
+
+              </button>
+
+
+              {/* Favorites */}
+              <button
+                onClick={() => {
+                  onFavoriteClick();
+                  onClose();
+                }}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer"
+              >
+
+                <div className="flex items-center gap-3">
+                  <Heart size={20} />
+                  <span>Favorites</span>
+                </div>
+
+                {totalFavorites > 0 && (
+                  <span className="bg-green-500 text-xs px-2 py-1 rounded-full">
+                    {totalFavorites}
+                  </span>
+                )}
+
+              </button>
+
+
+              {/* Profile */}
+              <button
+                onClick={() => {
+                  onProfileClick();
+                  onClose();
+                }}
+                className="w-full flex items-center gap-3 p-4 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer"
+              >
+                <User size={20} />
+                <span>Profile</span>
+              </button>
+
+            </div>
           )}
 
-        </div>
 
-        {/* Icons */}
-        {loggedUser ? (
-          <div className="mt-8 flex items-center gap-6 px-2">
+          {/* Login / Logout */}
+          <div className="pt-4">
 
-            <div
-              onClick={() => {
-                onCartClick();
-                onClose();
-              }}
-              className="relative cursor-pointer"
-            >
-              <ShoppingCart className="text-white" />
-
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-green-500 text-xs px-1 rounded-full">
-                  {cart.length}
-                </span>
-              )}
-            </div>
-
-            <div
-              onClick={() => {
-                onFavoriteClick();
-                onClose();
-              }}
-              className="relative cursor-pointer"
-            >
-              <Heart className="text-white" />
-
-              {favorites.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-green-500 text-xs px-1 rounded-full">
-                  {favorites.length}
-                </span>
-              )}
-            </div>
-
-            <div
-              onClick={() => {
-                onProfileClick();
-                onClose();
-              }}
-              className="cursor-pointer"
-            >
-              <User className="text-white" />
-            </div>
-
-          </div>
-        ) : (
-          <div className="flex items-center mt-4 text-white w-full gap-2">
-
-            <button
-              onClick={() => navigate("/login")}
-              className="text-sm px-4 py-2 rounded-lg bg-(--color-accent)"
-            >
-              Login
-            </button>
-
-            <button
-              onClick={() => navigate("/register")}
-              className="text-sm px-4 py-2 rounded-lg bg-(--color-accent)"
-            >
-              Register
-            </button>
-
-          </div>
-        )}
-
-        {/* Admin + Logout */}
-        {loggedUser && (
-          <div className="flex flex-col mt-auto gap-2">
-
-            {loggedUser.role === "Admin" && (
+            {loggedUser ? (
               <button
-                onClick={() => navigate("/admin/dashboard")}
-                className="bg-(--color-accent) py-3 px-4 rounded-xl font-semibold"
+                onClick={handleLogout}
+                className="w-full py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold cursor-pointer"
               >
-                Switch to Admin
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  navigate("/login");
+                  onClose();
+                }}
+                className="w-full py-3 rounded-xl bg-(--color-accent) font-semibold cursor-pointer"
+              >
+                Login
               </button>
             )}
 
-            <button
-              onClick={handleLogout}
-              className="bg-(--color-accent) py-3 px-4 rounded-xl font-semibold"
-            >
-              Logout
-            </button>
-
           </div>
-        )}
+
+        </div>
 
       </div>
+
     </div>
   );
 };

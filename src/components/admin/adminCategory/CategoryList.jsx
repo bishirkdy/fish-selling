@@ -68,7 +68,6 @@ const CategoryList = ({
                 <td className="px-6 py-3">
                   <div className="flex items-center gap-3">
                     <Tag size={18} />
-
                     <span className="font-medium">
                       {category.name}
                     </span>
@@ -80,7 +79,7 @@ const CategoryList = ({
                     <button
                       disabled={deletePending}
                       onClick={() => deleteHandler(category.id)}
-                      className="w-10 h-10 rounded-xl bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center cursor-pointer disabled:opacity-50"
+                      className="w-10 h-10 rounded-xl bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={18} />
                     </button>

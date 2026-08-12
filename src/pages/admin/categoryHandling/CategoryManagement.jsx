@@ -8,11 +8,12 @@ import {
 } from "../../../tanstack/hooks/mutations/category/adminCategoryMutations";
 import CategoryList from "../../../components/admin/adminCategory/CategoryList";
 import AddCategory from "../../../components/admin/adminCategory/AddCategory";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CategoryManagement = () => {
   const [categoryName, setCategoryName] = useState("");
   const [search, setSearch] = useState("");
-
+  const client = useQueryClient()
   const { data: categories, isLoading } = useGetCategories();
 
   const {
@@ -40,6 +41,7 @@ const CategoryManagement = () => {
       {
         onSuccess: () => {
           toast.success("Category added successfully");
+          client.invalidateQueries({queryKey : ["categories"]})
           setCategoryName("");
         },
 
@@ -58,6 +60,8 @@ const CategoryManagement = () => {
     deleteCategory(id, {
       onSuccess: () => {
         toast.success("Category deleted");
+        client.invalidateQueries({queryKey : ["categories"]})
+
       },
 
       onError: (err) => {

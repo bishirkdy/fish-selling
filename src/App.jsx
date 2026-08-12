@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-
 import { addToCart } from "./redux/features/cartSlice";
 import { addToFavorite } from "./redux/features/favoriteSlice";
 

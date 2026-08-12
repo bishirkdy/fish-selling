@@ -10,6 +10,7 @@ import ProfileMenu from "./ProfileMenu";
 import Cart from "../../pages/user/cart/Cart";
 
 import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
+import {useLogout} from "../../tanstack/hooks/mutations/auth/authMutations"
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -20,15 +21,13 @@ const Navbar = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  // User from API
   const { data: loggedUser } = useGetCurrentUser();
+  const {mutate : logoutMutate , isPending : logoutPending} = useLogout();
 
-  // Cart from Redux
   const cart = useSelector((state) => state.cart.cart);
   const totalItems = useSelector((state) => state.cart.totalItems);
   const grandTotal = useSelector((state) => state.cart.grandTotal);
 
-  // Favorite from Redux
   const totalFavorites = useSelector(
     (state) => state.favorite.totalFavorites
   );
@@ -37,9 +36,7 @@ const Navbar = () => {
     const value = search.trim();
 
     if (!value) return;
-
-    navigate(`/shop?search=${encodeURIComponent(value)}`);
-
+    navigate(`/shop?q=${encodeURIComponent(value)}`);
     setSearch("");
     setOpen(false);
   };
@@ -65,26 +62,31 @@ const Navbar = () => {
     navigate(`/favorite/${loggedUser.id}`);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+const handleLogout = () => {
+  logoutMutate(undefined, {
+    onSuccess: () => {
+      queryClient.removeQueries({
+        queryKey: ["currentUser"],
+      });
 
-    queryClient.removeQueries({
-      queryKey: ["currentUser"],
-    });
+      setProfileOpen(false);
+      setOpen(false);
 
-    setProfileOpen(false);
-    setOpen(false);
+      toast.success("Logged out successfully");
+      navigate("/");
+    },
 
-    toast.success("Logged out successfully");
-
-    navigate("/login");
-  };
+    onError: (err) => {
+      toast.error(err.message || "Logout failed");
+    },
+  });
+};
 
   return (
     <>
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-(--color-background) text-white border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md text-white border-b border-white/10">
+        <div className="max-w-8xl mx-auto px-4 md:px-6 lg:px-16">
           <div className="h-20 flex items-center justify-between">
 
             {/* Logo */}
@@ -95,7 +97,6 @@ const Navbar = () => {
               Aquora
             </button>
 
-            {/* Desktop */}
             <DesktopNavbar
               loggedUser={loggedUser}
               search={search}

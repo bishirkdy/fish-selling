@@ -8,6 +8,7 @@ const Success = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data, isLoading } = useGetLatestOrder(location?.state?.id);
+  
   if (isLoading) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
@@ -15,9 +16,9 @@ const Success = () => {
       </div>
     );
   }
-  if (!data) {
-    navigate("/");
-  }
+  // if (!data) {
+  //   navigate("/");
+  // }
   return (
     <div className="min-h-screen bg-(--color-background) flex items-center justify-center px-4">
       <div className="w-full max-w-lg bg-(--color-surface) border border-white/10 rounded-3xl p-8 text-center shadow-2xl">

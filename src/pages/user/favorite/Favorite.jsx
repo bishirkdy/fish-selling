@@ -21,6 +21,7 @@ const Favorite = () => {
       </div>
     );
   }
+console.log(favData);
 
   return (
     <div className="min-h-screen pt-24 pb-8 bg-(--color-background) text-white px-4 md:px-16 lg:px-24">

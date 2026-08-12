@@ -48,11 +48,7 @@ export const handleOnlinePayment = async ({
             queryKey: ["cart"],
           });
           toast.success("Payment Successful");
-          navigate("/success", {
-            state: {
-              id: order.id,
-            },
-          });
+          navigate("/shop");
         } catch (err) {
           toast.error(err.message || "Payment verification failed");
         }

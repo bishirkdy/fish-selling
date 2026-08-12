@@ -142,9 +142,7 @@ const Payment = () => {
     addressMutate(addressData, {
 
       onSuccess: (address) => {
-
         setPaymentType(null);
-
         const orderData = {
           addressId: address.id,
 
@@ -165,22 +163,16 @@ const Payment = () => {
           orderMutation(orderData, {
 
             onSuccess: (order) => {
-
               client.invalidateQueries({
                 queryKey: ["cart"],
               });
 
               setPaymentType(null);
-
               toast.success(
                 "Order placed successfully"
               );
-
-              navigate("/success", {
-                state: {
-                  id: order.id,
-                },
-              });
+              
+              navigate("/shop") 
             },
 
             onError: (err) => {
@@ -226,7 +218,11 @@ const Payment = () => {
 
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-(--color-background)">
+        <Loader />
+      </div>
+    );
   }
 
 
