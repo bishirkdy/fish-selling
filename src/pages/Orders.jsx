@@ -83,7 +83,10 @@ const PAYMENT_STATUS = {
     text: "Failed",
     color: "text-red-500",
   },
-
+  Cancelled: {
+    text: "Cancelled",
+    color: "text-orange-500",
+  },
   Refunded: {
     text: "Refunded",
     color: "text-blue-400",
@@ -154,8 +157,13 @@ const Orders = () => {
                 text: "text-gray-400",
               };
 
-              const payment = PAYMENT_STATUS[order.paymentStatus] ?? {
-                text: order.paymentStatus,
+              const paymentStatus =
+                item.refunded && order.paymentMethod === "Cash" && item.orderStatus === "Cancelled"
+                    ? "Cancelled" : item.refunded && order.paymentMethod === "Razorpay" && item.orderStatus === "Cancelled" ? "Refunded" 
+                    : order.paymentStatus;
+
+              const payment = PAYMENT_STATUS[paymentStatus] ?? {
+                text: paymentStatus,
                 color: "text-gray-400",
               };
 

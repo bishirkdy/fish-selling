@@ -2,8 +2,8 @@ import { api } from "../../api/apiClient";
 import { ADMIN_ORDER_ENDPOINTS } from "../../api/endpoints/order/adminOrderEndpoints";
 
 
-export const getAllOrders = async () => {
-  const res = await api.get(ADMIN_ORDER_ENDPOINTS.BASE);
+export const getAllOrders = async ({page = 1,pageSize = 5,search = "",status = ""}) => {
+  const res = await api.get(ADMIN_ORDER_ENDPOINTS.BASE , {params: {page,pageSize,search,status}});  
   return res.data.data;
 };
 

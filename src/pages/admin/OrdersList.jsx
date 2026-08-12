@@ -24,6 +24,7 @@ import {
   useDeleteOrder,
   useEditOrderStatus,
 } from "../../tanstack/hooks/mutations/order/adminOrderMutations";
+import OrderProductCard from "../../components/admin/adminOrder/OrderProductCard";
 
 const statusStyle = {
   OrderPlaced: "bg-blue-100 text-blue-700",
@@ -36,11 +37,19 @@ const statusStyle = {
 };
 
 const OrdersList = () => {
-  const { data, isLoading } = useGetAllOrders();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const pageSize = 5;
+  const { data, isLoading, isFetching, isError } = useGetAllOrders({
+    page,
+    pageSize,
+    search,
+    status: filterStatus,
+  });
+
   const [view, setView] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState("All");
 
   const { data: orderStatus, isLoading: statusLoading } =
     useGetTotalOrderStatus();
@@ -55,23 +64,6 @@ const OrdersList = () => {
       </div>
     );
   }
-
-  const filteredOrders = data?.filter((order) => {
-    const searchValue = search.toLowerCase();
-
-    const matchesSearch =
-      order.id.toLowerCase().includes(searchValue) ||
-      order.paymentMethod.toLowerCase().includes(searchValue) ||
-      order.paymentStatus.toLowerCase().includes(searchValue) ||
-      order.shippingAddress.fullName.toLowerCase().includes(searchValue) ||
-      String(order.shippingAddress.phoneNumber ?? "").includes(searchValue);
-
-    const matchesFilter =
-      filterStatus === "All" ||
-      order.items.some((item) => item.orderStatus === filterStatus);
-
-    return matchesSearch && matchesFilter;
-  });
 
   function deleteOrderHandler(orderId) {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
@@ -105,7 +97,9 @@ const OrdersList = () => {
       </div>
     );
   }
-  const currentOrder = data?.find((order) => order.id === selectedOrderId);
+  const currentOrder = data?.data?.find(
+    (order) => order.id === selectedOrderId,
+  );
   function viewOrderProducts(order) {
     setSelectedOrderId(order.id);
     setView(true);
@@ -138,6 +132,7 @@ const OrdersList = () => {
     Paid: "bg-green-100 text-green-700",
     Failed: "bg-red-100 text-red-700",
     Refunded: "bg-blue-100 text-blue-700",
+    Cancelled: "bg-gray-100 text-orange-700",
   };
 
   return (
@@ -259,7 +254,10 @@ const OrdersList = () => {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search orders..."
                 className="w-full border border-gray-300 rounded-xl py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-black"
               />
@@ -267,7 +265,10 @@ const OrdersList = () => {
 
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setPage(1);
+              }}
               className="border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
             >
               <option value="All">All Status</option>
@@ -312,7 +313,7 @@ const OrdersList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders?.map((order, index) => (
+              {data?.data?.map((order, index) => (
                 <tr
                   key={order.id || index}
                   className="border-b last:border-none transition"
@@ -347,11 +348,10 @@ const OrdersList = () => {
 
                   <td className="px-6 py-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        order.paymentMethod === "RazorPay"
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${order.paymentMethod === "RazorPay"
                           ? "bg-green-100 text-green-700"
                           : "bg-yellow-100 text-yellow-700"
-                      }`}
+                        }`}
                     >
                       {order.paymentMethod}
                     </span>
@@ -359,9 +359,8 @@ const OrdersList = () => {
 
                   <td className="px-6 py-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        paymentStyle[order.paymentStatus]
-                      }`}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${paymentStyle[order.paymentStatus]
+                        }`}
                     >
                       {order.paymentStatus}
                     </span>
@@ -389,12 +388,35 @@ const OrdersList = () => {
                   </td>
                 </tr>
               ))}
-              {filteredOrders?.length === 0 && (
+              {data?.data?.length === 0 && (
                 <tr>
                   <td colSpan="7" className="text-center py-10 text-gray-500">
                     No matching orders found
                   </td>
                 </tr>
+              )}
+              {data?.data > length > 0 && (
+                <div className="flex items-center justify-center gap-4 py-6">
+                  <button
+                    disabled={page === 1 || isFetching}
+                    onClick={() => setPage((prev) => prev - 1)}
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="text-sm text-gray-600">
+                    Page {data?.page ?? page} of {data?.totalPages ?? 1}
+                  </span>
+
+                  <button
+                    disabled={page >= (data?.totalPages ?? 1) || isFetching}
+                    onClick={() => setPage((prev) => prev + 1)}
+                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
               )}
             </tbody>
           </table>
@@ -457,85 +479,26 @@ const OrdersList = () => {
               </div>
 
               <div className="p-3 md:p-6 space-y-6">
-                {currentOrder?.items?.map((item, index) => {
+                {currentOrder?.items?.map((item) => {
+                  let itemPaymentStatus = currentOrder.paymentStatus;
+
+                  if (item.orderStatus === "Cancelled") {
+                    if (currentOrder.paymentMethod === "Cash") {
+                      itemPaymentStatus = "Cancelled";
+                    } else if (item.refunded) {
+                      itemPaymentStatus = "Refunded";
+                    }
+                  }
+
                   return (
-                    <div key={index} className="rounded-3xl overflow-hidden">
-                      <div className="p-3 md:p-6">
-                        <div className="flex flex-col sm:flex-row gap-4">
-                          <img
-                            src={item?.productImage || "/no-image.png"}
-                            alt={item?.productName || "Product"}
-                            className="w-full sm:w-28 h-48 sm:h-28 object-cover rounded-2xl"
-                          />
-
-                          <div className="flex-1">
-                            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                              <div>
-                                <h1 className="font-bold text-base md:text-lg text-gray-800">
-                                  {item?.productName || "Product Removed"}
-                                </h1>
-                              </div>
-
-                              <div className="flex flex-col gap-2">
-                                <span
-                                  className={`px-3 py-1 rounded-full text-xs font-semibold w-fit ${statusStyle[item.orderStatus]}`}
-                                >
-                                  {item.orderStatus}
-                                </span>
-
-                                <select
-                                  disabled={isPending}
-                                  value={item.orderStatus}
-                                  onChange={(e) =>
-                                    orderStatusHandler(
-                                      item.productId,
-                                      e.target.value,
-                                    )
-                                  }
-                                  className="px-3 py-2 rounded-xl border border-gray-300"
-                                >
-                                  <option value="OrderPlaced">
-                                    Order Placed
-                                  </option>
-                                  <option value="Confirmed">Confirmed</option>
-                                  <option value="Packed">Packed</option>
-                                  <option value="Shipping">Shipping</option>
-                                  <option value="Shipped">
-                                    Out For Delivery
-                                  </option>
-                                  <option value="Delivered">Delivered</option>
-                                  <option value="Cancelled">Cancelled</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <p className="text-xs md:text-sm text-gray-500 mt-3"></p>
-
-                            <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-4">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold text-green-600 text-lg">
-                                  ₹{Math.floor(item.discountedPrice)}
-                                </span>
-
-                                {item.discountPercentage > 0 && (
-                                  <span className="text-sm text-gray-400 line-through">
-                                    ₹{Math.floor(item.originalPrice)}
-                                  </span>
-                                )}
-                              </div>
-
-                              <span className="px-3 py-1 rounded-full bg-gray-100 text-xs md:text-sm">
-                                Qty : {item?.quantity}
-                              </span>
-
-                              <span className="px-3 py-1 rounded-full bg-blue-100 text-(--color-surface) text-xs md:text-sm">
-                                {currentOrder?.paymentStatus || "PENDING"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <OrderProductCard
+                      key={item.productId}
+                      item={item}
+                      paymentStatus={itemPaymentStatus}
+                      isPending={isPending}
+                      statusStyle={statusStyle}
+                      orderStatusHandler={orderStatusHandler}
+                    />
                   );
                 })}
               </div>

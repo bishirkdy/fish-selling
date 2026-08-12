@@ -79,7 +79,7 @@ const CategoryManagement = () => {
   return (
     <div className="w-full min-h-screen bg-gray-100 p-8">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Add Category */}
 
@@ -174,11 +174,11 @@ const CategoryManagement = () => {
                   className="border-b last:border-none"
                 >
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-3">
                     {index + 1}
                   </td>
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-3">
 
                     <div className="flex items-center gap-3">
 
@@ -192,7 +192,7 @@ const CategoryManagement = () => {
 
                   </td>
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-3">
 
                     <div className="flex justify-center">
 
@@ -205,9 +205,7 @@ const CategoryManagement = () => {
                       </button>
 
                     </div>
-
                   </td>
-
                 </tr>
 
               ))}
