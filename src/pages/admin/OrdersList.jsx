@@ -1,511 +1,138 @@
 import { useState } from "react";
-import {
-  CheckCircle,
-  Truck,
-  XCircle,
-  Search,
-  View,
-  ShoppingCart,
-  BadgeCheck,
-  Archive,
-  Bike,
-  CircleX,
-  ShoppingBagIcon,
-  Boxes,
-  Trash2,
-} from "lucide-react";
-
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+
 import Loader from "../../components/Loader";
-import { useGetTotalOrderStatus } from "../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
+
+import OrderStats from "../../components/admin/adminOrder/OrderStats";
+import OrderFilters from "../../components/admin/adminOrder/OrderFilters";
+import OrdersTable from "../../components/admin/adminOrder/OrdersTable";
+import OrderPagination from "../../components/admin/adminOrder/OrderPagination";
+import OrderProductModal from "../../components/admin/adminOrder/OrderProductModal";
+import { useDeleteOrder, useEditOrderStatus } from "../../tanstack/hooks/mutations/order/adminOrderMutations";
 import { useGetAllOrders } from "../../tanstack/hooks/queries/order/adminOrderQueries";
-import {
-  useDeleteOrder,
-  useEditOrderStatus,
-} from "../../tanstack/hooks/mutations/order/adminOrderMutations";
-import OrderProductCard from "../../components/admin/adminOrder/OrderProductCard";
-
-const statusStyle = {
-  OrderPlaced: "bg-blue-100 text-blue-700",
-  Confirmed: "bg-cyan-100 text-cyan-700",
-  Packed: "bg-yellow-100 text-yellow-700",
-  Shipping: "bg-purple-100 text-purple-700",
-  Shipped: "bg-orange-100 text-orange-700",
-  Delivered: "bg-green-100 text-green-700",
-  Cancelled: "bg-red-100 text-red-700",
-};
-
+import { getTotalOrderStatus } from "../../services/analysis/adminAnalysisService";
 const OrdersList = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+
+  const [currentOrder, setCurrentOrder] = useState(null);
+
   const pageSize = 5;
-  const { data, isLoading, isFetching, isError } = useGetAllOrders({
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetAllOrders({
     page,
     pageSize,
     search,
     status: filterStatus,
   });
 
-  const [view, setView] = useState(false);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const {
+    data: orderStatus,
+    isLoading: statusLoading,
+  } = getTotalOrderStatus();
 
-  const { data: orderStatus, isLoading: statusLoading } =
-    useGetTotalOrderStatus();
-  const { mutate, isPending } = useEditOrderStatus();
-  const { mutate: deleteMutate, isPending: deletePending } = useDeleteOrder();
-  const client = useQueryClient();
+  const {
+    mutate: deleteOrder,
+  } = useDeleteOrder();
 
-  if (isLoading || statusLoading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <Loader />
-      </div>
+  const {
+    mutate: updateOrderStatus,
+    isPending,
+  } = useEditOrderStatus();
+
+  const orderStatusHandler = (productId, status) => {
+    if (!currentOrder) return;
+
+    updateOrderStatus(
+      {
+        orderId: currentOrder.id,
+        productId,
+        status,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Order status updated");
+        },
+        onError: (err) => {
+          toast.error(err.message || "Failed to update status");
+        },
+      }
     );
-  }
+  };
 
-  function deleteOrderHandler(orderId) {
-    if (!window.confirm("Are you sure you want to delete this order?")) return;
-
-    deleteMutate(orderId, {
+  const deleteOrderHandler = (orderId) => {
+    deleteOrder(orderId, {
       onSuccess: () => {
-        client.invalidateQueries({
-          queryKey: ["orders"],
-        });
-
-        if (selectedOrderId === orderId) {
-          setView(false);
-          setSelectedOrderId(null);
-        }
-
         toast.success("Order deleted successfully");
       },
       onError: (err) => {
         toast.error(err.message || "Failed to delete order");
       },
     });
-  }
-
-  if (!data || data.length === 0) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <ShoppingBagIcon size={60} className="mb-4" />
-
-        <h1 className="text-2xl font-bold">No Orders Yet</h1>
-        <p className="text-gray-400 mt-2">All orders will appear here</p>
-      </div>
-    );
-  }
-  const currentOrder = data?.data?.find(
-    (order) => order.id === selectedOrderId,
-  );
-  function viewOrderProducts(order) {
-    setSelectedOrderId(order.id);
-    setView(true);
-  }
-
-  function orderStatusHandler(productId, status) {
-    mutate(
-      { orderId: selectedOrderId, productId, status },
-      {
-        onSuccess: () => {
-          client.invalidateQueries({
-            queryKey: ["user-orders"],
-          });
-          client.invalidateQueries({
-            queryKey: ["orders"],
-          });
-          client.invalidateQueries({
-            queryKey: ["order-status"],
-          });
-          toast.success("Status Updated");
-        },
-        onError: (err) => {
-          toast.error(err.message);
-        },
-      },
-    );
-  }
-  const paymentStyle = {
-    Pending: "bg-yellow-100 text-yellow-700",
-    Paid: "bg-green-100 text-green-700",
-    Failed: "bg-red-100 text-red-700",
-    Refunded: "bg-blue-100 text-blue-700",
-    Cancelled: "bg-gray-100 text-orange-700",
   };
 
+  if (isLoading || statusLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        Failed to load orders.
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full min-h-screen bg-gray-100 p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Orders Management</h1>
-        <p className="text-gray-500 mt-1">Manage and track customer orders</p>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Total Orders</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.totalOrders}
-            </h2>
-          </div>
+    <div className="w-full min-h-screen bg-gray-100 p-4 md:p-6">
 
-          <div className="bg-gray-100 p-3 rounded-xl">
-            <Boxes className="text-black" />
-          </div>
-        </div>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        Orders
+      </h1>
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Order Placed</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.orderPlaced}
-            </h2>
-          </div>
+      {/* Statistics */}
+      <OrderStats data={orderStatus} />
 
-          <div className="bg-blue-100 p-3 rounded-xl">
-            <ShoppingCart className="text-blue-600" />
-          </div>
-        </div>
+      {/* Search + Filter */}
+      <OrderFilters
+        search={search}
+        setSearch={setSearch}
+        filterStatus={filterStatus}
+        setFilterStatus={setFilterStatus}
+        setPage={setPage}
+      />
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Confirmed</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.confirmed}
-            </h2>
-          </div>
+      {/* Orders */}
+      <OrdersTable
+        orders={data?.data}
+        onView={(order) => setCurrentOrder(order)}
+        onDelete={deleteOrderHandler}
+      />
 
-          <div className="bg-cyan-100 p-3 rounded-xl">
-            <BadgeCheck className="text-cyan-600" />
-          </div>
-        </div>
+      {/* Pagination */}
+      <OrderPagination
+        page={page}
+        setPage={setPage}
+        totalPages={data?.totalPages}
+        isFetching={isFetching}
+      />
 
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Packed</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.packed}</h2>
-          </div>
+      {/* Order Details */}
+      {currentOrder && (
+        <OrderProductModal
+          order={currentOrder}
+          onClose={() => setCurrentOrder(null)}
+          isPending={isPending}
+          orderStatusHandler={orderStatusHandler}
+        />
+      )}
 
-          <div className="bg-yellow-100 p-3 rounded-xl">
-            <Archive className="text-yellow-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Shipping</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipping}</h2>
-          </div>
-
-          <div className="bg-purple-100 p-3 rounded-xl">
-            <Truck className="text-purple-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Shipped</p>
-            <h2 className="text-2xl font-bold mt-1">{orderStatus?.shipped}</h2>
-          </div>
-          <div className="bg-orange-100 p-3 rounded-xl">
-            <Bike className="text-orange-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Delivered</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.delivered}
-            </h2>
-          </div>
-
-          <div className="bg-green-100 p-3 rounded-xl">
-            <CheckCircle className="text-green-600" />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-5 shadow-sm flex items-center justify-between">
-          <div>
-            <p className="text-gray-500 text-sm">Cancelled</p>
-            <h2 className="text-2xl font-bold mt-1">
-              {orderStatus?.cancelled}
-            </h2>
-          </div>
-
-          <div className="bg-red-100 p-3 rounded-xl">
-            <XCircle className="text-red-600" />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-5 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Recent Orders</h2>
-
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-            <div className="relative w-full md:w-80">
-              <Search
-                size={18}
-                className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-              />
-
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-                placeholder="Search orders..."
-                className="w-full border border-gray-300 rounded-xl py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-black"
-              />
-            </div>
-
-            <select
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value);
-                setPage(1);
-              }}
-              className="border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black"
-            >
-              <option value="All">All Status</option>
-              <option value="OrderPlaced">Order Placed</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Packed">Packed</option>
-              <option value="Shipping">Shipping</option>
-              <option value="Shipped">Out For Delivery</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-275">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Order ID
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Customer
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Ordered Date
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Total
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Payment Method
-                </th>
-                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-600">
-                  Payment Status
-                </th>
-                <th className="text-center px-6 py-4 text-sm font-semibold text-gray-600">
-                  View
-                </th>
-                <th className="text-center px-6 py-4 text-sm font-semibold text-gray-600">
-                  Delete
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.data?.map((order, index) => (
-                <tr
-                  key={order.id || index}
-                  className="border-b last:border-none transition"
-                >
-                  <td className="px-6 py-2">
-                    <div className="font-semibold text-gray-800">
-                      {order?.id}
-                    </div>
-                  </td>
-
-                  <td className="px-6 py-2">
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-gray-800">
-                        {order.shippingAddress.fullName}
-                      </h3>
-
-                      <p className="text-sm text-gray-500">
-                        {order.shippingAddress?.phoneNumber}
-                      </p>
-                    </div>
-                  </td>
-
-                  <td className="px-6 py-2 text-gray-600">
-                    {new Date(order.orderedAt).toLocaleDateString()}
-                  </td>
-
-                  <td className="px-6 py-2">
-                    <span className="font-bold text-gray-800">
-                      ₹{Math.round(order.totalAmount)}
-                    </span>
-                  </td>
-
-                  <td className="px-6 py-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${order.paymentMethod === "RazorPay"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                        }`}
-                    >
-                      {order.paymentMethod}
-                    </span>
-                  </td>
-
-                  <td className="px-6 py-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${paymentStyle[order.paymentStatus]
-                        }`}
-                    >
-                      {order.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="px-6 py-2">
-                    <div className="flex items-center justify-center">
-                      <button
-                        onClick={() => viewOrderProducts(order)}
-                        className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition cursor-pointer"
-                      >
-                        <View size={18} />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-6 py-2">
-                    <div className="flex items-center justify-center">
-                      <button
-                        disabled={deletePending}
-                        onClick={() => deleteOrderHandler(order.id)}
-                        className="w-10 h-10 rounded-xl bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition cursor-pointer disabled:opacity-50"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {data?.data?.length === 0 && (
-                <tr>
-                  <td colSpan="7" className="text-center py-10 text-gray-500">
-                    No matching orders found
-                  </td>
-                </tr>
-              )}
-              {data?.data > length > 0 && (
-                <div className="flex items-center justify-center gap-4 py-6">
-                  <button
-                    disabled={page === 1 || isFetching}
-                    onClick={() => setPage((prev) => prev - 1)}
-                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-
-                  <span className="text-sm text-gray-600">
-                    Page {data?.page ?? page} of {data?.totalPages ?? 1}
-                  </span>
-
-                  <button
-                    disabled={page >= (data?.totalPages ?? 1) || isFetching}
-                    onClick={() => setPage((prev) => prev + 1)}
-                    className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </tbody>
-          </table>
-        </div>
-        {view && currentOrder && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-3xl shadow-2xl no-scrollbar overflow-y-auto">
-              <div className="flex items-center justify-between px-8 py-5 border-b">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-800">
-                    Order Products
-                  </h1>
-                  <p className="text-gray-500 text-sm mt-1">
-                    Total Products : {currentOrder?.items?.length}
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    setView(false);
-                    setSelectedOrderId(null);
-                  }}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition cursor-pointer"
-                >
-                  <CircleX />
-                </button>
-              </div>
-
-              <div className="border-b bg-gray-50 p-6">
-                <h2 className="font-bold text-lg text-gray-800 mb-4">
-                  Customer Details
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-gray-700">
-                  <div className="space-y-2">
-                    <p>
-                      <span className="font-semibold">Name :</span>{" "}
-                      {currentOrder?.shippingAddress?.fullName}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Phone :</span>{" "}
-                      {currentOrder?.shippingAddress?.phoneNumber}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Email :</span>{" "}
-                      {currentOrder?.shippingAddress?.email}
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p>
-                      {currentOrder?.shippingAddress?.street},
-                      {currentOrder?.shippingAddress?.post},{" "}
-                      {currentOrder?.shippingAddress?.district},{" "}
-                      {currentOrder?.shippingAddress?.state}
-                    </p>
-                    <p>Pincode : {currentOrder?.shippingAddress?.pincode}</p>
-                    <p>Landmark : {currentOrder?.shippingAddress?.landmark}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3 md:p-6 space-y-6">
-                {currentOrder?.items?.map((item) => {
-                  let itemPaymentStatus = currentOrder.paymentStatus;
-
-                  if (item.orderStatus === "Cancelled") {
-                    if (currentOrder.paymentMethod === "Cash") {
-                      itemPaymentStatus = "Cancelled";
-                    } else if (item.refunded) {
-                      itemPaymentStatus = "Refunded";
-                    }
-                  }
-
-                  return (
-                    <OrderProductCard
-                      key={item.productId}
-                      item={item}
-                      paymentStatus={itemPaymentStatus}
-                      isPending={isPending}
-                      statusStyle={statusStyle}
-                      orderStatusHandler={orderStatusHandler}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
