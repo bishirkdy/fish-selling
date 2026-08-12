@@ -61,7 +61,6 @@ const ViewFish = () => {
       }
       return 0;
     });
-console.log(data);
 
   const totalPages = Math.ceil(filteredFish?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
