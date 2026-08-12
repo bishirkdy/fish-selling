@@ -3,7 +3,7 @@ import { Image, SquareX } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/common/Loader";
 import { useEditProductById } from "../../../tanstack/hooks/mutations/product/adminProductMutations";
 import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
 import { useGetProductById } from "../../../tanstack/hooks/queries/product/productQueries";

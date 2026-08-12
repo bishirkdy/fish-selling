@@ -4,7 +4,7 @@ import { Check, Star, Truck, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import Loader from "../Loader";
+import Loader from "../common/Loader";
 import { useAddToCart } from "../../tanstack/hooks/mutations/cart/cartMutations";
 import { useAddReview } from "../../tanstack/hooks/mutations/review/reviewMutations";
 import { useGetProductById } from "../../tanstack/hooks/queries/product/productQueries";

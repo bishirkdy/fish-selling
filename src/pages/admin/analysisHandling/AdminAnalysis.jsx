@@ -1,9 +1,9 @@
-import SameDataComposedChart from '../../components/admin/adminAnalysis/ProductChart'
-import { SalesChart } from '../../components/admin/adminAnalysis/SalesCharts'
-import { ProfitChart } from '../../components/admin/adminAnalysis/ProfitChart'
-import { CategoryChart } from '../../components/admin/adminAnalysis/CategoryProductsAnalisys'
-import Loader from '../../components/Loader'
-import { useAnalysisTopData } from '../../tanstack/hooks/queries/analysis/adminAnalysisQueries'
+import SameDataComposedChart from '../../../components/admin/adminAnalysis/ProductChart'
+import { SalesChart } from '../../../components/admin/adminAnalysis/SalesCharts'
+import { ProfitChart } from '../../../components/admin/adminAnalysis/ProfitChart'
+import { CategoryChart } from '../../../components/admin/adminAnalysis/CategoryProductsAnalisys'
+import Loader from '../../../components/common/Loader'
+import { useAnalysisTopData } from '../../../tanstack/hooks/queries/analysis/adminAnalysisQueries'
 
 const AdminAnalysis = () => {
   const {data : topData , isLoading : topLoading , isError : topError} = useAnalysisTopData()  

@@ -1,22 +1,22 @@
 import React from "react";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGetLatestOrder } from "../../tanstack/hooks/queries/order/orderQueries";
 import Loader from "./Loader";
-import { useGetLatestOrder } from "../tanstack/hooks/queries/order/orderQueries";
 
 const Success = () => {
   const navigate = useNavigate();
-  const location = useLocation()
-const {data , isLoading} = useGetLatestOrder(location?.state?.id)
-if (isLoading) {
+  const location = useLocation();
+  const { data, isLoading } = useGetLatestOrder(location?.state?.id);
+  if (isLoading) {
     return (
       <div className="w-screen h-screen bg-(--color-background) flex items-center justify-center">
         <Loader />
       </div>
     );
   }
-  if(!data){
-    navigate("/")
+  if (!data) {
+    navigate("/");
   }
   return (
     <div className="min-h-screen bg-(--color-background) flex items-center justify-center px-4">
@@ -39,7 +39,9 @@ if (isLoading) {
         <div className="bg-white/5 border border-white/10 rounded-2xl p-5 mb-8">
           <div className="flex items-center justify-between text-sm mb-3">
             <span className="text-gray-400">Payment Method</span>
-            <span className="text-green-400 font-semibold">{data.orderMethod}</span>
+            <span className="text-green-400 font-semibold">
+              {data.orderMethod}
+            </span>
           </div>
 
           <div className="flex items-center justify-between text-sm">
@@ -52,7 +54,7 @@ if (isLoading) {
             onClick={() => navigate(`/orders/${data.user}`)}
             className="flex-1 bg-white/10 hover:bg-white/15 text-white py-3 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <ShoppingBag size={18}/>
+            <ShoppingBag size={18} />
             View Orders
           </button>
 

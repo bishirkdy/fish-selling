@@ -1,7 +1,7 @@
 import React from "react";
-import TopDashboard from "../../components/admin/adminDashboard/TopDashboard";
-import RatingChart from "../../components/admin/adminDashboard/RatingGraph";
-import SalesChart from "../../components/admin/adminDashboard/SalesProgress";
+import TopDashboard from "../../../components/admin/adminDashboard/TopDashboard";
+import RatingChart from "../../../components/admin/adminDashboard/RatingGraph";
+import SalesChart from "../../../components/admin/adminDashboard/SalesProgress";
 
 const AdminDashboard = () => {
   return (

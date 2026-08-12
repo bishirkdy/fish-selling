@@ -1,12 +1,12 @@
 import { useSearchParams } from "react-router-dom";
-import ProductCard from "../components/product/ProductCard";
-import { buildParam } from "../utils/priceParam";
-import Loader from "../components/Loader";
+import ProductCard from "../../../components/product/ProductCard";
+import { buildParam } from "../../../utils/priceParam";
+import Loader from "../../../components/common/Loader";
 import { FishSymbol } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useGetProducts } from "../tanstack/hooks/queries/product/productQueries";
-import { useGetCategories } from "../tanstack/hooks/queries/category/categoryQueries";
-import ProductSkeleton from "../components/product/ProductSkeleton";
+import { useGetProducts } from "../../../tanstack/hooks/queries/product/productQueries";
+import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
+import ProductSkeleton from "../../../components/product/ProductSkeleton";
 
 const Shop = () => {
   const [params, setParams] = useSearchParams();

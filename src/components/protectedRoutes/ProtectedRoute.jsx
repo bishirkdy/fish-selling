@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
+import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
 
 const ProtectedRoute = () => {
   const {

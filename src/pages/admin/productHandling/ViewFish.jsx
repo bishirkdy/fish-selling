@@ -3,7 +3,7 @@ import { Search, Eye, Pencil, Trash2, Fish } from "lucide-react";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import Loader from "../../../components/Loader";
+import Loader from "../../../components/common/Loader";
 import { useDeleteProduct } from "../../../tanstack/hooks/mutations/product/adminProductMutations";
 import { useGetCategories } from "../../../tanstack/hooks/queries/category/categoryQueries";
 import { useGetProducts } from "../../../tanstack/hooks/queries/product/productQueries";

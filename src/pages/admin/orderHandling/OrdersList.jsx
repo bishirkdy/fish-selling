@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-import Loader from "../../components/Loader";
+import Loader from "../../../components/common/Loader";
 
-import OrderStats from "../../components/admin/adminOrder/OrderStats";
-import OrderFilters from "../../components/admin/adminOrder/OrderFilters";
-import OrdersTable from "../../components/admin/adminOrder/OrdersTable";
-import OrderPagination from "../../components/admin/adminOrder/OrderPagination";
-import OrderProductModal from "../../components/admin/adminOrder/OrderProductModal";
-import { useDeleteOrder, useEditOrderStatus } from "../../tanstack/hooks/mutations/order/adminOrderMutations";
-import { useGetAllOrders } from "../../tanstack/hooks/queries/order/adminOrderQueries";
-import { getTotalOrderStatus } from "../../services/analysis/adminAnalysisService";
+import OrderStats from "../../../components/admin/adminOrder/OrderStats";
+import OrderFilters from "../../../components/admin/adminOrder/OrderFilters";
+import OrdersTable from "../../../components/admin/adminOrder/OrdersTable";
+import OrderPagination from "../../../components/admin/adminOrder/OrderPagination";
+import OrderProductModal from "../../../components/admin/adminOrder/OrderProductModal";
+import { useDeleteOrder, useEditOrderStatus } from "../../../tanstack/hooks/mutations/order/adminOrderMutations";
+import { useGetAllOrders } from "../../../tanstack/hooks/queries/order/adminOrderQueries";
+import { getTotalOrderStatus } from "../../../services/analysis/adminAnalysisService";
 const OrdersList = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");

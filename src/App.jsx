@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
-import Navbar from "./components/Navbar";
 
 import { addToCart } from "./redux/features/cartSlice";
 import { addToFavorite } from "./redux/features/favoriteSlice";
@@ -10,6 +9,7 @@ import { useGetCurrentUser } from "./tanstack/hooks/queries/auth/authQueries";
 import { useGetAllCartDataOfUser } from "./tanstack/hooks/queries/cart/cartQueries";
 import { useFavDataOfUser } from "./tanstack/hooks/queries/favorite/favoriteQueries";
 import { useEffect } from "react";
+import Navbar from "./components/navbar/Navbar";
 
 const App = () => {
   const dispatch = useDispatch();

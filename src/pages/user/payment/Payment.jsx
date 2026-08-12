@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { data, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRazorpay } from "react-razorpay";
-import { handleOnlinePayment } from "../utils/razonPay";
-import { useAddShippingAddress } from "../tanstack/hooks/mutations/address/shippingAddressMutations";
-import { useAddOrders } from "../tanstack/hooks/mutations/order/orderMutations";
+import { handleOnlinePayment } from "../../../utils/razonPay";
+import { useAddShippingAddress } from "../../../tanstack/hooks/mutations/address/shippingAddressMutations";
+import { useAddOrders } from "../../../tanstack/hooks/mutations/order/orderMutations";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetLastUsedAddress } from "../tanstack/hooks/queries/address/addressQueries";
+import { useGetLastUsedAddress } from "../../../tanstack/hooks/queries/address/addressQueries";
 
 const Payment = () => {
   const [formData, setFormData] = useState({

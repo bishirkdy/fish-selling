@@ -1,5 +1,5 @@
 import ProductCard from "../product/ProductCard";
-import Loader from "../Loader";
+import Loader from "../common/Loader";
 import { useGetSixProduct } from "../../tanstack/hooks/queries/product/productQueries";
 import ProductSkeleton from "../product/ProductSkeleton";
 

@@ -8,7 +8,7 @@ import {
   Boxes,
   HandCoins,
 } from "lucide-react";
-import Loader from "../../Loader";
+import Loader from "../../common/Loader";
 import { useDashboardTopData } from "../../../tanstack/hooks/queries/analysis/adminAnalysisQueries";
 
 const TopDashboard = () => {

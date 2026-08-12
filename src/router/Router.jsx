@@ -3,29 +3,29 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
-import Home from "../pages/Home";
+import Home from "../pages/user/home/Home";
 import App from "../App";
 import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
-import Shop from "../pages/Shop";
-import ProtectedRoute from "../components/ProtectedRoute";
+import Shop from "../pages/user/explore/Shop";
+import ProtectedRoute from "../components/protectedRoutes/ProtectedRoute";
 import OneProduct from "../components/product/OneProduct";
-import Payment from "../pages/Payment";
-import Orders from "../pages/Orders";
-import Favorite from "../pages/Favorite";
-import Profile from "../components/Profile";
-import Success from "../components/Success";
-import AdminProtectedRoute from "../components/AdminProtectedRoute";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import OrdersList from "../pages/admin/OrdersList";
+import Payment from "../pages/user/payment/Payment";
+import Orders from "../pages/user/order/Orders";
+import Favorite from "../pages/user/favorite/Favorite";
+import Profile from "../components/profile/Profile";
+import Success from "../components/common/Success";
+import AdminProtectedRoute from "../components/protectedRoutes/AdminProtectedRoute";
 import AddFish from "../pages/admin/productHandling/AddFish";
 import ViewFish from "../pages/admin/productHandling/ViewFish";
 import ViewCustomer from "../pages/admin/customerHandling/ViewCustomer";
-import AdminAnalysis from "../pages/admin/AdminAnalysis";
 import EditFish from "../pages/admin/productHandling/EditFish";
 import { ForgotPassword } from "../components/auth/ForgotPassword";
 import ResetPassword from "../components/auth/ResetPassword";
-import CategoryManagement from "../pages/admin/category/CategoryManagement";
+import CategoryManagement from "../pages/admin/categoryHandling/CategoryManagement";
+import OrdersList from "../pages/admin/orderHandling/OrdersList";
+import AdminDashboard from "../pages/admin/dashboardHandling/AdminDashboard";
+import AdminAnalysis from "../pages/admin/analysisHandling/AdminAnalysis";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(

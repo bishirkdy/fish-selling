@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import {  Heart } from "lucide-react";
-import ProductCard from "../components/product/ProductCard";
+import ProductCard from "../../../components/product/ProductCard";
 import { useNavigate } from "react-router-dom";
 
 const Favorite = () => {

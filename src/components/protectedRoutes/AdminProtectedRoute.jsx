@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import AdminSidebar from "./admin/AdminSidebar";
+import AdminSidebar from "../admin/AdminSidebar";
 import { useSelector } from "react-redux";
-import { useGetCurrentUser } from "../tanstack/hooks/queries/auth/authQueries";
+import { useGetCurrentUser } from "../../tanstack/hooks/queries/auth/authQueries";
 
 const AdminProtectedRoute = () => {
   const {data : user , isLoading} = useGetCurrentUser();
