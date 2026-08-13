@@ -121,7 +121,7 @@ const Shop = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen lg:flex-row gap-6 p-4 pt-22 sm:p-6 lg:p-6 lg:pt-24 lg:px-16 bg-(--color-background) text-white">
+    <div className="flex flex-col min-h-screen lg:flex-row gap-6 p-4 pt-22 sm:p-6 lg:p-6 md:pt-24 lg:pt-24 lg:px-16 bg-(--color-background) text-white">
       <div className="w-full lg:w-64 bg-(--color-surface) rounded-xl p-5 shadow-md lg:sticky lg:top-12 h-fit">
         <div className="mb-6">
           <h2 className="font-semibold text-lg mb-3">Category</h2>

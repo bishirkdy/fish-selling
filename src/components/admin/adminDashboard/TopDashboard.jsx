@@ -24,7 +24,7 @@ const TopDashboard = () => {
 
   const dashboardData = [
     {
-      title: "Total Revenue",
+      title: "Total Sales",
       value: Math.floor(analysisData?.totalRevenue),
       icon: HandCoins,
     },

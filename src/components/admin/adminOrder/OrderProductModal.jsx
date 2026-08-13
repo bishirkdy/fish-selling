@@ -12,13 +12,10 @@ const OrderProductModal = ({
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white w-full max-w-5xl max-h-[95vh] rounded-3xl shadow-2xl overflow-y-auto no-scrollbar">
-
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-5 border-b">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              Order Products
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-800">Order Products</h1>
 
             <p className="text-gray-500 text-sm mt-1">
               Total Products : {order.items?.length ?? 0}
@@ -40,7 +37,6 @@ const OrderProductModal = ({
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-gray-700">
-
             <div className="space-y-2">
               <p>
                 <span className="font-semibold">Name :</span>{" "}
@@ -60,21 +56,15 @@ const OrderProductModal = ({
 
             <div className="space-y-2">
               <p>
-                {order.shippingAddress?.street},{" "}
-                {order.shippingAddress?.post},{" "}
+                {order.shippingAddress?.street}, {order.shippingAddress?.post},{" "}
                 {order.shippingAddress?.district},{" "}
                 {order.shippingAddress?.state}
               </p>
 
-              <p>
-                Pincode : {order.shippingAddress?.pincode}
-              </p>
+              <p>Pincode : {order.shippingAddress?.pincode}</p>
 
-              <p>
-                Landmark : {order.shippingAddress?.landmark}
-              </p>
+              <p>Landmark : {order.shippingAddress?.landmark}</p>
             </div>
-
           </div>
         </div>
 
@@ -82,6 +72,13 @@ const OrderProductModal = ({
         <div className="p-3 md:p-6 space-y-6">
           {order.items?.map((item) => {
             let paymentStatus = order.paymentStatus;
+
+            if (
+              item.orderStatus === "Delivered" &&
+              order.paymentMethod === "Cash"
+            ) {
+              paymentStatus = "Paid";
+            }
 
             if (item.orderStatus === "Cancelled") {
               if (order.paymentMethod === "Cash") {
@@ -102,7 +99,6 @@ const OrderProductModal = ({
             );
           })}
         </div>
-
       </div>
     </div>
   );

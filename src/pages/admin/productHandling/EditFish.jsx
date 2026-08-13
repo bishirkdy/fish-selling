@@ -55,14 +55,13 @@ const EditFish = () => {
   useEffect(() => {
     if (data) {
       setFormData({
-        name: data.name || "",
-        category: data.categoryId || "",
-        price: data.originalPrice || "",
-        costPrice: data.costPrice || "",
-        stock: data.stock || "",
-        discountPercentage:
-          data.discountPercentage || "",
-        description: data.description || "",
+   name: data.name ?? "",
+  category: data.categoryId ?? "",
+  price: data.originalPrice ?? "",
+  costPrice: data.costPrice ?? "",
+  stock: data.stock ?? "",
+  discountPercentage: data.discountPercentage ?? "",
+  description: data.description ?? "",
       });
 
       setImage(data.imageUrls[0] || "");

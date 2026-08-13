@@ -11,6 +11,22 @@ const OrderCard = ({
   setViewTrack,
   handleCancel,
 }) => {
+    let paymentStatus = order.paymentStatus;
+
+  if (
+    item.orderStatus === "Delivered" &&
+    order.paymentMethod === "Cash"
+  ) {
+    paymentStatus = "Paid";
+  }
+
+  if (item.orderStatus === "Cancelled") {
+    if (order.paymentMethod === "Cash") {
+      paymentStatus = "Cancelled";
+    } else if (item.refunded) {
+      paymentStatus = "Refunded";
+    }
+  }
 
   const viewDetailsHandler = () => {
     setViewableData({
@@ -19,7 +35,7 @@ const OrderCard = ({
       orderedAt: order.orderedAt,
       shippingAddress: order.shippingAddress,
       paymentMethod: order.paymentMethod,
-      paymentStatus: order.paymentStatus,
+      paymentStatus: paymentStatus,
       totalAmount: order.totalAmount,
     });
 
