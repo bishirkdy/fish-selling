@@ -17,3 +17,19 @@ jobs:
         run: |
           node --version
           npm --version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Deploy to IIS
+        run: |
+          Remove-Item "C:\inetpub\AquaticFishFrontend\*" -Recurse -Force
+          Copy-Item ".\dist\*" "C:\inetpub\AquaticFishFrontend" -Recurse -Force
+
+      - name: Restart Frontend App Pool
+        run: |
+          Import-Module WebAdministration
+          Restart-WebAppPool -Name "AquaticFishFrontend"
