@@ -40,7 +40,7 @@ const ResetPassword = () => {
       return;
     }
 
-    resetPasswordMutation.mutate(
+    resetPasswordMutation(
       {
         token,
         newPassword: form.newPassword,

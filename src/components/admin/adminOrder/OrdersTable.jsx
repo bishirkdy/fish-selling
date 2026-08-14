@@ -54,12 +54,12 @@ const OrdersTable = ({ orders, onView, onDelete }) => {
                     View
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => onDelete(order.id)}
                     className="px-3 py-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
               </td>
             </tr>

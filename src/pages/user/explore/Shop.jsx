@@ -14,6 +14,7 @@ const Shop = () => {
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const query = params.get("q") || "";
   const category = params.get("category") || "";
@@ -29,6 +30,12 @@ const Shop = () => {
     isLoading: categoryLoading,
     isError: categoryIsError,
   } = useGetCategories();
+
+  useEffect(() => {
+    if (data) {
+      setHasLoaded(true);
+    }
+  }, [data]);
 
   // Reset when filters change
   useEffect(() => {
@@ -222,7 +229,7 @@ const Shop = () => {
           </div>
         )}
 
-        {products.length === 0 && !isLoading && (
+        {hasLoaded && products.length === 0 && !isLoading && (
           <div className="text-white h-[60vh] flex flex-col items-center justify-center">
             <FishSymbol size={60} className="text-green-500 mb-4" />
 

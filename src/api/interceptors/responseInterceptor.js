@@ -76,7 +76,6 @@ export const setupResponseInterceptor = (api) => {
       try {
         // Refresh token is expected in HttpOnly cookie
         await api.post("/auth/refresh-token");
-
         processQueue(null);
 
         // Retry original request
