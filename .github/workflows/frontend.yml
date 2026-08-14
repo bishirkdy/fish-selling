@@ -22,9 +22,10 @@ jobs:
         run: npm install
 
       - name: Build frontend
-        run: npm run build
-        env:
-          VITE_API_URL: ${{ env.VITE_API_URL }}
+        run: |
+          $env:VITE_API_URL = [Environment]::GetEnvironmentVariable("VITE_API_URL", "Machine")
+          Write-Host "VITE_API_URL = $env:VITE_API_URL"
+          npm run build
     
       - name: Deploy to IIS
         run: |
