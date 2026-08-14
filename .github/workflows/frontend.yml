@@ -23,7 +23,9 @@ jobs:
 
       - name: Build frontend
         run: npm run build
-
+        env:
+          VITE_API_URL: ${{ env.VITE_API_URL }}
+    
       - name: Deploy to IIS
         run: |
           Remove-Item "C:\inetpub\AquaticFishFrontend\*" -Recurse -Force
