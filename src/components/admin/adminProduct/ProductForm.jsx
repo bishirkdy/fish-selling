@@ -23,11 +23,12 @@ const ProductForm = ({
 
         <div className="grid md:grid-cols-2 gap-6 items-start">
 
+          {/* Left Side */}
           <div className="space-y-5">
 
             {/* Fish Name */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <label className="text-sm font-semibold text-gray-700">
                 Fish Name
               </label>
 
@@ -53,7 +54,7 @@ const ProductForm = ({
 
             {/* Category */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <label className="text-sm font-semibold text-gray-700">
                 Category
               </label>
 
@@ -72,10 +73,7 @@ const ProductForm = ({
                 </option>
 
                 {category?.map((item) => (
-                  <option
-                    key={item.id}
-                    value={item.id}
-                  >
+                  <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
@@ -91,13 +89,15 @@ const ProductForm = ({
           </div>
 
 
+          {/* Right Side */}
           <div className="space-y-5">
 
             {/* Price + Cost Price */}
             <div className="grid grid-cols-2 gap-4">
 
+              {/* Selling Price */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold">
+                <label className="block text-sm font-semibold text-gray-700">
                   Selling Price
                 </label>
 
@@ -106,12 +106,26 @@ const ProductForm = ({
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border"
+                  min="0"
+                  step="0.01"
+                  className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
+                    error?.price
+                      ? "border-red-500 focus:ring-red-300"
+                      : "border-gray-300 focus:ring-(--color-surface)"
+                  }`}
                 />
+
+                {error?.price && (
+                  <p className="text-red-500 text-sm pl-1">
+                    {error.price}
+                  </p>
+                )}
               </div>
 
+
+              {/* Cost Price */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold">
+                <label className="block text-sm font-semibold text-gray-700">
                   Cost Price
                 </label>
 
@@ -120,8 +134,20 @@ const ProductForm = ({
                   name="costPrice"
                   value={formData.costPrice}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border"
+                  min="0"
+                  step="0.01"
+                  className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
+                    error?.costPrice
+                      ? "border-red-500 focus:ring-red-300"
+                      : "border-gray-300 focus:ring-(--color-surface)"
+                  }`}
                 />
+
+                {error?.costPrice && (
+                  <p className="text-red-500 text-sm pl-1">
+                    {error.costPrice}
+                  </p>
+                )}
               </div>
 
             </div>
@@ -130,8 +156,9 @@ const ProductForm = ({
             {/* Discount + Stock */}
             <div className="grid grid-cols-2 gap-4">
 
+              {/* Discount */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold">
+                <label className="block text-sm font-semibold text-gray-700">
                   Discount %
                 </label>
 
@@ -140,12 +167,27 @@ const ProductForm = ({
                   name="discountPercentage"
                   value={formData.discountPercentage}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
+                    error?.discountPercentage
+                      ? "border-red-500 focus:ring-red-300"
+                      : "border-gray-300 focus:ring-(--color-surface)"
+                  }`}
                 />
+
+                {error?.discountPercentage && (
+                  <p className="text-red-500 text-sm pl-1">
+                    {error.discountPercentage}
+                  </p>
+                )}
               </div>
 
+
+              {/* Stock */}
               <div className="space-y-2">
-                <label className="block text-sm font-semibold">
+                <label className="block text-sm font-semibold text-gray-700">
                   Stock
                 </label>
 
@@ -154,8 +196,20 @@ const ProductForm = ({
                   name="stock"
                   value={formData.stock}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border"
+                  min="0"
+                  step="1"
+                  className={`w-full h-14 px-5 rounded-2xl border outline-none transition focus:ring-2 ${
+                    error?.stock
+                      ? "border-red-500 focus:ring-red-300"
+                      : "border-gray-300 focus:ring-(--color-surface)"
+                  }`}
                 />
+
+                {error?.stock && (
+                  <p className="text-red-500 text-sm pl-1">
+                    {error.stock}
+                  </p>
+                )}
               </div>
 
             </div>
@@ -168,7 +222,7 @@ const ProductForm = ({
         {/* Description */}
         <div className="space-y-2">
 
-          <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+          <label className="text-sm font-semibold text-gray-700">
             Description
           </label>
 
@@ -197,7 +251,8 @@ const ProductForm = ({
         {/* Submit */}
         <button
           type="submit"
-          className="h-14 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition flex items-center justify-center gap-3 shadow-lg cursor-pointer"
+          disabled={isPending}
+          className="h-14 w-full rounded-2xl bg-(--color-surface) hover:bg-(--color-surface)/90 text-white font-semibold transition flex items-center justify-center gap-3 shadow-lg cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isPending ? "Updating..." : "Save Change"}
         </button>

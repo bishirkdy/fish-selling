@@ -208,6 +208,7 @@ const Payment = () => {
 
       onError: (err) => {
         toast.error(
+          "Please write valid address" ||
           err.message ||
           "Failed to save address"
         );
@@ -227,7 +228,7 @@ const Payment = () => {
 
 
   return (
-    <div className="min-h-screen pt-24 md:pt-4 bg-(--color-background) flex justify-center items-center p-5">
+    <div className="min-h-screen pt-24 md:pt-4 lg:pt-12 bg-(--color-background) flex justify-center items-center p-5">
 
       <div className="w-full max-w-5xl bg-(--color-text) rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-2 overflow-hidden">
 

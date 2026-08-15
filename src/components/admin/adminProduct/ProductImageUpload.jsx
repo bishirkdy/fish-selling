@@ -6,9 +6,26 @@ const ProductImageUpload = ({
   setImage,
   setPreview,
   isPending,
+  error,
 }) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    setImage(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null);
+    setPreview("");
+  };
+
   return (
     <div className="bg-white rounded-[30px] shadow-sm p-6 h-fit sticky top-6">
+
+      {/* Header */}
       <h2 className="text-2xl font-bold text-gray-800">
         Update Image
       </h2>
@@ -17,16 +34,25 @@ const ProductImageUpload = ({
         Upload a new fish image
       </p>
 
-      <label className="h-52 rounded-[28px] border-2 border-dashed border-gray-300 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-(--color-background) hover:bg-(--color-background)/5 transition">
+
+      {/* Upload */}
+      <label
+        className={`h-52 rounded-[28px] border-2 border-dashed bg-gray-50 flex flex-col items-center justify-center transition ${
+          error?.image
+            ? "border-red-500"
+            : "border-gray-300 hover:border-(--color-background) hover:bg-(--color-background)/5"
+        } ${
+          isPending
+            ? "cursor-not-allowed opacity-60"
+            : "cursor-pointer"
+        }`}
+      >
         <input
           type="file"
+          accept="image/png,image/jpeg,image/webp"
           className="hidden"
-          onChange={(e) => {
-            const file = e.target.files[0];
-
-            setImage(file);
-            setPreview(URL.createObjectURL(file));
-          }}
+          disabled={isPending}
+          onChange={handleImageChange}
         />
 
         <Image
@@ -43,43 +69,58 @@ const ProductImageUpload = ({
         </p>
       </label>
 
-      <div className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-gray-800">
-            Image Preview
-          </h3>
-        </div>
 
-        <div className="relative h-56 rounded-3xl overflow-hidden group border border-gray-200">
+      {/* Image Error */}
+      {error?.image && (
+        <p className="text-red-500 text-sm mt-2 pl-1">
+          {error.image}
+        </p>
+      )}
+
+
+      {/* Preview */}
+      <div className="mt-8">
+
+        <h3 className="font-bold text-gray-800 mb-4">
+          Image Preview
+        </h3>
+
+        <div className="relative h-56 rounded-3xl overflow-hidden border border-gray-200">
+
           {preview ? (
             <img
               src={preview}
-              alt="Preview"
+              alt="Fish preview"
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
+            <div className="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
               No Image
             </div>
           )}
 
+        </div>
+
+
+        {/* Remove Button */}
+        {preview && (
           <button
             type="button"
             disabled={isPending}
-            onClick={() => {
-              setImage(null);
-              setPreview("");
-            }}
-            className={`h-14 w-full rounded-2xl text-white font-semibold transition ${
+            onClick={handleRemoveImage}
+            className={`mt-4 h-12 w-full rounded-2xl text-white font-semibold transition flex items-center justify-center gap-2 ${
               isPending
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-(--color-surface) hover:bg-(--color-surface)/90"
+                : "bg-(--color-surface) hover:bg-(--color-surface)/90 cursor-pointer"
             }`}
           >
             <SquareX size={18} />
+            Remove Image
           </button>
-        </div>
+        )}
+
       </div>
+
     </div>
   );
 };
