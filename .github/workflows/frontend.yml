@@ -22,8 +22,11 @@ jobs:
         run: npm install
 
       - name: Build frontend
-        run: npm run build
-
+        run: |
+          $env:VITE_API_URL = [Environment]::GetEnvironmentVariable("VITE_API_URL", "Machine")
+          Write-Host "VITE_API_URL = $env:VITE_API_URL"
+          npm run build
+    
       - name: Deploy to IIS
         run: |
           Remove-Item "C:\inetpub\AquaticFishFrontend\*" -Recurse -Force
